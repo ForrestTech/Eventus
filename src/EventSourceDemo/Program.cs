@@ -1,6 +1,13 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Net;
+using System.Threading.Tasks;
+using EventSourceDemo.Commands;
+using EventSourceDemo.Domain;
+using EventSourceDemo.Handlers;
+using EventSourcing.Event;
+using EventSourcing.EventBus;
+using EventSourcing.EventSource;
+using EventSourcing.Repository;
 using EventStore.ClientAPI;
 
 namespace EventSourceDemo
@@ -8,48 +15,45 @@ namespace EventSourceDemo
     class Program
     {
         //todo
-        //create commands
-        //create handlers
         //create validators
-        //snapshots
         //subscriptions
         //readmodel
-        private static string StreamId(Guid id)
-        {
-            return $"bankAccount-{id}";
-        }
 
         static void Main(string[] args)
         {
             var connection = EventStoreConnection.Create(new IPEndPoint(IPAddress.Loopback, 1113));
             connection.ConnectAsync();
 
-            var aggregateId = Guid.NewGuid();
-            var eventsToRun = new List<Event>
-            {
-                new AccountCreatedEvent(aggregateId, "Joe Doe " + Guid.NewGuid()),
-                new FundsDepositedEvent(aggregateId, 150),
-                new FundsDepositedEvent(aggregateId, 100),
-                new FundsWithdrawalEvent(aggregateId, 60),
-                new FundsWithdrawalEvent(aggregateId, 94),
-                new FundsDepositedEvent(aggregateId, 4)
-            };
+            var accountId = Guid.NewGuid();
+            var repo = new Repository(new EventstoreStorageProvider(connection, GetStreamNamePrefix()),
+                new EventstoreSnapshotStorageProvider(connection, GetStreamNamePrefix(), 3),
+                new NullEventPublisher());
 
-            var wallet = new Wallet();
+            var handler = new BankAccountHandlers(repo);
 
-            foreach (var e in eventsToRun)
-            {
-                wallet.ApplyEvent(e);
-            }
+            handler.HandleAsync(new CreateAccountCommand(Guid.NewGuid(), accountId, "Joe Bloggs")).Wait();
+            handler.HandleAsync(new DepostiFundsCommand(Guid.NewGuid(), accountId, 10)).Wait();
+            handler.HandleAsync(new DepostiFundsCommand(Guid.NewGuid(), accountId, 35)).Wait();
+            handler.HandleAsync(new WithdrawFundsCommand(Guid.NewGuid(), accountId, 25)).Wait();
+            handler.HandleAsync(new DepostiFundsCommand(Guid.NewGuid(), accountId, 5)).Wait();
+            handler.HandleAsync(new WithdrawFundsCommand(Guid.NewGuid(), accountId, 10)).Wait();
 
-            var repo = new EventStoreRepository(connection);
-            repo.Save(wallet);
+            var fromStore = repo.GetByIdAsync<BankAccount>(accountId).Result;
 
-            var fromStore = repo.GetById<Wallet>(wallet.Id);
-            
             Console.ReadLine();
+        }
+
+        private static Func<string> GetStreamNamePrefix()
+        {
+            return () => "Demo-";
         }
     }
 
-    
+    internal class NullEventPublisher : IEventPublisher
+    {
+        public Task PublishAsync(IEvent @event)
+        {
+            return Task.FromResult(0);
+        }
+    }
 }
