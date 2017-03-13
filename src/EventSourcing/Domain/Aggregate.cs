@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using EventSourcing.Event;
-using EventSourcing.Extensions;
+using EventSourcing.Exceptions;
 
 namespace EventSourcing.Domain
 {
@@ -16,6 +16,7 @@ namespace EventSourcing.Domain
         }
 
         private readonly List<IEvent> _uncommittedChanges;
+        private Dictionary<Type, string> _eventHandlerCache;
 
         protected Aggregate(List<IEvent> uncommittedChanges)
         {
@@ -43,6 +44,7 @@ namespace EventSourcing.Domain
             CurrentVersion = (int)StreamState.NoStream; ;
             LastCommittedVersion = (int)StreamState.NoStream; ;
             _uncommittedChanges = new List<IEvent>();
+            SetupInternalEventHandlers();
         }
 
         public IEnumerable<IEvent> GetUncommittedChanges()
@@ -77,13 +79,37 @@ namespace EventSourcing.Domain
         protected virtual void ApplyEvent(IEvent @event, bool isNew)
         {
             //todo validate events can be applied to this aggregate
-            this.AsDynamic().Apply(@event);
+            if (_eventHandlerCache.ContainsKey(@event.GetType()))
+            {
+                var methodName = _eventHandlerCache[@event.GetType()];
+
+                var method = ReflectionHelper.GetMethod(GetType(), methodName, new[] { @event.GetType() });
+
+                if (method != null)
+                {
+                    method.Invoke(this, new object[] { @event });
+                }
+                else
+                {
+                    throw new AggregateEventOnApplyMethodMissingException($"No event Apply method found on {GetType()} for {@event.GetType()}");
+                }
+            }
+            else
+            {
+                throw new AggregateEventOnApplyMethodMissingException($"No event handler specified for {@event.GetType()} on {this.GetType()}");
+            }
+
             if (isNew)
             {
                 _uncommittedChanges.Add(@event);
             }
 
             CurrentVersion++;
+        }
+
+        private void SetupInternalEventHandlers()
+        {
+            _eventHandlerCache = ReflectionHelper.FindEventHandlerMethodsInAggregate(GetType());
         }
     }
 }

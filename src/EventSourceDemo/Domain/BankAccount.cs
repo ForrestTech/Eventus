@@ -12,7 +12,7 @@ namespace EventSourceDemo.Domain
 
         public decimal CurrentBalance { get; private set; }
 
-        public List<Transaction> Transactions { get; }
+        public List<Transaction> Transactions { get; private set; }
 
         public BankAccount()
         {
@@ -44,26 +44,32 @@ namespace EventSourceDemo.Domain
             ApplyEvent(deposit);
         }
 
-        private void Apply(AccountCreatedEvent @event)
+        #region ApplyEvents
+
+        private void OnAccountCreated(AccountCreatedEvent @event)
         {
             Id = @event.AggregateId;
             Name = @event.Name;
             CurrentBalance = 0;
         }
 
-        private void Apply(FundsDepositedEvent @event)
+        private void OnFundsDeposited(FundsDepositedEvent @event)
         {
             var newTransaction = new Transaction(TransactionType.Deposit, @event.AggregateId, @event.Amount);
             Transactions.Add(newTransaction);
             CurrentBalance = CurrentBalance + @event.Amount;
         }
 
-        private void Apply(FundsWithdrawalEvent @event)
+        private void OnFundsWithdrawl(FundsWithdrawalEvent @event)
         {
             var newTransaction = new Transaction(TransactionType.Withdrawal, @event.AggregateId, @event.Amount);
             Transactions.Add(newTransaction);
             CurrentBalance = CurrentBalance - @event.Amount;
         }
+
+        #endregion
+
+        #region Snapshot
 
         public Snapshot TakeSnapshot()
         {
@@ -71,7 +77,8 @@ namespace EventSourceDemo.Domain
                 Id,
                 CurrentVersion,
                 Name,
-                CurrentBalance);
+                CurrentBalance,
+                Transactions);
         }
 
         public void ApplySnapshot(Snapshot snapshot)
@@ -83,6 +90,9 @@ namespace EventSourceDemo.Domain
             LastCommittedVersion = item.Version;
             Name = item.Name;
             CurrentBalance = item.CurrentBalance;
+            Transactions = item.Transactions;
         }
+
+        #endregion
     }
 }

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using EventSourcing.Repository;
 
 namespace EventSourceDemo.Domain
@@ -9,11 +10,14 @@ namespace EventSourceDemo.Domain
 
         public decimal CurrentBalance { get; }
 
-        public BankAccountSnapshot(Guid id, Guid aggregateId, int version, string name, decimal currentBalance)
+        public List<Transaction> Transactions { get; }
+
+        public BankAccountSnapshot(Guid id, Guid aggregateId, int version, string name, decimal currentBalance, List<Transaction> transactions)
             : base(id, aggregateId, version)
         {
             Name = name;
             CurrentBalance = currentBalance;
+            Transactions = transactions;
         }
     }
 }
