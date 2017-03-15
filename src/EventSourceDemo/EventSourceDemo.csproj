@@ -43,6 +43,7 @@
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Runtime.Caching" />
     <Reference Include="System.Runtime.Serialization" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
@@ -55,6 +56,16 @@
     <Compile Include="Commands\Commands.cs" />
     <Compile Include="Commands\ICommand.cs" />
     <Compile Include="Domain\TransactionType.cs" />
+    <Compile Include="ReadModel\AccountSummary.cs" />
+    <Compile Include="DemoPublisher.cs" />
+    <Compile Include="EventHandlers\HandleDeposit.cs" />
+    <Compile Include="EventHandlers\HandleWithdrawal.cs" />
+    <Compile Include="EventHandlers\IHandleEvent.cs" />
+    <Compile Include="ReadModel\IReadModelRepository.cs" />
+    <Compile Include="EventHandlers\NullEventPublisher.cs" />
+    <Compile Include="Program.cs" />
+    <Compile Include="ReadModel\ReadModelRepository.cs" />
+    <Compile Include="ReadModel\TopAccountsReadModel.cs" />
     <Compile Include="Events\AccountCreatedEvent.cs" />
     <Compile Include="Domain\BankAccount.cs" />
     <Compile Include="Handlers\BankAccountHandlers.cs" />
@@ -64,7 +75,6 @@
     <Compile Include="Events\FundsDepositedEvent.cs" />
     <Compile Include="Events\FundsWithdrawalEvent.cs" />
     <Compile Include="IHandleCommands.cs" />
-    <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Domain\Transaction.cs" />
     <Compile Include="Commands\WithdrawFundsCommand.cs" />

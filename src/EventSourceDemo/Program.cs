@@ -1,11 +1,10 @@
-﻿using System;
+using System;
 using System.Net;
-using System.Threading.Tasks;
 using EventSourceDemo.Commands;
 using EventSourceDemo.Domain;
+using EventSourceDemo.EventHandlers;
 using EventSourceDemo.Handlers;
-using EventSourcing.Event;
-using EventSourcing.EventBus;
+using EventSourceDemo.ReadModel;
 using EventSourcing.EventSource;
 using EventSourcing.Repository;
 using EventStore.ClientAPI;
@@ -16,18 +15,23 @@ namespace EventSourceDemo
     {
         //todo
         //create validators
-        //subscriptions
-        //readmodel
-
+        //direct event store subscription
+        //sql implementation of event store
+        //martin implementation of event store
         static void Main(string[] args)
         {
             var connection = EventStoreConnection.Create(new IPEndPoint(IPAddress.Loopback, 1113));
             connection.ConnectAsync();
 
             var accountId = Guid.NewGuid();
-            var repo = new Repository(new EventstoreStorageProvider(connection, GetStreamNamePrefix()),
+            var readRepo = new ReadModelRepository();
+
+            var repo = new Repository(
+                new EventstoreStorageProvider(connection, GetStreamNamePrefix()),
                 new EventstoreSnapshotStorageProvider(connection, GetStreamNamePrefix(), 3),
-                new NullEventPublisher());
+                new DemoPublisher(
+                    new HandleDeposit(readRepo),
+                    new HandleWithdrawal(readRepo)));
 
             var handler = new BankAccountHandlers(repo);
 
@@ -46,14 +50,6 @@ namespace EventSourceDemo
         private static Func<string> GetStreamNamePrefix()
         {
             return () => "Demo-";
-        }
-    }
-
-    internal class NullEventPublisher : IEventPublisher
-    {
-        public Task PublishAsync(IEvent @event)
-        {
-            return Task.FromResult(0);
         }
     }
 }
