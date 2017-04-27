@@ -5,16 +5,16 @@ using EventSourceDemo.ReadModel;
 
 namespace EventSourceDemo.EventHandlers
 {
-    public class HandleDeposit : IHandleEvent<FundsDepositedEvent>
+    public class WithdrawalEventHandler : IHandleEvent<FundsWithdrawalEvent>
     {
         private readonly IReadModelRepository _repository;
 
-        public HandleDeposit(IReadModelRepository repository)
+        public WithdrawalEventHandler(IReadModelRepository repository)
         {
             _repository = repository;
         }
 
-        public async Task Handle(FundsDepositedEvent @event)
+        public async Task Handle(FundsWithdrawalEvent @event)
         {
             var readmodel = await _repository.Get() ?? new TopAccountsReadModel();
 
@@ -30,7 +30,7 @@ namespace EventSourceDemo.EventHandlers
             }
             else
             {
-                account.Balance += @event.Amount;
+                account.Balance -= @event.Amount;
             }
 
             await _repository.Save(readmodel);

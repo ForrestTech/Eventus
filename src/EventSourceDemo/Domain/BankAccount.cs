@@ -55,9 +55,9 @@ namespace EventSourceDemo.Domain
 
         private void OnFundsDeposited(FundsDepositedEvent @event)
         {
+            CurrentBalance = CurrentBalance + @event.Amount;
             var newTransaction = new Transaction(TransactionType.Deposit, @event.AggregateId, @event.Amount);
             Transactions.Add(newTransaction);
-            CurrentBalance = CurrentBalance + @event.Amount;
         }
 
         private void OnFundsWithdrawl(FundsWithdrawalEvent @event)

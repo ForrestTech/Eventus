@@ -58,8 +58,8 @@
     <Compile Include="Domain\TransactionType.cs" />
     <Compile Include="ReadModel\AccountSummary.cs" />
     <Compile Include="DemoPublisher.cs" />
-    <Compile Include="EventHandlers\HandleDeposit.cs" />
-    <Compile Include="EventHandlers\HandleWithdrawal.cs" />
+    <Compile Include="EventHandlers\DepositEventHandler.cs" />
+    <Compile Include="EventHandlers\WithdrawalEventHandler.cs" />
     <Compile Include="EventHandlers\IHandleEvent.cs" />
     <Compile Include="ReadModel\IReadModelRepository.cs" />
     <Compile Include="EventHandlers\NullEventPublisher.cs" />
@@ -68,7 +68,7 @@
     <Compile Include="ReadModel\TopAccountsReadModel.cs" />
     <Compile Include="Events\AccountCreatedEvent.cs" />
     <Compile Include="Domain\BankAccount.cs" />
-    <Compile Include="Handlers\BankAccountHandlers.cs" />
+    <Compile Include="Handlers\BankAccountCommandHandlers.cs" />
     <Compile Include="Domain\BankAccountSnapshot.cs" />
     <Compile Include="Commands\CreateAccountCommand.cs" />
     <Compile Include="Commands\DepostiFundsCommand.cs" />

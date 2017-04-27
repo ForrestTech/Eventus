@@ -25,10 +25,10 @@ namespace EventSourceDemo
                 new EventstoreStorageProvider(connection, GetStreamNamePrefix()),
                 new EventstoreSnapshotStorageProvider(connection, GetStreamNamePrefix(), 3),
                 new DemoPublisher(
-                    new HandleDeposit(readRepo),
-                    new HandleWithdrawal(readRepo)));
+                    new DepositEventHandler(readRepo),
+                    new WithdrawalEventHandler(readRepo)));
 
-            var handler = new BankAccountHandlers(repo);
+            var handler = new BankAccountCommandHandlers(repo);
 
             handler.HandleAsync(new CreateAccountCommand(Guid.NewGuid(), accountId, "Joe Bloggs")).Wait();
             handler.HandleAsync(new DepostiFundsCommand(Guid.NewGuid(), accountId, 10)).Wait();

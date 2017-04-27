@@ -5,13 +5,13 @@ using EventSourcing.Repository;
 
 namespace EventSourceDemo.Handlers
 {
-    public class BankAccountHandlers : IHandleCommands<CreateAccountCommand>,
+    public class BankAccountCommandHandlers : IHandleCommands<CreateAccountCommand>,
         IHandleCommands<WithdrawFundsCommand>,
         IHandleCommands<DepostiFundsCommand>
     {
         private readonly IRepository _repository;
 
-        public BankAccountHandlers(IRepository repository)
+        public BankAccountCommandHandlers(IRepository repository)
         {
             _repository = repository;
         }
