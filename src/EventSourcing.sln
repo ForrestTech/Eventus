@@ -1,13 +1,13 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 14
-VisualStudioVersion = 14.0.25420.1
+# Visual Studio 15
+VisualStudioVersion = 15.0.26403.7
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EventSourceDemo", "EventSourceDemo\EventSourceDemo.csproj", "{B0D6E886-4FB4-4297-BD50-C712AF24CE7B}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EventSourcing", "EventSourcing\EventSourcing.csproj", "{15110214-3710-40E3-B3AA-8450C6466568}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EventSourcing.EventSource", "EventSourcing.EventSource\EventSourcing.EventSource.csproj", "{E5FD1A4C-9E79-484A-A44C-B8B5C70145BC}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EventSourcing.EventStore", "EventSourcing.EventSource\EventSourcing.EventStore.csproj", "{E5FD1A4C-9E79-484A-A44C-B8B5C70145BC}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

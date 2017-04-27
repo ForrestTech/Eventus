@@ -7,8 +7,8 @@
     <ProjectGuid>{E5FD1A4C-9E79-484A-A44C-B8B5C70145BC}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>EventSourcing.EventSource</RootNamespace>
-    <AssemblyName>EventSourcing.EventSource</AssemblyName>
+    <RootNamespace>EventSourcing.EventStore</RootNamespace>
+    <AssemblyName>EventSourcing.EventStore</AssemblyName>
     <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>

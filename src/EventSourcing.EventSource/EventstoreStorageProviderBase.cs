@@ -5,7 +5,7 @@ using EventSourcing.Repository;
 using EventStore.ClientAPI;
 using Newtonsoft.Json;
 
-namespace EventSourcing.EventSource
+namespace EventSourcing.EventStore
 {
     public abstract class EventstoreStorageProviderBase
     {

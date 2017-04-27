@@ -7,7 +7,7 @@ using EventSourcing.Event;
 using EventSourcing.Repository;
 using EventStore.ClientAPI;
 
-namespace EventSourcing.EventSource
+namespace EventSourcing.EventStore
 {
     public class EventstoreStorageProvider : EventstoreStorageProviderBase, IEventStorageProvider
     {

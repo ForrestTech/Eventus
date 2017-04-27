@@ -84,9 +84,9 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\EventSourcing.EventSource\EventSourcing.EventSource.csproj">
+    <ProjectReference Include="..\EventSourcing.EventSource\EventSourcing.EventStore.csproj">
       <Project>{e5fd1a4c-9e79-484a-a44c-b8b5c70145bc}</Project>
-      <Name>EventSourcing.EventSource</Name>
+      <Name>EventSourcing.EventStore</Name>
     </ProjectReference>
     <ProjectReference Include="..\EventSourcing\EventSourcing.csproj">
       <Project>{15110214-3710-40e3-b3aa-8450c6466568}</Project>

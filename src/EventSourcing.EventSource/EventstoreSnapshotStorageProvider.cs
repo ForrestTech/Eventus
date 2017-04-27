@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 using EventSourcing.Repository;
 using EventStore.ClientAPI;
 
-namespace EventSourcing.EventSource
+namespace EventSourcing.EventStore
 {
     public class EventstoreSnapshotStorageProvider : EventstoreStorageProviderBase, ISnapshotStorageProvider
     {

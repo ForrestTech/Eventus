@@ -5,19 +5,14 @@ using EventSourceDemo.Domain;
 using EventSourceDemo.EventHandlers;
 using EventSourceDemo.Handlers;
 using EventSourceDemo.ReadModel;
-using EventSourcing.EventSource;
+using EventSourcing.EventStore;
 using EventSourcing.Repository;
 using EventStore.ClientAPI;
 
 namespace EventSourceDemo
 {
     class Program
-    {
-        //todo
-        //create validators
-        //direct event store subscription
-        //sql implementation of event store
-        //martin implementation of event store
+    {        
         static void Main(string[] args)
         {
             var connection = EventStoreConnection.Create(new IPEndPoint(IPAddress.Loopback, 1113));

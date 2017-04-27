@@ -1,4 +1,4 @@
-﻿namespace EventSourcing.EventSource
+﻿namespace EventSourcing.EventStore
 {
     public class EventstoreMetaDataHeader
     {
