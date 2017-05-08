@@ -18,7 +18,7 @@ namespace EventSourcing.Repository
         public Repository(IEventStorageProvider eventStorageProvider, ISnapshotStorageProvider snapshotStorageProvider, IEventPublisher eventPublisher)
         {
             if (eventStorageProvider == null) throw new ArgumentNullException(nameof(eventStorageProvider));
-            if (snapshotStorageProvider == null) throw new ArgumentNullException(nameof(snapshotStorageProvider));
+            //if (snapshotStorageProvider == null) throw new ArgumentNullException(nameof(snapshotStorageProvider));
             if (eventPublisher == null) throw new ArgumentNullException(nameof(eventPublisher));
 
             _eventStorageProvider = eventStorageProvider;
@@ -102,7 +102,7 @@ namespace EventSourcing.Repository
             //If the Aggregate implements snaphottable
             var snapshottable = aggregate as ISnapshottable;
 
-            if ((snapshottable != null))
+            if ((snapshottable != null && _snapshotStorageProvider != null))
             {
                 //Every N events we save a snapshot
                 if (ShouldCreateSnapShot(aggregate, changesToCommit))

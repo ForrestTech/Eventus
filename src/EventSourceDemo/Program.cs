@@ -1,4 +1,5 @@
 using System;
+using System.Configuration;
 using System.Net;
 using EventSourceDemo.Commands;
 using EventSourceDemo.Domain;
@@ -8,6 +9,8 @@ using EventSourceDemo.ReadModel;
 using EventSourcing.EventStore;
 using EventSourcing.Repository;
 using EventStore.ClientAPI;
+using Microsoft.Azure.Documents.Client;
+using EventSourcing.DocumentDb;
 
 namespace EventSourceDemo
 {
@@ -15,18 +18,11 @@ namespace EventSourceDemo
     {        
         static void Main(string[] args)
         {
-            var connection = EventStoreConnection.Create(new IPEndPoint(IPAddress.Loopback, 1113));
-            connection.ConnectAsync();
-
             var accountId = Guid.NewGuid();
             var readRepo = new ReadModelRepository();
 
-            var repo = new Repository(
-                new EventstoreStorageProvider(connection, GetStreamNamePrefix()),
-                new EventstoreSnapshotStorageProvider(connection, GetStreamNamePrefix(), 3),
-                new DemoPublisher(
-                    new DepositEventHandler(readRepo),
-                    new WithdrawalEventHandler(readRepo)));
+            //var repo = EventStoreRepository(readRepo);
+            var repo = DocumentDbRepository(readRepo);
 
             var handler = new BankAccountCommandHandlers(repo);
 
@@ -40,6 +36,32 @@ namespace EventSourceDemo
             var fromStore = repo.GetByIdAsync<BankAccount>(accountId).Result;
 
             Console.ReadLine();
+        }
+
+        private static Repository EventStoreRepository(ReadModelRepository readRepo)
+        {
+            var connection = EventStoreConnection.Create(new IPEndPoint(IPAddress.Loopback, 1113));
+            connection.ConnectAsync();
+
+
+            return new Repository(
+                new EventstoreStorageProvider(connection, GetStreamNamePrefix()),
+                new EventstoreSnapshotStorageProvider(connection, GetStreamNamePrefix(), 3),
+                new DemoPublisher(
+                    new DepositEventHandler(readRepo),
+                    new WithdrawalEventHandler(readRepo)));
+        }
+
+        private static Repository DocumentDbRepository(ReadModelRepository readRepo)
+        {
+            var client = new DocumentClient(new Uri(ConfigurationManager.AppSettings["endpoint"]), ConfigurationManager.AppSettings["authKey"], new ConnectionPolicy { EnableEndpointDiscovery = false });
+
+            return new Repository(
+                new DocumentDbStorageProvider(client, "test1"), 
+                null,//new DocumentDbSnapShotProvider(client), 
+                new DemoPublisher(
+                    new DepositEventHandler(readRepo),
+                    new WithdrawalEventHandler(readRepo)));
         }
 
         private static Func<string> GetStreamNamePrefix()

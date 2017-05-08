@@ -9,7 +9,7 @@ namespace EventSourceDemo.ReadModel
         private readonly ObjectCache _cache = MemoryCache.Default;
         private const string CacheKey = "TopAccounts";
 
-        public Task Save(TopAccountsReadModel model)
+        public Task SaveAsync(TopAccountsReadModel model)
         {
             return Task.Run(() =>
             {
@@ -21,7 +21,7 @@ namespace EventSourceDemo.ReadModel
             });
         }
 
-        public Task<TopAccountsReadModel> Get()
+        public Task<TopAccountsReadModel> GetAsync()
         {
             if (_cache.Contains(CacheKey))
             {
