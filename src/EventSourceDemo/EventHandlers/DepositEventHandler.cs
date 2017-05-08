@@ -16,7 +16,7 @@ namespace EventSourceDemo.EventHandlers
 
         public async Task Handle(FundsDepositedEvent @event)
         {
-            var readmodel = await _repository.Get() ?? new TopAccountsReadModel();
+            var readmodel = await _repository.GetAsync() ?? new TopAccountsReadModel();
 
             var account = readmodel.Accounts.SingleOrDefault(x => x.Id == @event.AggregateId);
 
@@ -33,7 +33,7 @@ namespace EventSourceDemo.EventHandlers
                 account.Balance += @event.Amount;
             }
 
-            await _repository.Save(readmodel);
+            await _repository.SaveAsync(readmodel);
         }
     }
 }
