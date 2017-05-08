@@ -16,7 +16,7 @@ namespace EventSourceDemo.Domain
 
         public BankAccount()
         {
-            //Important: Aggregate roots must have a parameterless constructor
+            //Important: AggregateType roots must have a parameterless constructor
             //to make it easier to construct from scratch.
 
             Transactions = new List<Transaction>();

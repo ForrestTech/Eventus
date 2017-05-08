@@ -49,6 +49,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AggregateConfig.cs" />
+    <Compile Include="DocumentDbEventStoreConfig.cs" />
+    <Compile Include="DocumentDbEventStoreEvent.cs" />
     <Compile Include="DocumentDbSnapShotProvider.cs" />
     <Compile Include="DocumentDbStorageProvider.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

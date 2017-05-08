@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Configuration;
 using System.Net;
 using EventSourceDemo.Commands;
@@ -56,9 +57,22 @@ namespace EventSourceDemo
         {
             var client = new DocumentClient(new Uri(ConfigurationManager.AppSettings["endpoint"]), ConfigurationManager.AppSettings["authKey"], new ConnectionPolicy { EnableEndpointDiscovery = false });
 
+            var documentDbStorageProvider = new DocumentDbStorageProvider(client, "Test");
+            documentDbStorageProvider.InitAsync(new DocumentDbEventStoreConfig
+            {
+                AggregateConfig = new List<AggregateConfig>
+                {
+                    new AggregateConfig
+                    {
+                        AggregateType = typeof(BankAccount),
+                        OfferThroughput = 1000
+                    }
+                }
+            }).Wait();
+
             return new Repository(
-                new DocumentDbStorageProvider(client, "test1"), 
-                null,//new DocumentDbSnapShotProvider(client), 
+                documentDbStorageProvider, 
+                null,//todo implement documentdb snapshotting new DocumentDbSnapShotProvider(client), 
                 new DemoPublisher(
                     new DepositEventHandler(readRepo),
                     new WithdrawalEventHandler(readRepo)));
