@@ -1,8 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Linq;
-using System.Text;
+using System.Net.NetworkInformation;
 using System.Threading.Tasks;
 using EventSourcing.Domain;
 using EventSourcing.Event;
@@ -24,22 +23,30 @@ namespace EventSourcing.DocumentDb
         {
             _client = client;
             _databaseId = databaseId;
+        }
 
-            //todo move to an async init method (make common interface for storage providers that should have a application start setup)
-            CreateDatabaseIfNotExistsAsync().Wait();
+        public async Task InitAsync(DocumentDbEventStoreConfig config)
+        {
+            await CreateDatabaseIfNotExistsAsync();
+
+            foreach (var c in config.AggregateConfig)
+            {
+                await CreateCollectionIfNotExistsAsync(c.AggregateType.Name, c.OfferThroughput);
+            }
         }
 
         public async Task<IEnumerable<IEvent>> GetEventsAsync(Type aggregateType, Guid aggregateId, int start, int count)
         {
-            await CreateCollectionIfNotExistsAsync(aggregateType, aggregateId);
-
             try
             {
+                var collectionUri = CollectionUri(aggregateType);
+
                 var query = _client.CreateDocumentQuery<DocumentDbEventStoreEvent>(
-                        UriFactory.CreateDocumentCollectionUri(_databaseId, AggregateIdToCollectionName(aggregateType, aggregateId)),
+                        collectionUri,
                         new FeedOptions { MaxItemCount = -1 })
-                        .OrderBy(x => x.EventTimestamp)
-                        .AsDocumentQuery();
+                    .Where(x => x.AggregateId == aggregateId)
+                    .OrderBy(x => x.EventTimestamp)
+                    .AsDocumentQuery();
 
                 var results = new List<IEvent>();
                 while (query.HasMoreResults)
@@ -63,20 +70,22 @@ namespace EventSourcing.DocumentDb
 
         public async Task<IEvent> GetLastEventAsync(Type aggregateType, Guid aggregateId)
         {
-            await CreateCollectionIfNotExistsAsync(aggregateType, aggregateId);
-
             try
             {
-                var query = _client.CreateDocumentQuery<IEvent>(
-                        UriFactory.CreateDocumentCollectionUri(_databaseId, AggregateIdToCollectionName(aggregateType, aggregateId)),
+                var collectionUri = CollectionUri(aggregateType);
+
+                var query = _client.CreateDocumentQuery<DocumentDbEventStoreEvent>(
+                        collectionUri,
                         new FeedOptions { MaxItemCount = -1 })
-                        .OrderBy(x => x.EventCommittedTimestamp)
+                        .Where(x => x.AggregateId == aggregateId)
+                        .OrderByDescending(x => x.EventTimestamp)
                         .Take(1)
-                        .AsDocumentQuery();
+                    .AsDocumentQuery();
 
-                var result = await query.ExecuteNextAsync<IEvent>();
-                return result.SingleOrDefault();
+                var result = await query.ExecuteNextAsync<DocumentDbEventStoreEvent>();
+                var item = result.SingleOrDefault();
 
+                return item == null ? null : DeserializeEvent(item);
             }
             catch (DocumentClientException e)
             {
@@ -90,23 +99,26 @@ namespace EventSourcing.DocumentDb
 
         public async Task CommitChangesAsync(Aggregate aggregate)
         {
-            await CreateCollectionIfNotExistsAsync(aggregate.GetType(), aggregate.Id);
-
             var events = aggregate.GetUncommittedChanges();
 
             if (events.Any())
             {
-                var collectionUri = UriFactory.CreateDocumentCollectionUri(_databaseId, AggregateIdToCollectionName(aggregate.GetType(), aggregate.Id));
+                var collectionUri = CollectionUri(aggregate.GetType());
 
                 var commited = aggregate.LastCommittedVersion;
 
                 foreach (var @event in events)
                 {
                     commited++;
-                    var documetEvent = CreateDocumentDbEvent(@event, commited);
+                    var documetEvent = CreateDocumentDbEvent(aggregate, @event, commited);
                     await _client.CreateDocumentAsync(collectionUri, documetEvent);
                 }
             }
+        }
+
+        private Uri CollectionUri(Type aggregateType)
+        {
+            return UriFactory.CreateDocumentCollectionUri(_databaseId, aggregateType.Name);
         }
 
         private async Task CreateDatabaseIfNotExistsAsync()
@@ -128,10 +140,8 @@ namespace EventSourcing.DocumentDb
             }
         }
 
-        private async Task CreateCollectionIfNotExistsAsync(Type aggregateType, Guid aggregateId)
+        private async Task CreateCollectionIfNotExistsAsync(string collectionId, int throughput)
         {
-            var collectionId = AggregateIdToCollectionName(aggregateType, aggregateId);
-
             try
             {
                 await _client.ReadDocumentCollectionAsync(UriFactory.CreateDocumentCollectionUri(_databaseId, collectionId));
@@ -141,9 +151,6 @@ namespace EventSourcing.DocumentDb
                 if (e.StatusCode == System.Net.HttpStatusCode.NotFound)
                 {
                     //todo lookup throughput from config
-                    //todo remove all indexs by default and allow them to be configured
-                    //todo consider a single collection partitioned on aggregate id
-
                     var collection = new DocumentCollection
                     {
                         Id = collectionId,
@@ -155,13 +162,15 @@ namespace EventSourcing.DocumentDb
 
                     collection.IndexingPolicy.ExcludedPaths.Add(new ExcludedPath
                     {
-                        Path = "/EventData/*"
+                        Path = "/eventData/*"
                     });
+
+                    collection.PartitionKey.Paths.Add("/aggregateId");
 
                     await _client.CreateDocumentCollectionAsync(
                         UriFactory.CreateDatabaseUri(_databaseId),
                         collection,
-                        new RequestOptions { OfferThroughput = 1000 });
+                        new RequestOptions { OfferThroughput = throughput });
                 }
                 else
                 {
@@ -170,23 +179,21 @@ namespace EventSourcing.DocumentDb
             }
         }
 
-        private string AggregateIdToCollectionName(Type aggregateType, Guid aggregateId)
-        {
-            return $"{aggregateType.Name}-{aggregateId:N}";
-        }
-
-        private static DocumentDbEventStoreEvent CreateDocumentDbEvent(IEvent @event, int commitNumber)
+        private static DocumentDbEventStoreEvent CreateDocumentDbEvent(Aggregate aggregate, IEvent @event, int commitNumber)
         {
             var docStoreEvent = new DocumentDbEventStoreEvent
             {
-                EventData = SerializeEvent(@event),
+                Id = @event.CorrelationId,
+                AggregateId = aggregate.Id,
                 ClrType = GetClrTypeName(@event),
-                Commited = commitNumber
+                Commited = commitNumber,
+                EventTimestamp = @event.EventCommittedTimestamp,
+                EventData = SerializeEvent(@event)
             };
 
             return docStoreEvent;
         }
-
+      
         protected static string SerializeEvent(IEvent @event)
         {
             return JsonConvert.SerializeObject(@event, GetSerializerSettings());
@@ -208,17 +215,5 @@ namespace EventSourcing.DocumentDb
         {
             return @event.GetType() + "," + @event.GetType().Assembly.GetName().Name;
         }
-    }
-
-    public class DocumentDbEventStoreEvent
-    {
-        public string ClrType { get; set; }
-
-        public int Commited { get; set; }
-
-        //todo just query _ts
-        public DateTime EventTimestamp { get; set; }
-
-        public string EventData { get; set; }
     }
 }
