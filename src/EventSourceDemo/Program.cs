@@ -76,7 +76,6 @@ namespace EventSourceDemo
         {
             var client = DocumentDbClient();
 
-            //todo change to order docs by versions
             var documentDbStorageProvider = new DocumentDbStorageProvider(client, DatabaseId);
             documentDbStorageProvider.InitAsync(new DocumentDbEventStoreConfig
             {
