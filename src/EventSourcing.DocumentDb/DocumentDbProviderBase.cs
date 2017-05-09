@@ -40,7 +40,6 @@ namespace EventSourcing.DocumentDb
             {
                 await CreateAggreateCollectionIfNotExistsAsync(c.AggregateType, c.OfferThroughput);
 
-                //todo add snapshot collection check
                 await CreateSnapShotCollectionIfNotExistsAsync(c.AggregateType, c.SnapshotOfferThroughput);
             }
         }
@@ -100,10 +99,6 @@ namespace EventSourcing.DocumentDb
                     var collection = new DocumentCollection
                     {
                         Id = collectionName
-                        //IndexingPolicy = new IndexingPolicy(new RangeIndex(DataType.String) { Precision = -1 })
-                        //{
-                        //    IndexingMode = IndexingMode.Lazy
-                        //}
                     };
 
                     collection.IndexingPolicy.IncludedPaths.Add(new IncludedPath { Path = "/*" });
