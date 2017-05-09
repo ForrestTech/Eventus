@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Net.NetworkInformation;
 using System.Threading.Tasks;
+using EventSourcing.DocumentDb.Config;
 using EventSourcing.Domain;
 using EventSourcing.Event;
 using EventSourcing.Repository;
@@ -13,45 +13,28 @@ using Newtonsoft.Json;
 
 namespace EventSourcing.DocumentDb
 {
-    public class DocumentDbStorageProvider : IEventStorageProvider
+    public class DocumentDbStorageProvider : DocumentDbProviderBase, IEventStorageProvider
     {
-        private readonly DocumentClient _client;
-        private readonly string _databaseId;
-        private static JsonSerializerSettings _serializerSetting;
-
-        public DocumentDbStorageProvider(DocumentClient client, string databaseId)
-        {
-            _client = client;
-            _databaseId = databaseId;
-        }
-
-        public async Task InitAsync(DocumentDbEventStoreConfig config)
-        {
-            await CreateDatabaseIfNotExistsAsync();
-
-            foreach (var c in config.AggregateConfig)
-            {
-                await CreateCollectionIfNotExistsAsync(c.AggregateType.Name, c.OfferThroughput);
-            }
-        }
+        public DocumentDbStorageProvider(DocumentClient client, string databaseId) : base(client, databaseId)
+        { }
 
         public async Task<IEnumerable<IEvent>> GetEventsAsync(Type aggregateType, Guid aggregateId, int start, int count)
         {
             try
             {
-                var collectionUri = CollectionUri(aggregateType);
+                var collectionUri = EventCollectionUri(aggregateType);
 
-                var query = _client.CreateDocumentQuery<DocumentDbEventStoreEvent>(
+                var query = Client.CreateDocumentQuery<DocumentDbAggregateEvent>(
                         collectionUri,
                         new FeedOptions { MaxItemCount = -1 })
-                    .Where(x => x.AggregateId == aggregateId)
-                    .OrderBy(x => x.EventTimestamp)
+                    .Where(x => x.AggregateId == aggregateId && x.Version >= start)
+                    .OrderBy(x => x.Version)
                     .AsDocumentQuery();
 
                 var results = new List<IEvent>();
                 while (query.HasMoreResults)
                 {
-                    var items = await query.ExecuteNextAsync<DocumentDbEventStoreEvent>();
+                    var items = await query.ExecuteNextAsync<DocumentDbAggregateEvent>();
 
                     results.AddRange(items.Select(DeserializeEvent));
                 }
@@ -72,17 +55,17 @@ namespace EventSourcing.DocumentDb
         {
             try
             {
-                var collectionUri = CollectionUri(aggregateType);
+                var collectionUri = EventCollectionUri(aggregateType);
 
-                var query = _client.CreateDocumentQuery<DocumentDbEventStoreEvent>(
+                var query = Client.CreateDocumentQuery<DocumentDbAggregateEvent>(
                         collectionUri,
                         new FeedOptions { MaxItemCount = -1 })
                         .Where(x => x.AggregateId == aggregateId)
-                        .OrderByDescending(x => x.EventTimestamp)
+                        .OrderByDescending(x => x.Version)
                         .Take(1)
                     .AsDocumentQuery();
 
-                var result = await query.ExecuteNextAsync<DocumentDbEventStoreEvent>();
+                var result = await query.ExecuteNextAsync<DocumentDbAggregateEvent>();
                 var item = result.SingleOrDefault();
 
                 return item == null ? null : DeserializeEvent(item);
@@ -103,7 +86,7 @@ namespace EventSourcing.DocumentDb
 
             if (events.Any())
             {
-                var collectionUri = CollectionUri(aggregate.GetType());
+                var collectionUri = EventCollectionUri(aggregate.GetType());
 
                 var commited = aggregate.LastCommittedVersion;
 
@@ -111,109 +94,47 @@ namespace EventSourcing.DocumentDb
                 {
                     commited++;
                     var documetEvent = CreateDocumentDbEvent(aggregate, @event, commited);
-                    await _client.CreateDocumentAsync(collectionUri, documetEvent);
+                    await Client.CreateDocumentAsync(collectionUri, documetEvent);
                 }
             }
         }
 
-        private Uri CollectionUri(Type aggregateType)
+        private static DocumentDbAggregateEvent CreateDocumentDbEvent(Aggregate aggregate, IEvent @event, int commitNumber)
         {
-            return UriFactory.CreateDocumentCollectionUri(_databaseId, aggregateType.Name);
-        }
-
-        private async Task CreateDatabaseIfNotExistsAsync()
-        {
-            try
-            {
-                await _client.ReadDatabaseAsync(UriFactory.CreateDatabaseUri(_databaseId));
-            }
-            catch (DocumentClientException e)
-            {
-                if (e.StatusCode == System.Net.HttpStatusCode.NotFound)
-                {
-                    await _client.CreateDatabaseAsync(new Database { Id = _databaseId });
-                }
-                else
-                {
-                    throw;
-                }
-            }
-        }
-
-        private async Task CreateCollectionIfNotExistsAsync(string collectionId, int throughput)
-        {
-            try
-            {
-                await _client.ReadDocumentCollectionAsync(UriFactory.CreateDocumentCollectionUri(_databaseId, collectionId));
-            }
-            catch (DocumentClientException e)
-            {
-                if (e.StatusCode == System.Net.HttpStatusCode.NotFound)
-                {
-                    //todo lookup throughput from config
-                    var collection = new DocumentCollection
-                    {
-                        Id = collectionId,
-                        IndexingPolicy = new IndexingPolicy(new RangeIndex(DataType.String) { Precision = -1 })
-                        {
-                            IndexingMode = IndexingMode.Lazy
-                        }
-                    };
-
-                    collection.IndexingPolicy.ExcludedPaths.Add(new ExcludedPath
-                    {
-                        Path = "/eventData/*"
-                    });
-
-                    collection.PartitionKey.Paths.Add("/aggregateId");
-
-                    await _client.CreateDocumentCollectionAsync(
-                        UriFactory.CreateDatabaseUri(_databaseId),
-                        collection,
-                        new RequestOptions { OfferThroughput = throughput });
-                }
-                else
-                {
-                    throw;
-                }
-            }
-        }
-
-        private static DocumentDbEventStoreEvent CreateDocumentDbEvent(Aggregate aggregate, IEvent @event, int commitNumber)
-        {
-            var docStoreEvent = new DocumentDbEventStoreEvent
+            var docStoreEvent = new DocumentDbAggregateEvent
             {
                 Id = @event.CorrelationId,
                 AggregateId = aggregate.Id,
                 ClrType = GetClrTypeName(@event),
-                Commited = commitNumber,
-                EventTimestamp = @event.EventCommittedTimestamp,
-                EventData = SerializeEvent(@event)
+                Version = commitNumber,
+                TargetVersion = @event.TargetVersion,
+                Timestamp = @event.EventCommittedTimestamp,
+                Data = SerializeEvent(@event)
             };
 
             return docStoreEvent;
         }
-      
+
         protected static string SerializeEvent(IEvent @event)
         {
-            return JsonConvert.SerializeObject(@event, GetSerializerSettings());
+            return JsonConvert.SerializeObject(@event, SerializerSettings);
         }
 
-        protected static IEvent DeserializeEvent(DocumentDbEventStoreEvent returnedEvent)
+        protected static IEvent DeserializeEvent(DocumentDbAggregateEvent returnedAggregateEvent)
         {
-            var returnType = Type.GetType(returnedEvent.ClrType);
+            var returnType = Type.GetType(returnedAggregateEvent.ClrType);
 
-            return (Event.Event)JsonConvert.DeserializeObject(returnedEvent.EventData, returnType, GetSerializerSettings());
+            return (Event.Event)JsonConvert.DeserializeObject(returnedAggregateEvent.Data, returnType, SerializerSettings);
         }
 
-        private static JsonSerializerSettings GetSerializerSettings()
+        protected Uri EventCollectionUri(Type aggregateType)
         {
-            return _serializerSetting ?? (_serializerSetting = new JsonSerializerSettings { TypeNameHandling = TypeNameHandling.None });
+            return UriFactory.CreateDocumentCollectionUri(DatabaseId, aggregateType.Name);
         }
 
-        private static string GetClrTypeName(object @event)
+        protected Uri SnapshotCollectionUri(Type aggregateType)
         {
-            return @event.GetType() + "," + @event.GetType().Assembly.GetName().Name;
+            return UriFactory.CreateDocumentCollectionUri(DatabaseId, SnapshotCollectionName(aggregateType));
         }
     }
 }

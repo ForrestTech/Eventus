@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 
-namespace EventSourcing.DocumentDb
+namespace EventSourcing.DocumentDb.Config
 {
     public class DocumentDbEventStoreConfig
     {
