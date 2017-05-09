@@ -3,7 +3,7 @@ using Newtonsoft.Json;
 
 namespace EventSourcing.DocumentDb
 {
-    public class DocumentDbEventStoreEvent
+    public abstract class DocumentDbEventBase
     {
         [JsonProperty("id")]
         public Guid Id { get; set; }
@@ -14,13 +14,13 @@ namespace EventSourcing.DocumentDb
         [JsonProperty("clrType")]
         public string ClrType { get; set; }
 
-        [JsonProperty("commited")]
-        public int Commited { get; set; }
-        
-        [JsonProperty("eventTimestamp")]
-        public DateTime EventTimestamp { get; set; }
+        [JsonProperty("version")]
+        public int Version { get; set; }
 
-        [JsonProperty("eventData")]
-        public string EventData { get; set; }
+        [JsonProperty("timestamp")]
+        public DateTime Timestamp { get; set; }
+
+        [JsonProperty("data")]
+        public string Data { get; set; }
     }
 }
