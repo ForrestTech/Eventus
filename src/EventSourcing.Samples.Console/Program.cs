@@ -1,21 +1,23 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Configuration;
 using System.Net;
-using System.Threading.Tasks;
+using EventSourceDemo;
 using EventSourceDemo.Commands;
 using EventSourceDemo.Domain;
 using EventSourceDemo.EventHandlers;
 using EventSourceDemo.Handlers;
 using EventSourceDemo.ReadModel;
-using EventSourcing.EventStore;
-using EventSourcing.Repository;
-using EventStore.ClientAPI;
-using Microsoft.Azure.Documents.Client;
+using EventSourcing.Cleanup;
 using EventSourcing.DocumentDb;
 using EventSourcing.DocumentDb.Config;
+using EventSourcing.EventStore;
+using EventStore.ClientAPI;
+using Microsoft.Azure.Documents.Client;
 
-namespace EventSourceDemo
+using static System.Console;
+
+namespace EventSourcing.Samples.Console
 {
     class Program
     {
@@ -25,8 +27,14 @@ namespace EventSourceDemo
 
         static void Main(string[] args)
         {
+            WriteLine("Event sourcing sample");
+
+            WriteLine("Tearing down provider");
+
             var cleaner = Cleaner();
             cleaner.TearDownAsync().Wait();
+
+            WriteLine("Provider torn down");
 
             var accountId = Guid.NewGuid();
             var readRepo = new ReadModelRepository();
@@ -35,6 +43,8 @@ namespace EventSourceDemo
 
             var handler = new BankAccountCommandHandlers(repo);
 
+            WriteLine("Running set of commands");
+
             handler.HandleAsync(new CreateAccountCommand(Guid.NewGuid(), accountId, "Joe Bloggs")).Wait();
             handler.HandleAsync(new DepostiFundsCommand(Guid.NewGuid(), accountId, 10)).Wait();
             handler.HandleAsync(new DepostiFundsCommand(Guid.NewGuid(), accountId, 35)).Wait();
@@ -42,12 +52,23 @@ namespace EventSourceDemo
             handler.HandleAsync(new DepostiFundsCommand(Guid.NewGuid(), accountId, 5)).Wait();
             handler.HandleAsync(new WithdrawFundsCommand(Guid.NewGuid(), accountId, 10)).Wait();
 
+            WriteLine("Commands Run");
+
+            WriteLine("Get aggregate from store");
+
             var fromStore = repo.GetByIdAsync<BankAccount>(accountId).Result;
 
-            Console.ReadLine();
+            WriteLine($"Bank account ID: {fromStore.Id}");
+            WriteLine($"Balance: {fromStore.CurrentBalance}");
+            WriteLine($"Last commited version: {fromStore.LastCommittedVersion}");
+            WriteLine($"Transaction Count: {fromStore.Transactions.Count}");
+
+            WriteLine("Event sourcing sample ran");
+
+            ReadLine();
         }
 
-        private static Repository Repository(IReadModelRepository readRepo)
+        private static Repository.Repository Repository(IReadModelRepository readRepo)
         {
             //return EventStoreRepository(readRepo);
             return DocumentDbRepository(readRepo);
@@ -58,13 +79,13 @@ namespace EventSourceDemo
             return new DocumentDbTearDown(DocumentDbClient(), DatabaseId);
         }
 
-        private static Repository EventStoreRepository(IReadModelRepository readRepo)
+        private static Repository.Repository EventStoreRepository(IReadModelRepository readRepo)
         {
             var connection = EventStoreConnection.Create(new IPEndPoint(IPAddress.Loopback, 1113));
             connection.ConnectAsync();
 
 
-            return new Repository(
+            return new Repository.Repository(
                 new EventstoreStorageProvider(connection, GetStreamNamePrefix()),
                 new EventstoreSnapshotStorageProvider(connection, GetStreamNamePrefix(), 3),
                 new DemoPublisher(
@@ -72,7 +93,7 @@ namespace EventSourceDemo
                     new WithdrawalEventHandler(readRepo)));
         }
 
-        private static Repository DocumentDbRepository(IReadModelRepository readRepo)
+        private static Repository.Repository DocumentDbRepository(IReadModelRepository readRepo)
         {
             var client = DocumentDbClient();
 
@@ -91,7 +112,7 @@ namespace EventSourceDemo
                 }
             }).Wait();
 
-            return new Repository(
+            return new Repository.Repository(
                 documentDbStorageProvider,
                 new DocumentDbSnapShotProvider(client, DatabaseId, 3),
                 new DemoPublisher(
@@ -107,28 +128,6 @@ namespace EventSourceDemo
         private static Func<string> GetStreamNamePrefix()
         {
             return () => "Demo-";
-        }
-    }
-
-    public interface ITeardown
-    {
-        Task TearDownAsync();
-    }
-
-    public class DocumentDbTearDown : ITeardown
-    {
-        private readonly DocumentClient _client;
-        private readonly string _databaseId;
-
-        public DocumentDbTearDown(DocumentClient client, string databaseId)
-        {
-            _client = client;
-            _databaseId = databaseId;
-        }
-
-        public async Task TearDownAsync()
-        {
-            await _client.DeleteDatabaseAsync(UriFactory.CreateDatabaseUri(_databaseId));
         }
     }
 }
