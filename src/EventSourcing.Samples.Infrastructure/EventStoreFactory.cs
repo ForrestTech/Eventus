@@ -2,10 +2,10 @@
 using System.Configuration;
 using System.Net;
 using System.Threading.Tasks;
-using EventSourceDemo;
-using EventSourceDemo.EventHandlers;
-using EventSourceDemo.ReadModel;
 using EventSourcing.EventStore;
+using EventSourcing.Samples.Core;
+using EventSourcing.Samples.Core.EventHandlers;
+using EventSourcing.Samples.Core.ReadModel;
 using EventSourcing.Storage;
 using EventStore.ClientAPI;
 

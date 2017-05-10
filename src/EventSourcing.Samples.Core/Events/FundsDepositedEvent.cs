@@ -1,9 +1,8 @@
 ﻿using System;
-using EventSourcing.Event;
 
-namespace EventSourceDemo.Events
+namespace EventSourcing.Samples.Core.Events
 {
-    public class FundsDepositedEvent : Event
+    public class FundsDepositedEvent : Event.Event
     {
         public decimal Amount { get; protected set; }
 

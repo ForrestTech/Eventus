@@ -1,9 +1,9 @@
 using System.Linq;
 using System.Threading.Tasks;
-using EventSourceDemo.Events;
-using EventSourceDemo.ReadModel;
+using EventSourcing.Samples.Core.Events;
+using EventSourcing.Samples.Core.ReadModel;
 
-namespace EventSourceDemo.EventHandlers
+namespace EventSourcing.Samples.Core.EventHandlers
 {
     public class WithdrawalEventHandler : IHandleEvent<FundsWithdrawalEvent>
     {

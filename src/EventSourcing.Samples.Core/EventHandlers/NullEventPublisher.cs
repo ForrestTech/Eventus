@@ -2,7 +2,7 @@ using System.Threading.Tasks;
 using EventSourcing.Event;
 using EventSourcing.EventBus;
 
-namespace EventSourceDemo.EventHandlers
+namespace EventSourcing.Samples.Core.EventHandlers
 {
     public class NullEventPublisher : IEventPublisher
     {

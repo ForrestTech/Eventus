@@ -1,9 +1,8 @@
 ﻿using System;
-using EventSourcing.Event;
 
-namespace EventSourceDemo.Events
+namespace EventSourcing.Samples.Core.Events
 {
-    public class AccountCreatedEvent : Event
+    public class AccountCreatedEvent : Event.Event
     {
         public string Name { get; protected set; }
 

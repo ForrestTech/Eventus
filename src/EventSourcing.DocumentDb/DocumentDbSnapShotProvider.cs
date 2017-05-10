@@ -1,7 +1,6 @@
 using System;
 using System.Linq;
 using System.Threading.Tasks;
-using EventSourcing.Event;
 using EventSourcing.Storage;
 using Microsoft.Azure.Documents;
 using Microsoft.Azure.Documents.Client;
@@ -92,14 +91,17 @@ namespace EventSourcing.DocumentDb
 
         private static string SerializeSnapshot(Snapshot snapshot)
         {
-            return JsonConvert.SerializeObject(snapshot, SerializerSettings);
+            var serialized = JsonConvert.SerializeObject(snapshot, SerializerSettings);
+            return serialized;
         }
 
         private static Snapshot DeserializeSnapshot(DocumentDbSnapshot item)
         {
             var returnType = Type.GetType(item.ClrType);
 
-            return (Snapshot)JsonConvert.DeserializeObject(item.Data, returnType, SerializerSettings);
+            var deserialized = JsonConvert.DeserializeObject(item.Data, returnType, SerializerSettings);
+
+            return (Snapshot)deserialized;
         }
 
         protected Uri EventCollectionUri(Type aggregateType)

@@ -1,6 +1,6 @@
 using System.Threading.Tasks;
 
-namespace EventSourceDemo.ReadModel
+namespace EventSourcing.Samples.Core.ReadModel
 {
     public interface IReadModelRepository
     {

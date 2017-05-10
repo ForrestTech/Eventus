@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace EventSourceDemo.Commands
+namespace EventSourcing.Samples.Core.Commands
 {
     public class Command : ICommand
     {

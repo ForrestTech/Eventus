@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
-using EventSourceDemo.Events;
 using EventSourcing.Domain;
+using EventSourcing.Samples.Core.Events;
 using EventSourcing.Storage;
 
-namespace EventSourceDemo.Domain
+namespace EventSourcing.Samples.Core.Domain
 {
     public class BankAccount : Aggregate, ISnapshottable
     {

@@ -1,7 +1,7 @@
 ﻿using System.Threading.Tasks;
-using EventSourceDemo.Commands;
+using EventSourcing.Samples.Core.Commands;
 
-namespace EventSourceDemo
+namespace EventSourcing.Samples.Core
 {
     internal interface IHandleCommands<in T> where T : ICommand
     {

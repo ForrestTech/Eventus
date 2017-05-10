@@ -2,7 +2,7 @@ using System;
 using System.Runtime.Caching;
 using System.Threading.Tasks;
 
-namespace EventSourceDemo.ReadModel
+namespace EventSourcing.Samples.Core.ReadModel
 {
     public class ReadModelRepository : IReadModelRepository
     {

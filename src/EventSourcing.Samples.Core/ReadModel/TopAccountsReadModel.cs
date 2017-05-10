@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using System.Linq;
 
-namespace EventSourceDemo.ReadModel
+namespace EventSourcing.Samples.Core.ReadModel
 {
     public class TopAccountsReadModel
     {

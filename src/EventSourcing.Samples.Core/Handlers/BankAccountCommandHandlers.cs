@@ -1,9 +1,9 @@
 ﻿using System.Threading.Tasks;
-using EventSourceDemo.Commands;
-using EventSourceDemo.Domain;
+using EventSourcing.Samples.Core.Commands;
+using EventSourcing.Samples.Core.Domain;
 using EventSourcing.Storage;
 
-namespace EventSourceDemo.Handlers
+namespace EventSourcing.Samples.Core.Handlers
 {
     public class BankAccountCommandHandlers : IHandleCommands<CreateAccountCommand>,
         IHandleCommands<WithdrawFundsCommand>,

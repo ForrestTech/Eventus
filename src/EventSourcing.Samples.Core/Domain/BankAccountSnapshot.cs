@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using EventSourcing.Storage;
 
-namespace EventSourceDemo.Domain
+namespace EventSourcing.Samples.Core.Domain
 {
     public class BankAccountSnapshot : Snapshot
     {

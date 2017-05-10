@@ -5,12 +5,15 @@ using EventSourcing.DocumentDb.Config;
 using Microsoft.Azure.Documents;
 using Microsoft.Azure.Documents.Client;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
+using Newtonsoft.Json.Serialization;
 
 namespace EventSourcing.DocumentDb
 {
     public abstract class DocumentDbProviderBase
     {
         private const string PartitionKey = "/aggregateId";
+        private static JsonSerializerSettings _serializerSetting;
 
         private static readonly List<string> ExcludePaths = new List<string>
         {
@@ -20,10 +23,36 @@ namespace EventSourcing.DocumentDb
             "/timestamp/*"
         };
 
-
         protected DocumentClient Client;
         protected string DatabaseId;
-        protected static JsonSerializerSettings SerializerSetting;
+
+        protected static JsonSerializerSettings SerializerSettings
+        {
+            get
+            {
+                if (_serializerSetting != null)
+                    return _serializerSetting;
+
+                _serializerSetting = new JsonSerializerSettings
+                {
+                    TypeNameHandling = TypeNameHandling.None,
+                    Formatting = Formatting.Indented,
+                    ContractResolver = new CamelCasePropertyNamesContractResolver(),
+                    Error = (sender, args) =>
+                    {
+                        if (System.Diagnostics.Debugger.IsAttached)
+                        {
+                            System.Diagnostics.Debugger.Break();
+                        }
+                    }
+                };
+
+                _serializerSetting.Converters.Add(new StringEnumConverter());
+
+                return _serializerSetting;
+            }
+
+        }
 
         protected DocumentDbProviderBase(DocumentClient client, string databaseId)
         {
@@ -42,8 +71,6 @@ namespace EventSourcing.DocumentDb
                 await CreateSnapShotCollectionIfNotExistsAsync(c.AggregateType, c.SnapshotOfferThroughput);
             }
         }
-
-        protected static JsonSerializerSettings SerializerSettings => SerializerSetting ?? (SerializerSetting = new JsonSerializerSettings { TypeNameHandling = TypeNameHandling.None });
 
         protected static string GetClrTypeName(object item)
         {

@@ -1,6 +1,6 @@
 using System;
 
-namespace EventSourceDemo.ReadModel
+namespace EventSourcing.Samples.Core.ReadModel
 {
     public class AccountSummary
     {

@@ -1,7 +1,7 @@
 using System;
 using EventSourcing.Event;
 
-namespace EventSourceDemo.Commands
+namespace EventSourcing.Samples.Core.Commands
 {
     public interface ICommand : IMessage
     {

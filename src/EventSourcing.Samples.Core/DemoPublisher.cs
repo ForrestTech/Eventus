@@ -1,12 +1,12 @@
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using EventSourceDemo.EventHandlers;
-using EventSourceDemo.Events;
 using EventSourcing.Event;
 using EventSourcing.EventBus;
+using EventSourcing.Samples.Core.EventHandlers;
+using EventSourcing.Samples.Core.Events;
 
-namespace EventSourceDemo
+namespace EventSourcing.Samples.Core
 {
     public class DemoPublisher : IEventPublisher
     {

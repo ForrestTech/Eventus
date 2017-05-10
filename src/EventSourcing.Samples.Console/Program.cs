@@ -1,7 +1,7 @@
 ﻿using System;
-using EventSourceDemo.Commands;
-using EventSourceDemo.Domain;
-using EventSourceDemo.Handlers;
+using EventSourcing.Samples.Core.Commands;
+using EventSourcing.Samples.Core.Domain;
+using EventSourcing.Samples.Core.Handlers;
 using EventSourcing.Samples.Infrastructure;
 using static System.Console;
 

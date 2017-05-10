@@ -1,10 +1,10 @@
 using System;
 using System.Linq;
 using System.Threading.Tasks;
-using EventSourceDemo.Domain;
-using EventSourceDemo.Events;
 using EventSourcing.DocumentDb;
 using EventSourcing.Domain;
+using EventSourcing.Samples.Core.Domain;
+using EventSourcing.Samples.Core.Events;
 using EventSourcing.Samples.Infrastructure;
 using FluentAssertions;
 using Xunit;
@@ -78,7 +78,7 @@ namespace EventSourcing.Tests.Integration
             actual.Count().Should().Be(expected);
             actual.First().Should().BeOfType<AccountCreatedEvent>();
         }
-        
+
         [Fact]
         public async Task Commit_should_support_committing_multiple_events()
         {

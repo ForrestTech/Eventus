@@ -1,15 +1,16 @@
 ﻿using System;
 using System.Threading.Tasks;
-using EventSourceDemo.Commands;
-using EventSourceDemo.Domain;
-using EventSourceDemo.Handlers;
+using EventSourcing.Samples.Core.Commands;
+using EventSourcing.Samples.Core.Domain;
+using EventSourcing.Samples.Core.Handlers;
 using EventSourcing.Samples.Infrastructure;
 using FluentAssertions;
 using Xunit;
 
 namespace EventSourcing.Tests.Integration
 {
-    public class Scenario
+    [Collection(DocumetDbCollection.Name)]
+    public class Scenario 
     {
         [Fact]
         public async Task RunBankingScenario()
