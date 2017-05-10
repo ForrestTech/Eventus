@@ -22,7 +22,7 @@ namespace EventSourcing.Samples.Console
 
             var accountId = Guid.NewGuid();
 
-            var repo = RepositoryFactory.Create();
+            var repo = RepositoryFactory.CreateAsync().Result;
 
             var handler = new BankAccountCommandHandlers(repo);
 

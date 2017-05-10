@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Configuration;
 using System.Net;
+using System.Threading.Tasks;
 using EventSourceDemo;
 using EventSourceDemo.EventHandlers;
 using EventSourceDemo.ReadModel;
@@ -12,11 +13,11 @@ namespace EventSourcing.Samples.Infrastructure
 {
     public class EventStoreFactory
     {
-        public static Repository CreateEventStoreRepository()
+        public static async Task<Repository> CreateEventStoreRepository()
         {
             //todo move to configuration
             var connection = EventStoreConnection.Create(new IPEndPoint(IPAddress.Loopback, 1113));
-            connection.ConnectAsync();
+            await connection.ConnectAsync();
 
             var readRepo = new ReadModelRepository();
 

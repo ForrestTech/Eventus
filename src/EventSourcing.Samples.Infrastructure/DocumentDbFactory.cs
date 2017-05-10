@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Configuration;
+using System.Threading.Tasks;
 using EventSourceDemo;
 using EventSourceDemo.Domain;
 using EventSourceDemo.EventHandlers;
@@ -15,26 +16,28 @@ namespace EventSourcing.Samples.Infrastructure
 {
     public class DocumentDbFactory
     {
+        public static readonly DocumentDbEventStoreConfig DocumentDbConfig = new DocumentDbEventStoreConfig
+        {
+            AggregateConfig = new List<AggregateConfig>
+            {
+                new AggregateConfig
+                {
+                    AggregateType = typeof(BankAccount),
+                    OfferThroughput = 400,
+                    SnapshotOfferThroughput = 400
+                }
+            }
+        };
+
         private static DocumentClient _client;
 
-        public static Repository CreateDocumentDbRepository()
+        public static async Task<Repository> CreateDocumentDbRepository()
         {
-            var client = DocumentDbClient();
+            var client = DocumentDbClient;
 
-            var documentDbStorageProvider = new DocumentDbStorageProvider(client, DatabaseId);
-            documentDbStorageProvider.InitAsync(new DocumentDbEventStoreConfig
-            {
-                AggregateConfig = new List<AggregateConfig>
-                {
-                    new AggregateConfig
-                    {
-                        AggregateType = typeof(BankAccount),
-                        OfferThroughput = 400,
-                        SnapshotOfferThroughput = 400
-
-                    }
-                }
-            }).Wait();
+            var documentDbStorageProvider = CreateDocumentDbStorageProvider();
+            
+            await InitStorageProvider(documentDbStorageProvider);
 
             var readRepo = new ReadModelRepository();
 
@@ -48,17 +51,21 @@ namespace EventSourcing.Samples.Infrastructure
 
         public static ITeardown CreateTeardown()
         {
-            return new DocumentDbTearDown(DocumentDbClient(), DatabaseId);
+            return new DocumentDbTearDown(DocumentDbClient, DatabaseId);
         }
 
-        private static DocumentClient DocumentDbClient()
+        public static DocumentDbStorageProvider CreateDocumentDbStorageProvider()
         {
-            return _client ?? 
-                   (_client = new DocumentClient(
-                       new Uri(ConfigurationManager.AppSettings["DocumentDb.Endpoint"]),
-                       ConfigurationManager.AppSettings["DocumentDb.AuthKey"],
-                       new ConnectionPolicy { EnableEndpointDiscovery = false }));
+            return new DocumentDbStorageProvider(DocumentDbClient, DatabaseId);
         }
+
+        private static async Task InitStorageProvider(DocumentDbProviderBase documentDbStorageProvider)
+        {
+            //todo move throughput to config
+            await documentDbStorageProvider.InitAsync(DocumentDbConfig);
+        }
+
+        private static DocumentClient DocumentDbClient => _client ?? (_client = new DocumentClient(new Uri(ConfigurationManager.AppSettings["DocumentDb.Endpoint"]), ConfigurationManager.AppSettings["DocumentDb.AuthKey"], new ConnectionPolicy { EnableEndpointDiscovery = false }));
 
         private static readonly string DatabaseId = ConfigurationManager.AppSettings["DocumentDb.DatabaseId"];
     }

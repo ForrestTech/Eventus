@@ -22,7 +22,7 @@ namespace EventSourceDemo.Domain
             Transactions = new List<Transaction>();
         }
 
-        public BankAccount(Guid id, string name)
+        public BankAccount(Guid id, string name): this()
         {
             //Pattern: Create the event and call ApplyEvent(Event)
             var accountCreated = new AccountCreatedEvent(id, CurrentVersion, name);

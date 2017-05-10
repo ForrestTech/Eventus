@@ -1,11 +1,12 @@
 ﻿using System.Configuration;
+using System.Threading.Tasks;
 using EventSourcing.Storage;
 
 namespace EventSourcing.Samples.Infrastructure
 {
     public class RepositoryFactory
     {
-        public static Repository Create()
+        public static Task<Repository> CreateAsync()
         {
             var provider = ConfigurationManager.AppSettings["Provider"].ToLowerInvariant();
             switch (provider)

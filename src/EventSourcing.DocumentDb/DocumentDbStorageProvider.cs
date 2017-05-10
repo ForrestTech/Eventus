@@ -18,7 +18,7 @@ namespace EventSourcing.DocumentDb
         public DocumentDbStorageProvider(DocumentClient client, string databaseId) : base(client, databaseId)
         { }
 
-        public async Task<IEnumerable<IEvent>> GetEventsAsync(Type aggregateType, Guid aggregateId, int start, int count)
+        public async Task<IEnumerable<IEvent>> GetEventsAsync(Type aggregateType, Guid aggregateId, int start = 0, int count = int.MaxValue)
         {
             try
             {
@@ -27,7 +27,7 @@ namespace EventSourcing.DocumentDb
                 var query = Client.CreateDocumentQuery<DocumentDbAggregateEvent>(
                         collectionUri,
                         new FeedOptions { MaxItemCount = -1 })
-                    .Where(x => x.AggregateId == aggregateId && x.Version >= start)
+                    .Where(x => x.AggregateId == aggregateId && x.Version >= start && x.Version <= count)
                     .OrderBy(x => x.Version)
                     .AsDocumentQuery();
 

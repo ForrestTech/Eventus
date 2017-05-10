@@ -12,14 +12,11 @@ namespace EventSourcing.Tests.Integration
     public class Scenario
     {
         [Fact]
-        public async Task RunBankingSenario()
+        public async Task RunBankingScenario()
         {
-            var cleaner = TearDownFactory.Create();
-            await cleaner.TearDownAsync();
-
             var accountId = Guid.NewGuid();
 
-            var repo = RepositoryFactory.Create();
+            var repo = await RepositoryFactory.CreateAsync();
             var handler = new BankAccountCommandHandlers(repo);
             var joeBloggs = "Joe Bloggs";
 
