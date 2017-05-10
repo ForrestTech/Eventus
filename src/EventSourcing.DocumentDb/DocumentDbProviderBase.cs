@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using EventSourcing.DocumentDb.Config;
-using EventSourcing.Repository;
 using Microsoft.Azure.Documents;
 using Microsoft.Azure.Documents.Client;
 using Newtonsoft.Json;

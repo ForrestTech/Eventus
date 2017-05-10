@@ -56,12 +56,12 @@
     <Compile Include="Exceptions\AggregateCreationException.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ReflectionHelper.cs" />
-    <Compile Include="Repository\IEventStorageProvider.cs" />
-    <Compile Include="Repository\IRepository.cs" />
-    <Compile Include="Repository\ISnapshotStorageProvider.cs" />
-    <Compile Include="Repository\Repository.cs" />
-    <Compile Include="Repository\ISnapshottable.cs" />
-    <Compile Include="Repository\Snapshot.cs" />
+    <Compile Include="Storage\IEventStorageProvider.cs" />
+    <Compile Include="Storage\IRepository.cs" />
+    <Compile Include="Storage\ISnapshotStorageProvider.cs" />
+    <Compile Include="Storage\Repository.cs" />
+    <Compile Include="Storage\ISnapshottable.cs" />
+    <Compile Include="Storage\Snapshot.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

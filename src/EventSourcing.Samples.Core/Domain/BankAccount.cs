@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using EventSourceDemo.Events;
 using EventSourcing.Domain;
-using EventSourcing.Repository;
+using EventSourcing.Storage;
 
 namespace EventSourceDemo.Domain
 {

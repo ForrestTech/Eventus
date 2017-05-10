@@ -1,7 +1,7 @@
 ﻿using System.Threading.Tasks;
 using EventSourceDemo.Commands;
 using EventSourceDemo.Domain;
-using EventSourcing.Repository;
+using EventSourcing.Storage;
 
 namespace EventSourceDemo.Handlers
 {

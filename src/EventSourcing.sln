@@ -13,11 +13,11 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EventSourcing.DocumentDb", 
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{75C36474-611B-44B3-A48E-392C364EC27B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EventSourcing.Tests.Integration", "EventSourcing.Tests.Integration\EventSourcing.Tests.Integration.csproj", "{85AC6BB7-D1AD-4DB6-8B6A-76822073D226}"
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Samples", "Samples", "{DDF4BF8A-2DBD-4C5C-9D97-D0BCD2EA789F}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EventSourcing.Tests.DocumentDb", "EventSourcing.Tests.DocumentDb\EventSourcing.Tests.DocumentDb.csproj", "{85AC6BB7-D1AD-4DB6-8B6A-76822073D226}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EventSourcing.Samples.Console", "EventSourcing.Samples.Console\EventSourcing.Samples.Console.csproj", "{71F6058B-41FF-4F08-A461-32F73F03BAAC}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EventSourcing.Samples.Infrastructure", "EventSourcing.Samples.Infrastructure\EventSourcing.Samples.Infrastructure.csproj", "{02C0C5DD-AD27-4068-8030-A1E5BD50731E}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -49,13 +49,15 @@ Global
 		{71F6058B-41FF-4F08-A461-32F73F03BAAC}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{71F6058B-41FF-4F08-A461-32F73F03BAAC}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{71F6058B-41FF-4F08-A461-32F73F03BAAC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{02C0C5DD-AD27-4068-8030-A1E5BD50731E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{02C0C5DD-AD27-4068-8030-A1E5BD50731E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{02C0C5DD-AD27-4068-8030-A1E5BD50731E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{02C0C5DD-AD27-4068-8030-A1E5BD50731E}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
-		{B0D6E886-4FB4-4297-BD50-C712AF24CE7B} = {DDF4BF8A-2DBD-4C5C-9D97-D0BCD2EA789F}
 		{85AC6BB7-D1AD-4DB6-8B6A-76822073D226} = {75C36474-611B-44B3-A48E-392C364EC27B}
-		{71F6058B-41FF-4F08-A461-32F73F03BAAC} = {DDF4BF8A-2DBD-4C5C-9D97-D0BCD2EA789F}
 	EndGlobalSection
 EndGlobal

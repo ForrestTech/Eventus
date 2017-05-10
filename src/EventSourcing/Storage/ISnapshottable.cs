@@ -1,4 +1,4 @@
-namespace EventSourcing.Repository
+namespace EventSourcing.Storage
 {
     public interface ISnapshottable
     {

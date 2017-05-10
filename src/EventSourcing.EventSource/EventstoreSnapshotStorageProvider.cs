@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Linq;
 using System.Threading.Tasks;
-using EventSourcing.Repository;
+using EventSourcing.Storage;
 using EventStore.ClientAPI;
 
 namespace EventSourcing.EventStore

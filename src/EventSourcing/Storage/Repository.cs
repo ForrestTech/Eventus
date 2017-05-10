@@ -7,7 +7,7 @@ using EventSourcing.Event;
 using EventSourcing.EventBus;
 using EventSourcing.Exceptions;
 
-namespace EventSourcing.Repository
+namespace EventSourcing.Storage
 {
     public class Repository : IRepository
     {

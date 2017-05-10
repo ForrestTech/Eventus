@@ -1,7 +1,7 @@
 using System;
 using System.Threading.Tasks;
 
-namespace EventSourcing.Repository
+namespace EventSourcing.Storage
 {
     public interface ISnapshotStorageProvider
     {

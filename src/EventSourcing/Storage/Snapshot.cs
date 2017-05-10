@@ -1,6 +1,6 @@
 using System;
 
-namespace EventSourcing.Repository
+namespace EventSourcing.Storage
 {
     public class Snapshot
     {

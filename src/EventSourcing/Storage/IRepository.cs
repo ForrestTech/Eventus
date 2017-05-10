@@ -2,7 +2,7 @@ using System;
 using System.Threading.Tasks;
 using EventSourcing.Domain;
 
-namespace EventSourcing.Repository
+namespace EventSourcing.Storage
 {
     public interface IRepository
     {

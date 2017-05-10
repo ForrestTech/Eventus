@@ -1,11 +1,11 @@
 ﻿using System;
+using System.Net;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using EventSourcing.DocumentDb.Config;
 using EventSourcing.Domain;
 using EventSourcing.Event;
-using EventSourcing.Repository;
+using EventSourcing.Storage;
 using Microsoft.Azure.Documents;
 using Microsoft.Azure.Documents.Client;
 using Microsoft.Azure.Documents.Linq;
@@ -43,7 +43,7 @@ namespace EventSourcing.DocumentDb
             }
             catch (DocumentClientException e)
             {
-                if (e.StatusCode == System.Net.HttpStatusCode.NotFound)
+                if (e.StatusCode == HttpStatusCode.NotFound)
                 {
                     return null;
                 }
@@ -72,7 +72,7 @@ namespace EventSourcing.DocumentDb
             }
             catch (DocumentClientException e)
             {
-                if (e.StatusCode == System.Net.HttpStatusCode.NotFound)
+                if (e.StatusCode == HttpStatusCode.NotFound)
                 {
                     return null;
                 }

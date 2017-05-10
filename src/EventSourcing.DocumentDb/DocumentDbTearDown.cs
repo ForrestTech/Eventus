@@ -1,5 +1,7 @@
+using System.Net;
 using System.Threading.Tasks;
 using EventSourcing.Cleanup;
+using Microsoft.Azure.Documents;
 using Microsoft.Azure.Documents.Client;
 
 namespace EventSourcing.DocumentDb
@@ -17,7 +19,18 @@ namespace EventSourcing.DocumentDb
 
         public async Task TearDownAsync()
         {
-            await _client.DeleteDatabaseAsync(UriFactory.CreateDatabaseUri(_databaseId));
+            try
+            {
+                await _client.DeleteDatabaseAsync(UriFactory.CreateDatabaseUri(_databaseId));
+            }
+            catch (DocumentClientException e)
+            {
+                if (e.StatusCode == HttpStatusCode.NotFound)
+                {
+                    return;
+                }
+                throw;
+            }
         }
     }
 }

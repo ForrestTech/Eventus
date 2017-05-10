@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Text;
 using EventSourcing.Event;
-using EventSourcing.Repository;
+using EventSourcing.Storage;
 using EventStore.ClientAPI;
 using Newtonsoft.Json;
 

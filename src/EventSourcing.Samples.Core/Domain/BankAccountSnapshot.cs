@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using EventSourcing.Repository;
+using EventSourcing.Storage;
 
 namespace EventSourceDemo.Domain
 {
