@@ -30,6 +30,15 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="FluentAssertions, Version=4.19.2.0, Culture=neutral, PublicKeyToken=33f2691a05b67b6a, processorArchitecture=MSIL">
+      <HintPath>..\packages\FluentAssertions.4.19.2\lib\net45\FluentAssertions.dll</HintPath>
+    </Reference>
+    <Reference Include="FluentAssertions.Core, Version=4.19.2.0, Culture=neutral, PublicKeyToken=33f2691a05b67b6a, processorArchitecture=MSIL">
+      <HintPath>..\packages\FluentAssertions.4.19.2\lib\net45\FluentAssertions.Core.dll</HintPath>
+    </Reference>
+    <Reference Include="Newtonsoft.Json, Version=9.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\packages\Newtonsoft.Json.9.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
@@ -56,7 +65,26 @@
     <Compile Include="Scenario.cs" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="App.config" />
     <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\EventSourcing.DocumentDb\EventSourcing.DocumentDb.csproj">
+      <Project>{9356c94a-60d6-4854-8e07-02a41b23b731}</Project>
+      <Name>EventSourcing.DocumentDb</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\EventSourcing.Samples.Core\EventSourcing.Samples.Core.csproj">
+      <Project>{B0D6E886-4FB4-4297-BD50-C712AF24CE7B}</Project>
+      <Name>EventSourcing.Samples.Core</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\EventSourcing.Samples.Infrastructure\EventSourcing.Samples.Infrastructure.csproj">
+      <Project>{02C0C5DD-AD27-4068-8030-A1E5BD50731E}</Project>
+      <Name>EventSourcing.Samples.Infrastructure</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\EventSourcing\EventSourcing.csproj">
+      <Project>{15110214-3710-40e3-b3aa-8450c6466568}</Project>
+      <Name>EventSourcing</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
