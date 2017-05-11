@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Configuration;
 using System.Threading.Tasks;
 using EventSourcing.DocumentDb;
@@ -10,18 +9,19 @@ namespace EventSourcing.Samples.Infrastructure
 {
     public class StorageProviderInitialiser
     {
-        public static async Task Init(object provider)
+        public static async Task InitAsync(object provider)
         {
             var providerToUse = ConfigurationManager.AppSettings["Provider"].ToLowerInvariant();
             switch (providerToUse)
             {
                 case Constants.Eventstore:
-                    throw new NotImplementedException();
+                    // do nothing
+                    break;
                 case Constants.DocumentDb:
-                    await ((DocumentDbProviderBase)provider).InitAsync(DocumentDbConfig);
+                    await ((DocumentDbProviderBase)provider).InitAsync(DocumentDbConfig).ConfigureAwait(false);
                     break;
                 default:
-                    throw new ConfigurationErrorsException($"Unrecognised provider '{providerToUse}' provide a valid provider");
+                    throw new ConfigurationErrorsException($"Unrecognized provider '{providerToUse}' provide a valid provider");
             }
         }
 

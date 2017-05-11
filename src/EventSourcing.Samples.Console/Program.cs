@@ -2,7 +2,6 @@
 using EventSourcing.Samples.Core.Commands;
 using EventSourcing.Samples.Core.Domain;
 using EventSourcing.Samples.Core.Handlers;
-using EventSourcing.Samples.Infrastructure;
 using EventSourcing.Samples.Infrastructure.Factories;
 using static System.Console;
 

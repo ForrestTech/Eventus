@@ -13,11 +13,11 @@ namespace EventSourcing.Samples.Infrastructure.Factories
             switch (provider)
             {
                 case Constants.Eventstore:
-                    return EventStoreFactory.CreateEventStoreRepository();
+                    return EventStoreFactory.CreateEventStoreRepositoryAsync();
                 case Constants.DocumentDb:
-                    return DocumentDbFactory.CreateDocumentDbRepository();
+                    return DocumentDbFactory.CreateDocumentDbRepositoryAsync();
                 default:
-                    throw new ConfigurationErrorsException($"Unrecognised provider '{provider}' provide a valid provider");
+                    throw new ConfigurationErrorsException($"Unrecognized provider '{provider}' provide a valid provider");
             }
         }
     }

@@ -14,11 +14,11 @@ namespace EventSourcing.Samples.Infrastructure.Factories
             switch (provider)
             {
                 case Constants.Eventstore:
-                    throw new NotImplementedException();
+                    return EventStoreFactory.CreateSnapshotStorageProviderAsync();
                 case Constants.DocumentDb:
-                    return Task.FromResult(DocumentDbFactory.CreateDocumentDbSnapShotProvider());
+                    return DocumentDbFactory.CreateDocumentDbSnapshotProviderAsync();
                 default:
-                    throw new ConfigurationErrorsException($"Unrecognised provider '{provider}' provide a valid provider");
+                    throw new ConfigurationErrorsException($"Unrecognized provider '{provider}' provide a valid provider");
             }
         }
     }
