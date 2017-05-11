@@ -4,12 +4,13 @@ using EventSourcing.Samples.Core.Commands;
 using EventSourcing.Samples.Core.Domain;
 using EventSourcing.Samples.Core.Handlers;
 using EventSourcing.Samples.Infrastructure;
+using EventSourcing.Samples.Infrastructure.Factories;
 using FluentAssertions;
 using Xunit;
 
 namespace EventSourcing.Tests.Integration
 {
-    [Collection(DocumetDbCollection.Name)]
+    [Collection(StorageProvidersCollection.Name)]
     public class Scenario 
     {
         [Fact]

@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using EventSourcing.DocumentDb.Config;
+using EventSourcing.Storage;
 using Microsoft.Azure.Documents;
 using Microsoft.Azure.Documents.Client;
 using Newtonsoft.Json;
@@ -37,14 +38,7 @@ namespace EventSourcing.DocumentDb
                 {
                     TypeNameHandling = TypeNameHandling.None,
                     Formatting = Formatting.Indented,
-                    ContractResolver = new CamelCasePropertyNamesContractResolver(),
-                    Error = (sender, args) =>
-                    {
-                        if (System.Diagnostics.Debugger.IsAttached)
-                        {
-                            System.Diagnostics.Debugger.Break();
-                        }
-                    }
+                    ContractResolver = new CamelCasePropertyNamesContractResolver()
                 };
 
                 _serializerSetting.Converters.Add(new StringEnumConverter());

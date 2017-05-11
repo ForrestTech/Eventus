@@ -9,7 +9,7 @@ using EventSourcing.Samples.Core.ReadModel;
 using EventSourcing.Storage;
 using EventStore.ClientAPI;
 
-namespace EventSourcing.Samples.Infrastructure
+namespace EventSourcing.Samples.Infrastructure.Factories
 {
     public class EventStoreFactory
     {

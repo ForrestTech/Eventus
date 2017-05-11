@@ -6,20 +6,22 @@ using EventSourcing.Domain;
 using EventSourcing.Samples.Core.Domain;
 using EventSourcing.Samples.Core.Events;
 using EventSourcing.Samples.Infrastructure;
+using EventSourcing.Samples.Infrastructure.EventStore;
+using EventSourcing.Storage;
 using FluentAssertions;
 using Xunit;
 
 namespace EventSourcing.Tests.Integration
 {
-    [Collection(DocumetDbCollection.Name)]
-    public class DocumentDbStorageProviderTest
+    [Collection(StorageProvidersCollection.Name)]
+    public class EventStorageProviderTests
     {
-        private readonly DocumentDbStorageProvider _provider;
+        private readonly IEventStorageProvider _provider;
 
-        public DocumentDbStorageProviderTest()
+        public EventStorageProviderTests()
         {
-            _provider = DocumentDbFactory.CreateDocumentDbStorageProvider();
-            _provider.InitAsync(DocumentDbFactory.DocumentDbConfig).Wait();
+            _provider = EventStorageProviderFactory.CreateAsync().Result;
+            StorageProviderInitialiser.Init(_provider).Wait();
         }
 
         [Fact]

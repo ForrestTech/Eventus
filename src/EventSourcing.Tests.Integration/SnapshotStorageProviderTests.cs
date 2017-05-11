@@ -1,22 +1,23 @@
 using System;
 using System.Threading.Tasks;
-using EventSourcing.DocumentDb;
 using EventSourcing.Samples.Core.Domain;
 using EventSourcing.Samples.Infrastructure;
+using EventSourcing.Samples.Infrastructure.Factories;
+using EventSourcing.Storage;
 using FluentAssertions;
 using Xunit;
 
 namespace EventSourcing.Tests.Integration
 {
-    [Collection(DocumetDbCollection.Name)]
-    public class DocumentDbSnapshotProviderTest
+    [Collection(StorageProvidersCollection.Name)]
+    public class SnapshotStorageProviderTests
     {
-        private readonly DocumentDbSnapShotProvider _provider;
+        private readonly ISnapshotStorageProvider _provider;
 
-        public DocumentDbSnapshotProviderTest()
+        public SnapshotStorageProviderTests()
         {
-            _provider = DocumentDbFactory.CreateDocumentDbSnapShotProvider();
-            _provider.InitAsync(DocumentDbFactory.DocumentDbConfig).Wait();
+            _provider = SnapshotStorageProviderFactory.CreateAsync().Result;
+            StorageProviderInitialiser.Init(_provider).Wait();
         }
 
         [Fact]

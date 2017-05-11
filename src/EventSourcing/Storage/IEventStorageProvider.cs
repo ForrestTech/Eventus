@@ -6,9 +6,9 @@ using EventSourcing.Event;
 
 namespace EventSourcing.Storage
 {
-    public interface IEventStorageProvider
+    public interface IEventStorageProvider 
     {
-        Task<IEnumerable<IEvent>> GetEventsAsync(Type aggregateType, Guid aggregateId, int start, int count);
+        Task<IEnumerable<IEvent>> GetEventsAsync(Type aggregateType, Guid aggregateId, int start = 0, int count = int.MaxValue);
 
         Task<IEvent> GetLastEventAsync(Type aggregateType, Guid aggregateId);
 

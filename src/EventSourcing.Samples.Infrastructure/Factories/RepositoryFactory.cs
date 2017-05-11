@@ -1,8 +1,9 @@
 ﻿using System.Configuration;
 using System.Threading.Tasks;
+using EventSourcing.Samples.Infrastructure.DocumentDb;
 using EventSourcing.Storage;
 
-namespace EventSourcing.Samples.Infrastructure
+namespace EventSourcing.Samples.Infrastructure.Factories
 {
     public class RepositoryFactory
     {
@@ -11,9 +12,9 @@ namespace EventSourcing.Samples.Infrastructure
             var provider = ConfigurationManager.AppSettings["Provider"].ToLowerInvariant();
             switch (provider)
             {
-                case "eventstore":
+                case Constants.Eventstore:
                     return EventStoreFactory.CreateEventStoreRepository();
-                case "documentdb":
+                case Constants.DocumentDb:
                     return DocumentDbFactory.CreateDocumentDbRepository();
                 default:
                     throw new ConfigurationErrorsException($"Unrecognised provider '{provider}' provide a valid provider");

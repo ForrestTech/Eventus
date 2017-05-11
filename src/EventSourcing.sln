@@ -13,7 +13,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EventSourcing.DocumentDb", 
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{75C36474-611B-44B3-A48E-392C364EC27B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EventSourcing.Tests.DocumentDb", "EventSourcing.Tests.DocumentDb\EventSourcing.Tests.DocumentDb.csproj", "{85AC6BB7-D1AD-4DB6-8B6A-76822073D226}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EventSourcing.Tests.Integration", "EventSourcing.Tests.Integration\EventSourcing.Tests.Integration.csproj", "{85AC6BB7-D1AD-4DB6-8B6A-76822073D226}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EventSourcing.Samples.Console", "EventSourcing.Samples.Console\EventSourcing.Samples.Console.csproj", "{71F6058B-41FF-4F08-A461-32F73F03BAAC}"
 EndProject

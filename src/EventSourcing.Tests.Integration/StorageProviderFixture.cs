@@ -1,13 +1,14 @@
 ﻿using System;
 using System.Threading.Tasks;
 using EventSourcing.Samples.Infrastructure;
+using EventSourcing.Samples.Infrastructure.Factories;
 using Xunit;
 
 namespace EventSourcing.Tests.Integration
 {
-    public class DocumentDbFixture : IDisposable
+    public class StorageProviderFixture : IDisposable
     {
-        public DocumentDbFixture()
+        public StorageProviderFixture()
         {
             Setup().Wait();
         }
@@ -25,7 +26,7 @@ namespace EventSourcing.Tests.Integration
     }
 
     [CollectionDefinition(Name)]
-    public class DocumetDbCollection : ICollectionFixture<DocumentDbFixture>
+    public class StorageProvidersCollection : ICollectionFixture<StorageProviderFixture>
     {
         // This class has no code, and is never created. Its purpose is simply
         // to be the place to apply [CollectionDefinition] and all the

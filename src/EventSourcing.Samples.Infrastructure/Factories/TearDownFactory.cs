@@ -1,8 +1,9 @@
 using System;
 using System.Configuration;
 using EventSourcing.Cleanup;
+using EventSourcing.Samples.Infrastructure.DocumentDb;
 
-namespace EventSourcing.Samples.Infrastructure
+namespace EventSourcing.Samples.Infrastructure.Factories
 {
     public class TearDownFactory
     {
@@ -11,9 +12,9 @@ namespace EventSourcing.Samples.Infrastructure
             var provider = ConfigurationManager.AppSettings["Provider"].ToLowerInvariant();
             switch (provider)
             {
-                case "eventstore":
+                case Constants.Eventstore:
                     throw new NotImplementedException();
-                case "documentdb":
+                case Constants.DocumentDb:
                     return DocumentDbFactory.CreateTeardown();
                 default:
                     throw new ConfigurationErrorsException($"Unrecognised provider '{provider}' provide a valid provider");
