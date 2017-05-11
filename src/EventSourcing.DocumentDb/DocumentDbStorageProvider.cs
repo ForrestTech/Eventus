@@ -1,11 +1,11 @@
 ﻿using System;
+using System.Net;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using EventSourcing.DocumentDb.Config;
 using EventSourcing.Domain;
 using EventSourcing.Event;
-using EventSourcing.Repository;
+using EventSourcing.Storage;
 using Microsoft.Azure.Documents;
 using Microsoft.Azure.Documents.Client;
 using Microsoft.Azure.Documents.Linq;
@@ -18,7 +18,7 @@ namespace EventSourcing.DocumentDb
         public DocumentDbStorageProvider(DocumentClient client, string databaseId) : base(client, databaseId)
         { }
 
-        public async Task<IEnumerable<IEvent>> GetEventsAsync(Type aggregateType, Guid aggregateId, int start, int count)
+        public async Task<IEnumerable<IEvent>> GetEventsAsync(Type aggregateType, Guid aggregateId, int start = 0, int count = int.MaxValue)
         {
             try
             {
@@ -27,7 +27,7 @@ namespace EventSourcing.DocumentDb
                 var query = Client.CreateDocumentQuery<DocumentDbAggregateEvent>(
                         collectionUri,
                         new FeedOptions { MaxItemCount = -1 })
-                    .Where(x => x.AggregateId == aggregateId && x.Version >= start)
+                    .Where(x => x.AggregateId == aggregateId && x.Version >= start && x.Version <= count)
                     .OrderBy(x => x.Version)
                     .AsDocumentQuery();
 
@@ -43,7 +43,7 @@ namespace EventSourcing.DocumentDb
             }
             catch (DocumentClientException e)
             {
-                if (e.StatusCode == System.Net.HttpStatusCode.NotFound)
+                if (e.StatusCode == HttpStatusCode.NotFound)
                 {
                     return null;
                 }
@@ -72,7 +72,7 @@ namespace EventSourcing.DocumentDb
             }
             catch (DocumentClientException e)
             {
-                if (e.StatusCode == System.Net.HttpStatusCode.NotFound)
+                if (e.StatusCode == HttpStatusCode.NotFound)
                 {
                     return null;
                 }
