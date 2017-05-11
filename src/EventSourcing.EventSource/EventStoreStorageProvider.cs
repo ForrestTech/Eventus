@@ -19,7 +19,7 @@ namespace EventSourcing.EventStore
         {
         }
 
-        public async Task<IEnumerable<IEvent>> GetEventsAsync(Type aggregateType, Guid aggregateId, int start, int count)
+        public async Task<IEnumerable<IEvent>> GetEventsAsync(Type aggregateType, Guid aggregateId, int start = 0, int count = int.MaxValue)
         {
             var events = await ReadEventsAsync(aggregateType, aggregateId, start, count)
                 .ConfigureAwait(false);

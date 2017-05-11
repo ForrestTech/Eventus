@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using EventSourcing.DocumentDb.Config;
-using EventSourcing.Storage;
 using Microsoft.Azure.Documents;
 using Microsoft.Azure.Documents.Client;
 using Newtonsoft.Json;
@@ -56,13 +55,13 @@ namespace EventSourcing.DocumentDb
 
         public async Task InitAsync(DocumentDbEventStoreConfig config)
         {
-            await CreateDatabaseIfNotExistsAsync();
+            await CreateDatabaseIfNotExistsAsync().ConfigureAwait(false);
 
             foreach (var c in config.AggregateConfig)
             {
-                await CreateAggreateCollectionIfNotExistsAsync(c.AggregateType, c.OfferThroughput);
+                await CreateAggregateCollectionIfNotExistsAsync(c.AggregateType, c.OfferThroughput).ConfigureAwait(false);
 
-                await CreateSnapShotCollectionIfNotExistsAsync(c.AggregateType, c.SnapshotOfferThroughput);
+                await CreateSnapShotCollectionIfNotExistsAsync(c.AggregateType, c.SnapshotOfferThroughput).ConfigureAwait(false);
             }
         }
 
@@ -80,13 +79,14 @@ namespace EventSourcing.DocumentDb
         {
             try
             {
-                await Client.ReadDatabaseAsync(UriFactory.CreateDatabaseUri(DatabaseId));
+                await Client.ReadDatabaseAsync(UriFactory.CreateDatabaseUri(DatabaseId))
+                    .ConfigureAwait(false);
             }
             catch (DocumentClientException e)
             {
                 if (e.StatusCode == System.Net.HttpStatusCode.NotFound)
                 {
-                    await Client.CreateDatabaseAsync(new Database { Id = DatabaseId });
+                    await Client.CreateDatabaseAsync(new Database { Id = DatabaseId }).ConfigureAwait(false);
                 }
                 else
                 {
@@ -95,21 +95,22 @@ namespace EventSourcing.DocumentDb
             }
         }
 
-        private async Task CreateAggreateCollectionIfNotExistsAsync(Type aggregateType, int throughput)
+        private Task CreateAggregateCollectionIfNotExistsAsync(Type aggregateType, int throughput)
         {
-            await CreateCollection(aggregateType.Name, throughput, PartitionKey, ExcludePaths);
+            return CreateCollectionAsync(aggregateType.Name, throughput, PartitionKey, ExcludePaths);
         }
 
-        private async Task CreateSnapShotCollectionIfNotExistsAsync(Type aggregateType, int throughput)
+        private Task CreateSnapShotCollectionIfNotExistsAsync(Type aggregateType, int throughput)
         {
-            await CreateCollection(SnapshotCollectionName(aggregateType), throughput, PartitionKey, ExcludePaths);
+            return CreateCollectionAsync(SnapshotCollectionName(aggregateType), throughput, PartitionKey, ExcludePaths);
         }
 
-        private async Task CreateCollection(string collectionName, int throughput, string partitionKey, IEnumerable<string> excludePaths)
+        private async Task CreateCollectionAsync(string collectionName, int throughput, string partitionKey, IEnumerable<string> excludePaths)
         {
             try
             {
-                await Client.ReadDocumentCollectionAsync(UriFactory.CreateDocumentCollectionUri(DatabaseId, collectionName));
+                await Client.ReadDocumentCollectionAsync(UriFactory.CreateDocumentCollectionUri(DatabaseId, collectionName))
+                    .ConfigureAwait(false);
             }
             catch (DocumentClientException e)
             {
@@ -139,7 +140,7 @@ namespace EventSourcing.DocumentDb
                     await Client.CreateDocumentCollectionAsync(
                         UriFactory.CreateDatabaseUri(DatabaseId),
                         collection,
-                        new RequestOptions { OfferThroughput = throughput });
+                        new RequestOptions { OfferThroughput = throughput }).ConfigureAwait(false);
                 }
                 else
                 {

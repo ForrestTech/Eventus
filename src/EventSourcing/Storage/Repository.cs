@@ -17,13 +17,9 @@ namespace EventSourcing.Storage
 
         public Repository(IEventStorageProvider eventStorageProvider, ISnapshotStorageProvider snapshotStorageProvider, IEventPublisher eventPublisher)
         {
-            if (eventStorageProvider == null) throw new ArgumentNullException(nameof(eventStorageProvider));
-            //if (snapshotStorageProvider == null) throw new ArgumentNullException(nameof(snapshotStorageProvider));
-            if (eventPublisher == null) throw new ArgumentNullException(nameof(eventPublisher));
-
-            _eventStorageProvider = eventStorageProvider;
-            _snapshotStorageProvider = snapshotStorageProvider;
-            _eventPublisher = eventPublisher;
+            _eventStorageProvider = eventStorageProvider ?? throw new ArgumentNullException(nameof(eventStorageProvider));
+            _snapshotStorageProvider = snapshotStorageProvider ?? throw new ArgumentNullException(nameof(snapshotStorageProvider));
+            _eventPublisher = eventPublisher ?? throw new ArgumentNullException(nameof(eventPublisher));
         }
         
         public async Task<TAggregate> GetByIdAsync<TAggregate>(Guid id) where TAggregate : Aggregate
@@ -35,19 +31,21 @@ namespace EventSourcing.Storage
 
             if ((isSnapshottable) && (_snapshotStorageProvider != null))
             {
-                snapshot = await _snapshotStorageProvider.GetSnapshotAsync(typeof(TAggregate), id);
+                snapshot = await _snapshotStorageProvider.GetSnapshotAsync(typeof(TAggregate), id)
+                    .ConfigureAwait(false);
             }
 
             if (snapshot != null)
             {
                 item = ConstructAggregate<TAggregate>();
                 ((ISnapshottable)item).ApplySnapshot(snapshot);
-                var events = await _eventStorageProvider.GetEventsAsync(typeof(TAggregate), id, snapshot.Version + 1, int.MaxValue);
+                var events = await _eventStorageProvider.GetEventsAsync(typeof(TAggregate), id, snapshot.Version + 1)
+                    .ConfigureAwait(false);
                 item.LoadFromHistory(events);
             }
             else
             {
-                var events = (await _eventStorageProvider.GetEventsAsync(typeof(TAggregate), id, 0, int.MaxValue)).ToList();
+                var events = (await _eventStorageProvider.GetEventsAsync(typeof(TAggregate), id).ConfigureAwait(false)).ToList();
 
                 if (events.Any())
                 {
@@ -59,19 +57,17 @@ namespace EventSourcing.Storage
             return item;
         }
 
-        public async Task SaveAsync<TAggregate>(TAggregate aggregate) where TAggregate : Aggregate
+        public Task SaveAsync<TAggregate>(TAggregate aggregate) where TAggregate : Aggregate
         {
-            if (aggregate.HasUncommittedChanges())
-            {
-                await CommitChanges(aggregate);
-            }
+            return aggregate.HasUncommittedChanges() ? CommitChangesAsync(aggregate) : Task.CompletedTask;
         }
 
-        private async Task CommitChanges(Aggregate aggregate)
+        private async Task CommitChangesAsync(Aggregate aggregate)
         {
             var expectedVersion = aggregate.LastCommittedVersion;
 
-            var item = await _eventStorageProvider.GetLastEventAsync(aggregate.GetType(), aggregate.Id);
+            var item = await _eventStorageProvider.GetLastEventAsync(aggregate.GetType(), aggregate.Id)
+                .ConfigureAwait(false);
 
             if ((item != null) && (expectedVersion == (int)Aggregate.StreamState.NoStream))
             {
@@ -91,15 +87,17 @@ namespace EventSourcing.Storage
             }
 
             //CommitAsync events to storage provider
-            await _eventStorageProvider.CommitChangesAsync(aggregate);
+            await _eventStorageProvider.CommitChangesAsync(aggregate)
+                .ConfigureAwait(false);
 
             //Publish to event publisher asynchronously
             foreach (var e in changesToCommit)
             {
-                await _eventPublisher.PublishAsync(e);
+                await _eventPublisher.PublishAsync(e)
+                    .ConfigureAwait(false);
             }
 
-            //If the Aggregate implements snaphottable
+            //If the Aggregate implements snapshottable
             var snapshottable = aggregate as ISnapshottable;
 
             if ((snapshottable != null && _snapshotStorageProvider != null))
@@ -107,14 +105,15 @@ namespace EventSourcing.Storage
                 //Every N events we save a snapshot
                 if (ShouldCreateSnapShot(aggregate, changesToCommit))
                 {
-                    await _snapshotStorageProvider.SaveSnapshotAsync(aggregate.GetType(), snapshottable.TakeSnapshot());
+                    await _snapshotStorageProvider.SaveSnapshotAsync(aggregate.GetType(), snapshottable.TakeSnapshot())
+                        .ConfigureAwait(false);
                 }
             }
 
             aggregate.MarkChangesAsCommitted();
         }
 
-        private bool ShouldCreateSnapShot(Aggregate aggregate, List<IEvent> changesToCommit)
+        private bool ShouldCreateSnapShot(Aggregate aggregate, IReadOnlyCollection<IEvent> changesToCommit)
         {
             return (aggregate.CurrentVersion >= _snapshotStorageProvider.SnapshotFrequency) &&
                    (

@@ -28,9 +28,11 @@ namespace EventSourcing.Tests.Integration
 
             var expected = aggregate.TakeSnapshot();
 
-            await _provider.SaveSnapshotAsync(aggregate.GetType(), expected);
+            await _provider.SaveSnapshotAsync(aggregate.GetType(), expected)
+                .ConfigureAwait(false);
 
-            var actual = await _provider.GetSnapshotAsync(aggregate.GetType(), aggregateId);
+            var actual = await _provider.GetSnapshotAsync(aggregate.GetType(), aggregateId)
+                .ConfigureAwait(false);
 
             actual.Id.Should().Be(expected.Id);
             actual.AggregateId.Should().Be(expected.AggregateId);
@@ -49,15 +51,18 @@ namespace EventSourcing.Tests.Integration
 
             var firstSnapshot = aggregate.TakeSnapshot();
 
-            await _provider.SaveSnapshotAsync(aggregate.GetType(), firstSnapshot);
+            await _provider.SaveSnapshotAsync(aggregate.GetType(), firstSnapshot)
+                .ConfigureAwait(false);
 
             aggregate.Deposit(10);
 
             var expected = aggregate.TakeSnapshot();
 
-            await _provider.SaveSnapshotAsync(aggregate.GetType(), expected);
+            await _provider.SaveSnapshotAsync(aggregate.GetType(), expected)
+                .ConfigureAwait(false);
 
-            var actual = await _provider.GetSnapshotAsync(aggregate.GetType(), aggregateId);
+            var actual = await _provider.GetSnapshotAsync(aggregate.GetType(), aggregateId)
+                .ConfigureAwait(false);
 
             actual.Id.Should().Be(expected.Id);
             actual.AggregateId.Should().Be(expected.AggregateId);

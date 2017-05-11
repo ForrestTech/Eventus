@@ -10,13 +10,13 @@ namespace EventSourcing.Tests.Integration
     {
         public StorageProviderFixture()
         {
-            Setup().Wait();
+            SetupAsync().Wait();
         }
 
-        private static async Task Setup()
+        private static Task SetupAsync()
         {
             var cleaner = TearDownFactory.Create();
-            await cleaner.TearDownAsync();
+            return cleaner.TearDownAsync();
         }
 
         public void Dispose()

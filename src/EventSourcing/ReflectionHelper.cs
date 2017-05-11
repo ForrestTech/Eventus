@@ -50,7 +50,7 @@ namespace EventSourcing
 
         public static IEnumerable<MethodInfo> GetMethodsBySig(this Type type,
             Type returnType,
-            bool matchParameterInheritence,
+            bool matchParameterInheritance,
             params Type[] parameterTypes)
         {
             return type.GetMethods(BindingFlags.NonPublic | BindingFlags.Instance).Where((m) =>
@@ -71,15 +71,7 @@ namespace EventSourcing
                 if (parameters.Length != parameterTypes.Length)
                     return false;
 
-                for (var i = 0; i < parameterTypes.Length; i++)
-                {
-                    if (((parameters[i].ParameterType == parameterTypes[i]) ||
-                         (matchParameterInheritence && parameterTypes[i].IsAssignableFrom(parameters[i].ParameterType))) ==
-                        false)
-                        return false;
-                }
-
-                return true;
+                return !parameterTypes.Where((t, i) => (parameters[i].ParameterType == t || matchParameterInheritance && t.IsAssignableFrom(parameters[i].ParameterType)) == false).Any();
             });
         }
     }

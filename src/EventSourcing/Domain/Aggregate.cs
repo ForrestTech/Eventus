@@ -41,8 +41,8 @@ namespace EventSourcing.Domain
 
         protected Aggregate()
         {
-            CurrentVersion = (int)StreamState.NoStream; ;
-            LastCommittedVersion = (int)StreamState.NoStream; ;
+            CurrentVersion = (int)StreamState.NoStream;
+            LastCommittedVersion = (int)StreamState.NoStream;
             _uncommittedChanges = new List<IEvent>();
             SetupInternalEventHandlers();
         }
@@ -96,7 +96,7 @@ namespace EventSourcing.Domain
             }
             else
             {
-                throw new AggregateEventOnApplyMethodMissingException($"No event handler specified for {@event.GetType()} on {this.GetType()}");
+                throw new AggregateEventOnApplyMethodMissingException($"No event handler specified for {@event.GetType()} on {GetType()}");
             }
 
             if (isNew)

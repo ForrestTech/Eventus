@@ -30,9 +30,11 @@ namespace EventSourcing.Tests.Integration
 
             var aggregate = new BankAccount(aggregateId, "Account Name");
 
-            await CommitChangesAsync(aggregate);
+            await CommitChangesAsync(aggregate)
+                .ConfigureAwait(false);
 
-            var actual = await _provider.GetLastEventAsync(aggregate.GetType(), aggregateId);
+            var actual = await _provider.GetLastEventAsync(aggregate.GetType(), aggregateId)
+                .ConfigureAwait(false);
 
             //todo support time mocking
             actual.AggregateId.Should().Be(aggregateId);
@@ -50,9 +52,11 @@ namespace EventSourcing.Tests.Integration
             aggregate.Deposit(15);
             aggregate.WithDrawFunds(5);
 
-            await CommitChangesAsync(aggregate);
+            await CommitChangesAsync(aggregate)
+                .ConfigureAwait(false);
 
-            var actual = await _provider.GetEventsAsync(aggregate.GetType(), aggregateId);
+            var actual = await _provider.GetEventsAsync(aggregate.GetType(), aggregateId)
+                .ConfigureAwait(false);
 
             actual.Count().Should().Be(4);
             actual.First().Should().BeOfType<AccountCreatedEvent>();
@@ -72,9 +76,11 @@ namespace EventSourcing.Tests.Integration
             aggregate.Deposit(15);
             aggregate.WithDrawFunds(5);
 
-            await CommitChangesAsync(aggregate);
+            await CommitChangesAsync(aggregate)
+                .ConfigureAwait(false);
 
-            var actual = await _provider.GetEventsAsync(aggregate.GetType(), aggregateId, start, count);
+            var actual = await _provider.GetEventsAsync(aggregate.GetType(), aggregateId, start, count)
+                .ConfigureAwait(false);
 
             actual.Count().Should().Be(expected);
             actual.First().Should().BeOfType<AccountCreatedEvent>();
@@ -90,9 +96,11 @@ namespace EventSourcing.Tests.Integration
             aggregate.Deposit(15);
             aggregate.WithDrawFunds(5);
 
-            await CommitChangesAsync(aggregate);
+            await CommitChangesAsync(aggregate)
+                .ConfigureAwait(false);
 
-            var actual = await _provider.GetEventsAsync(aggregate.GetType(), aggregateId);
+            var actual = await _provider.GetEventsAsync(aggregate.GetType(), aggregateId)
+                .ConfigureAwait(false);
 
             actual.Count().Should().Be(4);
         }
@@ -107,9 +115,11 @@ namespace EventSourcing.Tests.Integration
             aggregate.Deposit(15);
             aggregate.WithDrawFunds(5);
 
-            await CommitChangesAsync(aggregate);
+            await CommitChangesAsync(aggregate)
+                .ConfigureAwait(false);
 
-            var actual = await _provider.GetEventsAsync(aggregate.GetType(), aggregateId);
+            var actual = await _provider.GetEventsAsync(aggregate.GetType(), aggregateId)
+                .ConfigureAwait(false);
 
             actual.Select(x => x.TargetVersion)
                 .ToArray()
@@ -124,28 +134,28 @@ namespace EventSourcing.Tests.Integration
 
             var aggregate = new BankAccount(aggregateId, "Account Name");
 
-            await CommitChangesAsync(aggregate);
+            await CommitChangesAsync(aggregate).ConfigureAwait(false);
 
             aggregate.Deposit(10);
 
-            await CommitChangesAsync(aggregate);
+            await CommitChangesAsync(aggregate).ConfigureAwait(false);
 
             aggregate.Deposit(15);
 
-            await CommitChangesAsync(aggregate);
+            await CommitChangesAsync(aggregate).ConfigureAwait(false);
 
             aggregate.WithDrawFunds(5);
 
-            await CommitChangesAsync(aggregate);
+            await CommitChangesAsync(aggregate).ConfigureAwait(false);
 
-            var actual = await _provider.GetEventsAsync(aggregate.GetType(), aggregateId);
+            var actual = await _provider.GetEventsAsync(aggregate.GetType(), aggregateId).ConfigureAwait(false);
 
             actual.Count().Should().Be(4);
         }
 
         private async Task CommitChangesAsync(Aggregate aggregate)
         {
-            await _provider.CommitChangesAsync(aggregate);
+            await _provider.CommitChangesAsync(aggregate).ConfigureAwait(false);
             //as we are not using the repo we need to remember to do this
             aggregate.MarkChangesAsCommitted();
         }

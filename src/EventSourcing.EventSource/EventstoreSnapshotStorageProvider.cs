@@ -20,7 +20,8 @@ namespace EventSourcing.EventStore
         {
             Snapshot snapshot = null;
 
-            var streamEvents = await Connection.ReadStreamEventsBackwardAsync(SnapShotStreamName(aggregateType, aggregateId), StreamPosition.End, 1, false);
+            var streamEvents = await Connection.ReadStreamEventsBackwardAsync(SnapShotStreamName(aggregateType, aggregateId), StreamPosition.End, 1, false)
+                .ConfigureAwait(false);
 
             if (streamEvents.Events.Any())
             {
@@ -32,18 +33,19 @@ namespace EventSourcing.EventStore
             return snapshot;
         }
 
-        public async Task SaveSnapshotAsync(Type aggregateType, Snapshot snapshot)
+        public Task SaveSnapshotAsync(Type aggregateType, Snapshot snapshot)
         {
-            var snapshotyEvent = SerializeSnapshotEvent(snapshot, snapshot.Version);
+            var snapShotEvent = SerializeSnapshotEvent(snapshot, snapshot.Version);
 
-            await Connection.AppendToStreamAsync(SnapShotStreamName(aggregateType, snapshot.AggregateId), ExpectedVersion.Any, snapshotyEvent);
+            return Connection.AppendToStreamAsync(SnapShotStreamName(aggregateType, snapshot.AggregateId), ExpectedVersion.Any, snapShotEvent);
         }
 
         public async Task<Snapshot> GetSnapshotAsync(Type aggregateType, Guid aggregateId, int version)
         {
             Snapshot snapshot = null;
 
-            var streamEvents = await Connection.ReadStreamEventsBackwardAsync(SnapShotStreamName(aggregateType, aggregateId), version, 1, false);
+            var streamEvents = await Connection.ReadStreamEventsBackwardAsync(SnapShotStreamName(aggregateType, aggregateId), version, 1, false)
+                .ConfigureAwait(false);
 
             if (streamEvents.Events.Any())
             {

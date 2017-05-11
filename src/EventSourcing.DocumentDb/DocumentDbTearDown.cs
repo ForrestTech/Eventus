@@ -21,7 +21,8 @@ namespace EventSourcing.DocumentDb
         {
             try
             {
-                await _client.DeleteDatabaseAsync(UriFactory.CreateDatabaseUri(_databaseId));
+                await _client.DeleteDatabaseAsync(UriFactory.CreateDatabaseUri(_databaseId))
+                    .ConfigureAwait(false);
             }
             catch (DocumentClientException e)
             {

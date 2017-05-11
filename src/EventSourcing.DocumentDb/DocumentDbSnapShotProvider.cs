@@ -28,7 +28,9 @@ namespace EventSourcing.DocumentDb
                     .Where(x => x.AggregateId == aggregateId && x.Version == version)
                     .AsDocumentQuery();
 
-                var result = await query.ExecuteNextAsync<DocumentDbSnapshot>();
+                var result = await query.ExecuteNextAsync<DocumentDbSnapshot>()
+                    .ConfigureAwait(false);
+
                 var item = result.SingleOrDefault();
 
                 return item == null ? null : DeserializeSnapshot(item);
@@ -55,7 +57,9 @@ namespace EventSourcing.DocumentDb
                     .Take(1)
                     .AsDocumentQuery();
 
-                var result = await query.ExecuteNextAsync<DocumentDbSnapshot>();
+                var result = await query.ExecuteNextAsync<DocumentDbSnapshot>()
+                    .ConfigureAwait(false);
+
                 var item = result.SingleOrDefault();
 
                 return item == null ? null : DeserializeSnapshot(item);
@@ -70,10 +74,10 @@ namespace EventSourcing.DocumentDb
             }
         }
 
-        public async Task SaveSnapshotAsync(Type aggregateType, Snapshot snapshot)
+        public Task SaveSnapshotAsync(Type aggregateType, Snapshot snapshot)
         {
             var documentDbSnapshot = CreateSnapshotEvent(snapshot);
-            await Client.CreateDocumentAsync(SnapshotCollectionUri(aggregateType), documentDbSnapshot);
+            return Client.CreateDocumentAsync(SnapshotCollectionUri(aggregateType), documentDbSnapshot);
         }
 
         private static DocumentDbSnapshot CreateSnapshotEvent(Snapshot snapshot)
@@ -95,7 +99,7 @@ namespace EventSourcing.DocumentDb
             return serialized;
         }
 
-        private static Snapshot DeserializeSnapshot(DocumentDbSnapshot item)
+        private static Snapshot DeserializeSnapshot(DocumentDbEventBase item)
         {
             var returnType = Type.GetType(item.ClrType);
 
