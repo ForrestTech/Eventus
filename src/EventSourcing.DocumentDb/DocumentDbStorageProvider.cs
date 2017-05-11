@@ -35,7 +35,8 @@ namespace EventSourcing.DocumentDb
                 var results = new List<IEvent>();
                 while (query.HasMoreResults)
                 {
-                    var items = await query.ExecuteNextAsync<DocumentDbAggregateEvent>();
+                    var items = await query.ExecuteNextAsync<DocumentDbAggregateEvent>()
+                        .ConfigureAwait(false);
 
                     results.AddRange(items.Select(DeserializeEvent));
                 }
@@ -66,7 +67,9 @@ namespace EventSourcing.DocumentDb
                         .Take(1)
                     .AsDocumentQuery();
 
-                var result = await query.ExecuteNextAsync<DocumentDbAggregateEvent>();
+                var result = await query.ExecuteNextAsync<DocumentDbAggregateEvent>()
+                    .ConfigureAwait(false);
+
                 var item = result.SingleOrDefault();
 
                 return item == null ? null : DeserializeEvent(item);
@@ -81,7 +84,7 @@ namespace EventSourcing.DocumentDb
             }
         }
 
-        public async Task CommitChangesAsync(Aggregate aggregate)
+        public Task CommitChangesAsync(Aggregate aggregate)
         {
             var events = aggregate.GetUncommittedChanges();
 
@@ -89,15 +92,17 @@ namespace EventSourcing.DocumentDb
             {
                 var collectionUri = EventCollectionUri(aggregate.GetType());
 
-                var commited = aggregate.LastCommittedVersion;
+                var committed = aggregate.LastCommittedVersion;
 
                 foreach (var @event in events)
                 {
-                    commited++;
-                    var documetEvent = CreateDocumentDbEvent(aggregate, @event, commited);
-                    await Client.CreateDocumentAsync(collectionUri, documetEvent);
+                    committed++;
+                    var documentEvent = CreateDocumentDbEvent(aggregate, @event, committed);
+                    return Client.CreateDocumentAsync(collectionUri, documentEvent);
                 }
             }
+
+            return Task.CompletedTask;
         }
 
         private static DocumentDbAggregateEvent CreateDocumentDbEvent(Aggregate aggregate, IEvent @event, int commitNumber)

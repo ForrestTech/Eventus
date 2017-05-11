@@ -3,7 +3,6 @@ using System.Threading.Tasks;
 using EventSourcing.Samples.Core.Commands;
 using EventSourcing.Samples.Core.Domain;
 using EventSourcing.Samples.Core.Handlers;
-using EventSourcing.Samples.Infrastructure;
 using EventSourcing.Samples.Infrastructure.Factories;
 using FluentAssertions;
 using Xunit;
@@ -18,18 +17,19 @@ namespace EventSourcing.Tests.Integration
         {
             var accountId = Guid.NewGuid();
 
-            var repo = await RepositoryFactory.CreateAsync();
+            var repo = await RepositoryFactory.CreateAsync()
+                .ConfigureAwait(false);
             var handler = new BankAccountCommandHandlers(repo);
-            var joeBloggs = "Joe Bloggs";
+            const string joeBloggs = "Joe Bloggs";
 
-            await handler.HandleAsync(new CreateAccountCommand(Guid.NewGuid(), accountId, joeBloggs));
-            await handler.HandleAsync(new DepostiFundsCommand(Guid.NewGuid(), accountId, 10));
-            await handler.HandleAsync(new DepostiFundsCommand(Guid.NewGuid(), accountId, 35));
-            await handler.HandleAsync(new WithdrawFundsCommand(Guid.NewGuid(), accountId, 25));
-            await handler.HandleAsync(new DepostiFundsCommand(Guid.NewGuid(), accountId, 5));
-            await handler.HandleAsync(new WithdrawFundsCommand(Guid.NewGuid(), accountId, 10));
+            await handler.HandleAsync(new CreateAccountCommand(Guid.NewGuid(), accountId, joeBloggs)).ConfigureAwait(false);
+            await handler.HandleAsync(new DepostiFundsCommand(Guid.NewGuid(), accountId, 10)).ConfigureAwait(false);
+            await handler.HandleAsync(new DepostiFundsCommand(Guid.NewGuid(), accountId, 35)).ConfigureAwait(false);
+            await handler.HandleAsync(new WithdrawFundsCommand(Guid.NewGuid(), accountId, 25)).ConfigureAwait(false);
+            await handler.HandleAsync(new DepostiFundsCommand(Guid.NewGuid(), accountId, 5)).ConfigureAwait(false);
+            await handler.HandleAsync(new WithdrawFundsCommand(Guid.NewGuid(), accountId, 10)).ConfigureAwait(false);
 
-            var actual = await repo.GetByIdAsync<BankAccount>(accountId);
+            var actual = await repo.GetByIdAsync<BankAccount>(accountId).ConfigureAwait(false);
 
             actual.Id.Should().Be(accountId);
             actual.Name.Should().Be(joeBloggs);
