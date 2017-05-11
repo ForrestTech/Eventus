@@ -46,6 +46,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Cleanup\ITeardown.cs" />
+    <Compile Include="Clock.cs" />
     <Compile Include="Domain\Aggregate.cs" />
     <Compile Include="EventBus\IEventPublisher.cs" />
     <Compile Include="Event\IEvent.cs" />
