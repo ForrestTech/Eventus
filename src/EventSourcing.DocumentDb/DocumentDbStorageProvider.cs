@@ -27,8 +27,9 @@ namespace EventSourcing.DocumentDb
                 var query = Client.CreateDocumentQuery<DocumentDbAggregateEvent>(
                         collectionUri,
                         new FeedOptions { MaxItemCount = -1 })
-                    .Where(x => x.AggregateId == aggregateId && x.Version >= start && x.Version <= count)
+                    .Where(x => x.AggregateId == aggregateId && x.Version >= start)
                     .OrderBy(x => x.Version)
+                    .Take(count)
                     .AsDocumentQuery();
 
                 var results = new List<IEvent>();

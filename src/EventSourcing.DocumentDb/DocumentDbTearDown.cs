@@ -6,12 +6,12 @@ using Microsoft.Azure.Documents.Client;
 
 namespace EventSourcing.DocumentDb
 {
-    public class DocumentDbTearDown : ITeardown
+    public class DocumentDbTeardown : ITeardown
     {
         private readonly DocumentClient _client;
         private readonly string _databaseId;
 
-        public DocumentDbTearDown(DocumentClient client, string databaseId)
+        public DocumentDbTeardown(DocumentClient client, string databaseId)
         {
             _client = client;
             _databaseId = databaseId;

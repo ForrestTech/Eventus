@@ -1,7 +1,6 @@
 using System;
 using System.Linq;
 using System.Threading.Tasks;
-using EventSourcing.DocumentDb;
 using EventSourcing.Domain;
 using EventSourcing.Samples.Core.Domain;
 using EventSourcing.Samples.Core.Events;
@@ -21,7 +20,7 @@ namespace EventSourcing.Tests.Integration
         public EventStorageProviderTests()
         {
             _provider = EventStorageProviderFactory.CreateAsync().Result;
-            StorageProviderInitialiser.Init(_provider).Wait();
+            StorageProviderInitialiser.InitAsync(_provider).Wait();
         }
 
         [Fact]
@@ -31,7 +30,7 @@ namespace EventSourcing.Tests.Integration
 
             var aggregate = new BankAccount(aggregateId, "Account Name");
 
-            await CommitChanges(aggregate);
+            await CommitChangesAsync(aggregate);
 
             var actual = await _provider.GetLastEventAsync(aggregate.GetType(), aggregateId);
 
@@ -51,7 +50,7 @@ namespace EventSourcing.Tests.Integration
             aggregate.Deposit(15);
             aggregate.WithDrawFunds(5);
 
-            await CommitChanges(aggregate);
+            await CommitChangesAsync(aggregate);
 
             var actual = await _provider.GetEventsAsync(aggregate.GetType(), aggregateId);
 
@@ -60,8 +59,8 @@ namespace EventSourcing.Tests.Integration
         }
 
         [Theory]
-        [InlineData(0, 0, 1)]
-        [InlineData(0, 1, 2)]
+        [InlineData(0, 1, 1)]
+        [InlineData(0, 2, 2)]
         [InlineData(0, 4, 4)]
         [InlineData(0, 5, 4)]
         public async Task GetEventsAsync_should_return_specified_range_of_events(int start, int count, int expected)
@@ -73,7 +72,7 @@ namespace EventSourcing.Tests.Integration
             aggregate.Deposit(15);
             aggregate.WithDrawFunds(5);
 
-            await CommitChanges(aggregate);
+            await CommitChangesAsync(aggregate);
 
             var actual = await _provider.GetEventsAsync(aggregate.GetType(), aggregateId, start, count);
 
@@ -91,7 +90,7 @@ namespace EventSourcing.Tests.Integration
             aggregate.Deposit(15);
             aggregate.WithDrawFunds(5);
 
-            await CommitChanges(aggregate);
+            await CommitChangesAsync(aggregate);
 
             var actual = await _provider.GetEventsAsync(aggregate.GetType(), aggregateId);
 
@@ -108,7 +107,7 @@ namespace EventSourcing.Tests.Integration
             aggregate.Deposit(15);
             aggregate.WithDrawFunds(5);
 
-            await CommitChanges(aggregate);
+            await CommitChangesAsync(aggregate);
 
             var actual = await _provider.GetEventsAsync(aggregate.GetType(), aggregateId);
 
@@ -125,26 +124,26 @@ namespace EventSourcing.Tests.Integration
 
             var aggregate = new BankAccount(aggregateId, "Account Name");
 
-            await CommitChanges(aggregate);
+            await CommitChangesAsync(aggregate);
 
             aggregate.Deposit(10);
 
-            await CommitChanges(aggregate);
+            await CommitChangesAsync(aggregate);
 
             aggregate.Deposit(15);
 
-            await CommitChanges(aggregate);
+            await CommitChangesAsync(aggregate);
 
             aggregate.WithDrawFunds(5);
 
-            await CommitChanges(aggregate);
+            await CommitChangesAsync(aggregate);
 
             var actual = await _provider.GetEventsAsync(aggregate.GetType(), aggregateId);
 
             actual.Count().Should().Be(4);
         }
 
-        private async Task CommitChanges(Aggregate aggregate)
+        private async Task CommitChangesAsync(Aggregate aggregate)
         {
             await _provider.CommitChangesAsync(aggregate);
             //as we are not using the repo we need to remember to do this

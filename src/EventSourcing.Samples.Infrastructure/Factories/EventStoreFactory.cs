@@ -13,20 +13,41 @@ namespace EventSourcing.Samples.Infrastructure.Factories
 {
     public class EventStoreFactory
     {
-        public static async Task<Repository> CreateEventStoreRepository()
-        {
-            //todo move to configuration
-            var connection = EventStoreConnection.Create(new IPEndPoint(IPAddress.Loopback, 1113));
-            await connection.ConnectAsync();
+        private static IEventStoreConnection _connection;
 
+        public static async Task<Repository> CreateEventStoreRepositoryAsync()
+        {
             var readRepo = new ReadModelRepository();
 
             return new Repository(
-                new EventstoreStorageProvider(connection, GetStreamNamePrefix()),
-                new EventstoreSnapshotStorageProvider(connection, GetStreamNamePrefix(), 3),
+                await CreateEventStoreEventStorageProviderAsync().ConfigureAwait(false),
+                await CreateSnapshotStorageProviderAsync().ConfigureAwait(false),
                 new DemoPublisher(
                     new DepositEventHandler(readRepo),
                     new WithdrawalEventHandler(readRepo)));
+        }
+
+        public static async Task<IEventStorageProvider> CreateEventStoreEventStorageProviderAsync()
+        {
+            return new EventstoreStorageProvider(await GetConnectionAsync().ConfigureAwait(false), GetStreamNamePrefix());
+        }
+
+        public static async Task<ISnapshotStorageProvider> CreateSnapshotStorageProviderAsync()
+        {
+            return new EventstoreSnapshotStorageProvider(await GetConnectionAsync().ConfigureAwait(false), GetStreamNamePrefix(), 3);
+        }
+
+        private static async Task<IEventStoreConnection> GetConnectionAsync()
+        {
+            if (_connection != null)
+                return _connection;
+
+            //todo connection setting to config
+            _connection = EventStoreConnection.Create(new IPEndPoint(IPAddress.Loopback, 1113));
+            await _connection.ConnectAsync()
+                .ConfigureAwait(false);
+
+            return _connection;
         }
 
         private static Func<string> GetStreamNamePrefix()

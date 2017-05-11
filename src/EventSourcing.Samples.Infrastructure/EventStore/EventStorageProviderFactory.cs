@@ -2,6 +2,7 @@
 using System.Configuration;
 using System.Threading.Tasks;
 using EventSourcing.Samples.Infrastructure.DocumentDb;
+using EventSourcing.Samples.Infrastructure.Factories;
 using EventSourcing.Storage;
 
 namespace EventSourcing.Samples.Infrastructure.EventStore
@@ -14,11 +15,11 @@ namespace EventSourcing.Samples.Infrastructure.EventStore
             switch (provider)
             {
                 case Constants.Eventstore:
-                    throw new NotImplementedException();
+                    return EventStoreFactory.CreateEventStoreEventStorageProviderAsync();
                 case Constants.DocumentDb:
-                    return Task.FromResult(DocumentDbFactory.CreateDocumentDbStorageProvider());
+                    return DocumentDbFactory.CreateDocumentDbEventProviderAsync();
                 default:
-                    throw new ConfigurationErrorsException($"Unrecognised provider '{provider}' provide a valid provider");
+                    throw new ConfigurationErrorsException($"Unrecognized provider '{provider}' provide a valid provider");
             }
         }
     }

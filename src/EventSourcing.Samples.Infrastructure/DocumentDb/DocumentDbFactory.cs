@@ -15,37 +15,34 @@ namespace EventSourcing.Samples.Infrastructure.DocumentDb
     {
         private static DocumentClient _client;
 
-        public static Task<Repository> CreateDocumentDbRepository()
+        public static async Task<Repository> CreateDocumentDbRepositoryAsync()
         {
-            var client = Client;
-
-            var documentDbStorageProvider = CreateDocumentDbStorageProvider();
             var readRepo = new ReadModelRepository();
 
             var repository = new Repository(
-                documentDbStorageProvider,
-                new DocumentDbSnapShotProvider(client, DatabaseId, 3),
+                await CreateDocumentDbEventProviderAsync().ConfigureAwait(false),
+                await CreateDocumentDbSnapshotProviderAsync().ConfigureAwait(false),
                 new DemoPublisher(
                     new DepositEventHandler(readRepo),
                     new WithdrawalEventHandler(readRepo)));
 
-            return Task.FromResult(repository);
+            return repository;
         }
 
         public static ITeardown CreateTeardown()
         {
-            return new DocumentDbTearDown(Client, DatabaseId);
+            return new DocumentDbTeardown(Client, DatabaseId);
         }
 
-        public static IEventStorageProvider CreateDocumentDbStorageProvider()
+        public static Task<IEventStorageProvider> CreateDocumentDbEventProviderAsync()
         {
-            return new DocumentDbStorageProvider(Client, DatabaseId);
+            return Task.FromResult<IEventStorageProvider>(new DocumentDbStorageProvider(Client, DatabaseId));
         }
 
-        public static ISnapshotStorageProvider CreateDocumentDbSnapShotProvider()
+        public static Task<ISnapshotStorageProvider> CreateDocumentDbSnapshotProviderAsync()
         {
             //todo move snapshot frequency to config
-            return new DocumentDbSnapShotProvider(Client, DatabaseId, 3);
+            return Task.FromResult<ISnapshotStorageProvider>(new DocumentDbSnapShotProvider(Client, DatabaseId, 3));
         }
 
         private static DocumentClient Client => _client ?? (_client = new DocumentClient(new Uri(ConfigurationManager.AppSettings["DocumentDb.Endpoint"]), ConfigurationManager.AppSettings["DocumentDb.AuthKey"], new ConnectionPolicy { EnableEndpointDiscovery = false }));

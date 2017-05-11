@@ -17,7 +17,7 @@ namespace EventSourcing.Tests.Integration
         public SnapshotStorageProviderTests()
         {
             _provider = SnapshotStorageProviderFactory.CreateAsync().Result;
-            StorageProviderInitialiser.Init(_provider).Wait();
+            StorageProviderInitialiser.InitAsync(_provider).Wait();
         }
 
         [Fact]
@@ -67,7 +67,6 @@ namespace EventSourcing.Tests.Integration
             actual.As<BankAccountSnapshot>().CurrentBalance.Should().Be(expected.As<BankAccountSnapshot>().CurrentBalance);
             actual.As<BankAccountSnapshot>().Transactions.Count.Should().Be(expected.As<BankAccountSnapshot>().Transactions.Count);
             actual.As<BankAccountSnapshot>().Transactions.Should().BeEquivalentTo(expected.As<BankAccountSnapshot>().Transactions);
-
         }
     }
 }

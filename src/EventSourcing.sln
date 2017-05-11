@@ -19,6 +19,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EventSourcing.Samples.Conso
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EventSourcing.Samples.Infrastructure", "EventSourcing.Samples.Infrastructure\EventSourcing.Samples.Infrastructure.csproj", "{02C0C5DD-AD27-4068-8030-A1E5BD50731E}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Samples", "Samples", "{C8D1A53A-2E83-4CB8-9621-205D2A376E4F}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -58,6 +60,9 @@ Global
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
+		{B0D6E886-4FB4-4297-BD50-C712AF24CE7B} = {C8D1A53A-2E83-4CB8-9621-205D2A376E4F}
 		{85AC6BB7-D1AD-4DB6-8B6A-76822073D226} = {75C36474-611B-44B3-A48E-392C364EC27B}
+		{71F6058B-41FF-4F08-A461-32F73F03BAAC} = {C8D1A53A-2E83-4CB8-9621-205D2A376E4F}
+		{02C0C5DD-AD27-4068-8030-A1E5BD50731E} = {C8D1A53A-2E83-4CB8-9621-205D2A376E4F}
 	EndGlobalSection
 EndGlobal

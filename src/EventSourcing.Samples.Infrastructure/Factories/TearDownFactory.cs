@@ -1,6 +1,6 @@
-using System;
 using System.Configuration;
 using EventSourcing.Cleanup;
+using EventSourcing.EventStore;
 using EventSourcing.Samples.Infrastructure.DocumentDb;
 
 namespace EventSourcing.Samples.Infrastructure.Factories
@@ -13,11 +13,11 @@ namespace EventSourcing.Samples.Infrastructure.Factories
             switch (provider)
             {
                 case Constants.Eventstore:
-                    throw new NotImplementedException();
+                    return new EventStoreTeardown();
                 case Constants.DocumentDb:
                     return DocumentDbFactory.CreateTeardown();
                 default:
-                    throw new ConfigurationErrorsException($"Unrecognised provider '{provider}' provide a valid provider");
+                    throw new ConfigurationErrorsException($"Unrecognized provider '{provider}' provide a valid provider");
             }
         }
     }

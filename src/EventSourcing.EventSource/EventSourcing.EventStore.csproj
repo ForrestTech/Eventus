@@ -53,6 +53,7 @@
     <Compile Include="EventstoreSnapshotStorageProvider.cs" />
     <Compile Include="EventstoreStorageProvider.cs" />
     <Compile Include="EventstoreStorageProviderBase.cs" />
+    <Compile Include="EventStoreTeardown.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
