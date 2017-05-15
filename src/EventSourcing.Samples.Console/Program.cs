@@ -43,7 +43,7 @@ namespace EventSourcing.Samples.Console
 
             WriteLine($"Bank account ID: {fromStore.Id}");
             WriteLine($"Balance: {fromStore.CurrentBalance}");
-            WriteLine($"Last commited version: {fromStore.LastCommittedVersion}");
+            WriteLine($"Last committed version: {fromStore.LastCommittedVersion}");
             WriteLine($"Transaction Count: {fromStore.Transactions.Count}");
 
             WriteLine("Event sourcing sample ran");

@@ -1,6 +1,6 @@
 using System.Threading.Tasks;
-using EventSourcing.Event;
 using EventSourcing.EventBus;
+using EventSourcing.Events;
 
 namespace EventSourcing.Samples.Core.EventHandlers
 {

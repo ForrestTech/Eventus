@@ -1,8 +1,8 @@
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using EventSourcing.Event;
 using EventSourcing.EventBus;
+using EventSourcing.Events;
 using EventSourcing.Samples.Core.EventHandlers;
 using EventSourcing.Samples.Core.Events;
 

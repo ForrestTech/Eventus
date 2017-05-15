@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using EventSourcing.Event;
+using EventSourcing.Events;
 using EventSourcing.Exceptions;
 
 namespace EventSourcing.Domain
@@ -111,5 +111,44 @@ namespace EventSourcing.Domain
         {
             _eventHandlerCache = ReflectionHelper.FindEventHandlerMethodsInAggregate(GetType());
         }
+
+        #region Comparison
+        private sealed class IdEqualityComparer : IEqualityComparer<Aggregate>
+        {
+            public bool Equals(Aggregate x, Aggregate y)
+            {
+                if (ReferenceEquals(x, y)) return true;
+                if (ReferenceEquals(x, null)) return false;
+                if (ReferenceEquals(y, null)) return false;
+                if (x.GetType() != y.GetType()) return false;
+                return x.Id.Equals(y.Id);
+            }
+
+            public int GetHashCode(Aggregate obj)
+            {
+                return obj.Id.GetHashCode();
+            }
+        }
+
+        public static IEqualityComparer<Aggregate> IdComparer { get; } = new IdEqualityComparer();
+
+        protected bool Equals(Aggregate other)
+        {
+            return Id.Equals(other.Id);
+        }
+
+        public override bool Equals(object obj)
+        {
+            if (ReferenceEquals(null, obj)) return false;
+            if (ReferenceEquals(this, obj)) return true;
+            if (obj.GetType() != this.GetType()) return false;
+            return Equals((Aggregate) obj);
+        }
+
+        public override int GetHashCode()
+        {
+            return Id.GetHashCode();
+        }
+        #endregion
     }
 }

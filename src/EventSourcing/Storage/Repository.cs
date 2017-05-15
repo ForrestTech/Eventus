@@ -3,8 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using EventSourcing.Domain;
-using EventSourcing.Event;
 using EventSourcing.EventBus;
+using EventSourcing.Events;
 using EventSourcing.Exceptions;
 
 namespace EventSourcing.Storage
@@ -29,7 +29,7 @@ namespace EventSourcing.Storage
             var isSnapshottable = typeof(ISnapshottable).IsAssignableFrom(typeof(TAggregate));
             Snapshot snapshot = null;
 
-            if ((isSnapshottable) && (_snapshotStorageProvider != null))
+            if (isSnapshottable)
             {
                 snapshot = await _snapshotStorageProvider.GetSnapshotAsync(typeof(TAggregate), id)
                     .ConfigureAwait(false);
@@ -69,13 +69,14 @@ namespace EventSourcing.Storage
             var item = await _eventStorageProvider.GetLastEventAsync(aggregate.GetType(), aggregate.Id)
                 .ConfigureAwait(false);
 
+
             if ((item != null) && (expectedVersion == (int)Aggregate.StreamState.NoStream))
             {
-                throw new AggregateCreationException(item.CorrelationId, item.TargetVersion +1);
+                throw new AggregateCreationException(aggregate.Id, item.TargetVersion +1);
             }
             if ((item != null) && ((item.TargetVersion + 1) != expectedVersion))
             {
-                throw new ConcurrencyException(item.CorrelationId);
+                throw new ConcurrencyException(aggregate.Id);
             }
 
             var changesToCommit = aggregate.GetUncommittedChanges().ToList();
@@ -125,7 +126,7 @@ namespace EventSourcing.Storage
 
         private static void DoPreCommitTasks(IEvent e)
         {
-            e.EventCommittedTimestamp = DateTime.UtcNow;
+            e.EventCommittedTimestamp = Clock.Now();
         }
         
         private static TAggregate ConstructAggregate<TAggregate>()

@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using EventSourcing.Domain;
-using EventSourcing.Event;
+using EventSourcing.Events;
 using EventSourcing.Storage;
 using Microsoft.Azure.Documents;
 using Microsoft.Azure.Documents.Client;
@@ -130,7 +130,7 @@ namespace EventSourcing.DocumentDb
         {
             var returnType = Type.GetType(returnedAggregateEvent.ClrType);
 
-            return (Event.Event)JsonConvert.DeserializeObject(returnedAggregateEvent.Data, returnType, SerializerSettings);
+            return (Event)JsonConvert.DeserializeObject(returnedAggregateEvent.Data, returnType, SerializerSettings);
         }
 
         protected Uri EventCollectionUri(Type aggregateType)

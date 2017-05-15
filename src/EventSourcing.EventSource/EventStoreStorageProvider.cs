@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using EventSourcing.Domain;
-using EventSourcing.Event;
+using EventSourcing.Events;
 using EventSourcing.Storage;
 using EventStore.ClientAPI;
 

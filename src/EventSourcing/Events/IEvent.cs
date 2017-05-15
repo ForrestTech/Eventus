@@ -1,6 +1,6 @@
 using System;
 
-namespace EventSourcing.Event
+namespace EventSourcing.Events
 {
     public interface IEvent : IMessage
     {

@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace EventSourcing.Event
+namespace EventSourcing.Events
 {
     public class Event : IEvent
     {
@@ -8,7 +8,7 @@ namespace EventSourcing.Event
 
         public Guid AggregateId { get; set; }
 
-        public Guid CorrelationId { get; }
+        public Guid CorrelationId { get; set; }
 
         public DateTime EventCommittedTimestamp { get; set; }
 
@@ -18,12 +18,12 @@ namespace EventSourcing.Event
         {
         }
 
-        public Event(Guid aggregateId, int targetVersion, int eventClassVersion = 1)
+        public Event(Guid aggregateId, int targetVersion, int eventClassVersion = 1, Guid correlationId = new Guid())
         {
             AggregateId = aggregateId;
             TargetVersion = targetVersion;
             ClassVersion = eventClassVersion;
-            CorrelationId = Guid.NewGuid();
+            CorrelationId = correlationId == Guid.Empty ? Guid.NewGuid() : correlationId;
         }
     }
 }
