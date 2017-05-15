@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<CoverageSession xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <Summary numSequencePoints="0" visitedSequencePoints="0" numBranchPoints="0" visitedBranchPoints="0" sequenceCoverage="0" branchCoverage="0" maxCyclomaticComplexity="0" minCyclomaticComplexity="0" visitedClasses="0" numClasses="0" visitedMethods="0" numMethods="0" />
+  <Modules>
+    <Module skippedDueTo="Filter" hash="10-6D-85-6B-63-39-B8-3F-B5-3E-CC-56-2E-DC-C3-5A-34-EA-17-FE">
+      <ModulePath>C:\WINDOWS\Microsoft.Net\assembly\GAC_64\mscorlib\v4.0_4.0.0.0__b77a5c561934e089\mscorlib.dll</ModulePath>
+      <ModuleTime>2016-10-05T00:23:46.0302453Z</ModuleTime>
+      <ModuleName>mscorlib</ModuleName>
+      <Classes />
+    </Module>
+    <Module skippedDueTo="MissingPdb" hash="D6-20-D0-CF-21-B5-CD-3C-63-A0-3F-85-84-C7-3C-3E-1B-DF-1F-AD">
+      <ModulePath>C:\Users\Richard\Projects\EventSourcing\src\packages\xunit.runner.console.2.2.0\tools\xunit.console.exe</ModulePath>
+      <ModuleTime>2017-02-19T15:18:06Z</ModuleTime>
+      <ModuleName>xunit.console</ModuleName>
+      <Classes />
+    </Module>
+    <Module skippedDueTo="MissingPdb" hash="6B-6F-B8-5B-DC-B5-68-78-DD-41-47-3F-3F-E9-C3-E6-50-F8-3A-87">
+      <ModulePath>C:\Users\Richard\Projects\EventSourcing\src\packages\xunit.runner.console.2.2.0\tools\xunit.runner.utility.net452.dll</ModulePath>
+      <ModuleTime>2017-02-19T15:18:06Z</ModuleTime>
+      <ModuleName>xunit.runner.utility.net452</ModuleName>
+      <Classes />
+    </Module>
+    <Module skippedDueTo="MissingPdb" hash="9E-A9-5D-7F-86-82-4D-02-7D-07-AD-C0-17-06-5D-73-8F-1F-28-44">
+      <ModulePath>C:\Users\Richard\Projects\EventSourcing\src\packages\xunit.runner.console.2.2.0\tools\xunit.abstractions.dll</ModulePath>
+      <ModuleTime>2017-02-19T15:18:06Z</ModuleTime>
+      <ModuleName>xunit.abstractions</ModuleName>
+      <Classes />
+    </Module>
+    <Module skippedDueTo="Filter" hash="C1-11-51-A0-A1-41-F6-FE-4C-D6-50-59-23-D6-12-77-CB-82-4A-2F">
+      <ModulePath>C:\WINDOWS\Microsoft.Net\assembly\GAC_MSIL\System.Core\v4.0_4.0.0.0__b77a5c561934e089\System.Core.dll</ModulePath>
+      <ModuleTime>2017-03-04T00:26:40.5910385Z</ModuleTime>
+      <ModuleName>System.Core</ModuleName>
+      <Classes />
+    </Module>
+    <Module skippedDueTo="MissingPdb" hash="A7-58-FE-BD-E7-A0-1D-C9-FD-27-C1-11-E2-74-AE-E4-55-1D-FB-81">
+      <ModulePath>C:\Users\Richard\Projects\EventSourcing\src\packages\xunit.runner.console.2.2.0\tools\xunit.runner.reporters.net452.dll</ModulePath>
+      <ModuleTime>2017-02-19T15:18:06Z</ModuleTime>
+      <ModuleName>xunit.runner.reporters.net452</ModuleName>
+      <Classes />
+    </Module>
+    <Module skippedDueTo="Filter" hash="4F-21-10-E6-18-64-7D-61-84-1D-01-2E-E8-10-CE-5F-73-21-43-95">
+      <ModulePath>C:\WINDOWS\Microsoft.Net\assembly\GAC_MSIL\System.Net.Http\v4.0_4.0.0.0__b03f5f7f11d50a3a\System.Net.Http.dll</ModulePath>
+      <ModuleTime>2015-10-30T07:19:38.1276408Z</ModuleTime>
+      <ModuleName>System.Net.Http</ModuleName>
+      <Classes />
+    </Module>
+    <Module skippedDueTo="Filter" hash="C0-93-FE-4F-FD-12-B2-6F-B4-CA-85-4A-31-E8-FF-BB-2B-7C-0C-73">
+      <ModulePath>C:\WINDOWS\Microsoft.Net\assembly\GAC_MSIL\System\v4.0_4.0.0.0__b77a5c561934e089\System.dll</ModulePath>
+      <ModuleTime>2016-04-27T06:31:03.8601995Z</ModuleTime>
+      <ModuleName>System</ModuleName>
+      <Classes />
+    </Module>
+    <Module skippedDueTo="Filter" hash="1A-17-06-5D-9F-3F-5D-49-2A-B9-FC-1B-90-7B-5A-DE-10-A3-D2-A0">
+      <ModulePath>C:\WINDOWS\Microsoft.Net\assembly\GAC_64\System.Web\v4.0_4.0.0.0__b03f5f7f11d50a3a\System.Web.dll</ModulePath>
+      <ModuleTime>2017-01-28T02:19:13.3294427Z</ModuleTime>
+      <ModuleName>System.Web</ModuleName>
+      <Classes />
+    </Module>
+  </Modules>
+</CoverageSession>
