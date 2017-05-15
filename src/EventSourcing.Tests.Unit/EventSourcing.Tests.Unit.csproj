@@ -73,7 +73,10 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="AutoMoqDataAttribute.cs" />
+    <Compile Include="AggregateTests.cs" />
+    <Compile Include="Fixture\AutoMoqDataAttribute.cs" />
+    <Compile Include="Fixture\NoneSnapshotable.cs" />
+    <Compile Include="Fixture\NonSnapshotableCreatedEvent.cs" />
     <Compile Include="RepositoryTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

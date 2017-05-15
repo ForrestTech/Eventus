@@ -1,5 +1,5 @@
 using System;
-using EventSourcing.Event;
+using EventSourcing.Events;
 
 namespace EventSourcing.Samples.Core.Commands
 {

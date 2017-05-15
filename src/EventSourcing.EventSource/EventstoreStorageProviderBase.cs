@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Text;
-using EventSourcing.Event;
+using EventSourcing.Events;
 using EventSourcing.Storage;
 using EventStore.ClientAPI;
 using Newtonsoft.Json;
@@ -42,7 +42,7 @@ namespace EventSourcing.EventStore
             var returnType = Type.GetType(header.ClrType);
 
             return
-                (Event.Event)JsonConvert.DeserializeObject(Encoding.UTF8.GetString(returnedEvent.Event.Data), returnType,
+                (Event)JsonConvert.DeserializeObject(Encoding.UTF8.GetString(returnedEvent.Event.Data), returnType,
                     GetSerializerSettings());
         }
 

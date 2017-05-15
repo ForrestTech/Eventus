@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using EventSourcing.Event;
+using EventSourcing.Events;
 using EventSourcing.Exceptions;
 
 namespace EventSourcing.Domain

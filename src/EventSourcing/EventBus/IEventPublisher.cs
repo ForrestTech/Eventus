@@ -1,5 +1,5 @@
 using System.Threading.Tasks;
-using EventSourcing.Event;
+using EventSourcing.Events;
 
 namespace EventSourcing.EventBus
 {

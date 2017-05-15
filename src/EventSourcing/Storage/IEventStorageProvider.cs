@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using EventSourcing.Domain;
-using EventSourcing.Event;
+using EventSourcing.Events;
 
 namespace EventSourcing.Storage
 {

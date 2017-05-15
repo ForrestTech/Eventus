@@ -3,8 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using EventSourcing.Domain;
-using EventSourcing.Event;
 using EventSourcing.EventBus;
+using EventSourcing.Events;
 using EventSourcing.Exceptions;
 
 namespace EventSourcing.Storage
@@ -29,7 +29,7 @@ namespace EventSourcing.Storage
             var isSnapshottable = typeof(ISnapshottable).IsAssignableFrom(typeof(TAggregate));
             Snapshot snapshot = null;
 
-            if ((isSnapshottable) && (_snapshotStorageProvider != null))
+            if (isSnapshottable)
             {
                 snapshot = await _snapshotStorageProvider.GetSnapshotAsync(typeof(TAggregate), id)
                     .ConfigureAwait(false);
