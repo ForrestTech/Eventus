@@ -9,15 +9,15 @@ namespace EventSourcing.Samples.Infrastructure.EventStore
 {
     public class EventStorageProviderFactory
     {
-        public static Task<IEventStorageProvider> CreateAsync()
+        public static Task<IEventStorageProvider> CreateAsync(bool addLogging = false)
         {
             var provider = ConfigurationManager.AppSettings["Provider"].ToLowerInvariant();
             switch (provider)
             {
                 case Constants.Eventstore:
-                    return EventStoreFactory.CreateEventStoreEventStorageProviderAsync();
+                    return EventStoreFactory.CreateEventStoreEventStorageProviderAsync(addLogging);
                 case Constants.DocumentDb:
-                    return DocumentDbFactory.CreateDocumentDbEventProviderAsync();
+                    return DocumentDbFactory.CreateDocumentDbEventProviderAsync(addLogging);
                 default:
                     throw new ConfigurationErrorsException($"Unrecognized provider '{provider}' provide a valid provider");
             }

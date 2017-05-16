@@ -6,11 +6,14 @@ using EventSourcing.Domain;
 using EventSourcing.EventBus;
 using EventSourcing.Events;
 using EventSourcing.Exceptions;
+using EventSourcing.Logging;
 
 namespace EventSourcing.Storage
 {
     public class Repository : IRepository
     {
+        private static readonly ILog Logger = LogProvider.GetCurrentClassLogger();
+
         private readonly IEventStorageProvider _eventStorageProvider;
         private readonly ISnapshotStorageProvider _snapshotStorageProvider;
         private readonly IEventPublisher _eventPublisher;
@@ -21,11 +24,10 @@ namespace EventSourcing.Storage
             _snapshotStorageProvider = snapshotStorageProvider ?? throw new ArgumentNullException(nameof(snapshotStorageProvider));
             _eventPublisher = eventPublisher ?? throw new ArgumentNullException(nameof(eventPublisher));
         }
-        
+
         public async Task<TAggregate> GetByIdAsync<TAggregate>(Guid id) where TAggregate : Aggregate
         {
             var item = default(TAggregate);
-
             var isSnapshottable = typeof(ISnapshottable).IsAssignableFrom(typeof(TAggregate));
             Snapshot snapshot = null;
 
@@ -37,8 +39,11 @@ namespace EventSourcing.Storage
 
             if (snapshot != null)
             {
+                Logger.Debug("Building aggregate from snapshot");
+
                 item = ConstructAggregate<TAggregate>();
                 ((ISnapshottable)item).ApplySnapshot(snapshot);
+
                 var events = await _eventStorageProvider.GetEventsAsync(typeof(TAggregate), id, snapshot.Version + 1)
                     .ConfigureAwait(false);
                 item.LoadFromHistory(events);
@@ -59,7 +64,13 @@ namespace EventSourcing.Storage
 
         public Task SaveAsync<TAggregate>(TAggregate aggregate) where TAggregate : Aggregate
         {
-            return aggregate.HasUncommittedChanges() ? CommitChangesAsync(aggregate) : Task.CompletedTask;
+            if (aggregate.HasUncommittedChanges())
+            {
+                Logger.DebugFormat("Aggregate has uncommitted changes");
+
+                return CommitChangesAsync(aggregate);
+            }
+            return Task.CompletedTask;
         }
 
         private async Task CommitChangesAsync(Aggregate aggregate)
@@ -69,17 +80,18 @@ namespace EventSourcing.Storage
             var item = await _eventStorageProvider.GetLastEventAsync(aggregate.GetType(), aggregate.Id)
                 .ConfigureAwait(false);
 
-
-            if ((item != null) && (expectedVersion == (int)Aggregate.StreamState.NoStream))
+            if (item != null && expectedVersion == (int)Aggregate.StreamState.NoStream)
             {
-                throw new AggregateCreationException(aggregate.Id, item.TargetVersion +1);
+                throw new AggregateCreationException(aggregate.Id, item.TargetVersion + 1);
             }
-            if ((item != null) && ((item.TargetVersion + 1) != expectedVersion))
+            if (item != null && item.TargetVersion + 1 != expectedVersion)
             {
                 throw new ConcurrencyException(aggregate.Id);
             }
 
             var changesToCommit = aggregate.GetUncommittedChanges().ToList();
+
+            Logger.Debug("Performing pre commit checks");
 
             //perform pre commit actions
             foreach (var e in changesToCommit)
@@ -101,7 +113,7 @@ namespace EventSourcing.Storage
             //If the Aggregate implements snapshottable
             var snapshottable = aggregate as ISnapshottable;
 
-            if ((snapshottable != null && _snapshotStorageProvider != null))
+            if (snapshottable != null && _snapshotStorageProvider != null)
             {
                 //Every N events we save a snapshot
                 if (ShouldCreateSnapShot(aggregate, changesToCommit))
@@ -128,7 +140,7 @@ namespace EventSourcing.Storage
         {
             e.EventCommittedTimestamp = Clock.Now();
         }
-        
+
         private static TAggregate ConstructAggregate<TAggregate>()
         {
             return (TAggregate)Activator.CreateInstance(typeof(TAggregate), true);
