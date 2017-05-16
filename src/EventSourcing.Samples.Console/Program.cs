@@ -3,6 +3,8 @@ using EventSourcing.Samples.Core.Commands;
 using EventSourcing.Samples.Core.Domain;
 using EventSourcing.Samples.Core.Handlers;
 using EventSourcing.Samples.Infrastructure.Factories;
+using EventSourcing.Storage;
+using Serilog;
 using static System.Console;
 
 namespace EventSourcing.Samples.Console
@@ -11,22 +13,29 @@ namespace EventSourcing.Samples.Console
     {
         static void Main(string[] args)
         {
-            WriteLine("Event sourcing sample");
+            var log = new LoggerConfiguration()
+                .WriteTo.ColoredConsole(outputTemplate: "{Timestamp:HH:mm} [{Level}] ({Name:l}) {Message}{NewLine}{Exception}")
+                .MinimumLevel.Debug()
+                .CreateLogger();
 
-            WriteLine("Tearing down provider");
+            Log.Logger = log;
+
+            log.Information("Event sourcing sample");
+
+            log.Information("Tearing down provider");
 
             var cleaner = TearDownFactory.Create();
             cleaner.TearDownAsync().Wait();
 
-            WriteLine("Provider torn down");
+            log.Information("Provider torn down");
 
             var accountId = Guid.NewGuid();
 
-            var repo = RepositoryFactory.CreateAsync().Result;
+            var repo = new RepositoryLoggingDecorator(RepositoryFactory.CreateAsync().Result);
 
             var handler = new BankAccountCommandHandlers(repo);
 
-            WriteLine("Running set of commands");
+            log.Information("Running set of commands");
 
             handler.HandleAsync(new CreateAccountCommand(Guid.NewGuid(), accountId, "Joe Bloggs")).Wait();
             handler.HandleAsync(new DepostiFundsCommand(Guid.NewGuid(), accountId, 10)).Wait();
@@ -35,18 +44,18 @@ namespace EventSourcing.Samples.Console
             handler.HandleAsync(new DepostiFundsCommand(Guid.NewGuid(), accountId, 5)).Wait();
             handler.HandleAsync(new WithdrawFundsCommand(Guid.NewGuid(), accountId, 10)).Wait();
 
-            WriteLine("Commands Run");
+            log.Information("Commands Run");
 
-            WriteLine("Get aggregate from store");
+            log.Information("Get aggregate from store");
 
             var fromStore = repo.GetByIdAsync<BankAccount>(accountId).Result;
 
-            WriteLine($"Bank account ID: {fromStore.Id}");
-            WriteLine($"Balance: {fromStore.CurrentBalance}");
-            WriteLine($"Last committed version: {fromStore.LastCommittedVersion}");
-            WriteLine($"Transaction Count: {fromStore.Transactions.Count}");
+            log.Information($"Bank account ID: {fromStore.Id}");
+            log.Information($"Balance: {fromStore.CurrentBalance}");
+            log.Information($"Last committed version: {fromStore.LastCommittedVersion}");
+            log.Information($"Transaction Count: {fromStore.Transactions.Count}");
 
-            WriteLine("Event sourcing sample ran");
+            log.Information("Event sourcing sample ran");
 
             ReadLine();
         }
