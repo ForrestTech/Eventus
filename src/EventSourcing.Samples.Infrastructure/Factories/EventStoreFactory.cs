@@ -3,6 +3,7 @@ using System.Configuration;
 using System.Net;
 using System.Threading.Tasks;
 using EventSourcing.EventStore;
+using EventSourcing.Logging;
 using EventSourcing.Samples.Core;
 using EventSourcing.Samples.Core.EventHandlers;
 using EventSourcing.Samples.Core.ReadModel;
@@ -15,26 +16,64 @@ namespace EventSourcing.Samples.Infrastructure.Factories
     {
         private static IEventStoreConnection _connection;
 
-        public static async Task<Repository> CreateEventStoreRepositoryAsync()
+        public static async Task<IRepository> CreateEventStoreRepositoryAsync(bool addLogging = false)
         {
             var readRepo = new ReadModelRepository();
 
-            return new Repository(
-                await CreateEventStoreEventStorageProviderAsync().ConfigureAwait(false),
-                await CreateSnapshotStorageProviderAsync().ConfigureAwait(false),
+            var repo = new Repository(
+                await CreateEventStoreEventStorageProviderAsync(addLogging).ConfigureAwait(false),
+                await CreateSnapshotStorageProviderAsync(addLogging).ConfigureAwait(false),
                 new DemoPublisher(
                     new DepositEventHandler(readRepo),
                     new WithdrawalEventHandler(readRepo)));
+
+            IRepository result;
+
+            if (addLogging)
+            {
+                result = new RepositoryLoggingDecorator(repo);
+            }
+            else
+            {
+                result = repo;
+            } 
+
+            return result;
         }
 
-        public static async Task<IEventStorageProvider> CreateEventStoreEventStorageProviderAsync()
+        public static async Task<IEventStorageProvider> CreateEventStoreEventStorageProviderAsync(bool addLogging)
         {
-            return new EventstoreStorageProvider(await GetConnectionAsync().ConfigureAwait(false), GetStreamNamePrefix());
+            var eventStore = new EventstoreStorageProvider(await GetConnectionAsync().ConfigureAwait(false), GetStreamNamePrefix());
+
+            IEventStorageProvider result;
+            if (addLogging)
+            {
+                result = new EventStorageProviderLoggingDecorator(eventStore);
+            }
+            else
+            {
+                result = eventStore;
+            }
+
+            return result;
         }
 
-        public static async Task<ISnapshotStorageProvider> CreateSnapshotStorageProviderAsync()
+        public static async Task<ISnapshotStorageProvider> CreateSnapshotStorageProviderAsync(bool addLogging)
         {
-            return new EventstoreSnapshotStorageProvider(await GetConnectionAsync().ConfigureAwait(false), GetStreamNamePrefix(), 3);
+            var snapshot = new EventstoreSnapshotStorageProvider(await GetConnectionAsync().ConfigureAwait(false), GetStreamNamePrefix(), 3);
+
+            ISnapshotStorageProvider result;
+
+            if (addLogging)
+            {
+                result = new SnapshotProviderLoggingDecorator(snapshot);
+            }
+            else
+            {
+                result = snapshot;
+            }
+
+            return result;
         }
 
         private static async Task<IEventStoreConnection> GetConnectionAsync()

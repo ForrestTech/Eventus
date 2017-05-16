@@ -7,7 +7,7 @@ namespace EventSourcing.Logging
     {
         internal static void Enter(this ILog logger, string type, object argument = null, [CallerMemberName]string method = "")
         {
-            logger.InfoFormat("Entering {method} of {type} , arguments @{argument}", method, type, argument);
+            logger.InfoFormat("Entering {method} of {type} , arguments {@argument}", method, type, argument);
         }
 
         internal static void Exit(this ILog logger, string type, [CallerMemberName]string method = "")

@@ -56,8 +56,11 @@
     <Compile Include="Exceptions\ConcurrencyException.cs" />
     <Compile Include="Events\Event.cs" />
     <Compile Include="Exceptions\AggregateCreationException.cs" />
+    <Compile Include="Logging\EventStorageProviderLoggingDecorator.cs" />
     <Compile Include="Logging\LoggingDecorator.cs" />
     <Compile Include="Logging\LoggingExtensions.cs" />
+    <Compile Include="Logging\RepositoryLoggingDecorator.cs" />
+    <Compile Include="Logging\SnapshotProviderLoggingDecorator.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ReflectionHelper.cs" />
     <Compile Include="Storage\IEventStorageProvider.cs" />

@@ -3,7 +3,6 @@ using EventSourcing.Samples.Core.Commands;
 using EventSourcing.Samples.Core.Domain;
 using EventSourcing.Samples.Core.Handlers;
 using EventSourcing.Samples.Infrastructure.Factories;
-using EventSourcing.Storage;
 using Serilog;
 using static System.Console;
 
@@ -31,7 +30,7 @@ namespace EventSourcing.Samples.Console
 
             var accountId = Guid.NewGuid();
 
-            var repo = new RepositoryLoggingDecorator(RepositoryFactory.CreateAsync().Result);
+            var repo = RepositoryFactory.CreateAsync(true).Result;
 
             var handler = new BankAccountCommandHandlers(repo);
 

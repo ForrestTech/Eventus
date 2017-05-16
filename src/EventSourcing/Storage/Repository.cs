@@ -33,12 +33,8 @@ namespace EventSourcing.Storage
 
             if (isSnapshottable)
             {
-                Logger.Debug("Aggregate is snapshotable, Getting snapshot");
-
                 snapshot = await _snapshotStorageProvider.GetSnapshotAsync(typeof(TAggregate), id)
                     .ConfigureAwait(false);
-
-                Logger.Debug("Snapshot returned");
             }
 
             if (snapshot != null)
@@ -48,19 +44,13 @@ namespace EventSourcing.Storage
                 item = ConstructAggregate<TAggregate>();
                 ((ISnapshottable)item).ApplySnapshot(snapshot);
 
-                Logger.Debug($"Getting events starting at version:{snapshot.Version +1}");
-
                 var events = await _eventStorageProvider.GetEventsAsync(typeof(TAggregate), id, snapshot.Version + 1)
                     .ConfigureAwait(false);
                 item.LoadFromHistory(events);
             }
             else
             {
-                Logger.Debug("Getting event stream");
-
                 var events = (await _eventStorageProvider.GetEventsAsync(typeof(TAggregate), id).ConfigureAwait(false)).ToList();
-
-                Logger.Debug("Event stream returned");
 
                 if (events.Any())
                 {
@@ -109,13 +99,9 @@ namespace EventSourcing.Storage
                 DoPreCommitTasks(e);
             }
 
-            Logger.Debug($"Committing changes '{changesToCommit.Count}' events");
-
             //CommitAsync events to storage provider
             await _eventStorageProvider.CommitChangesAsync(aggregate)
                 .ConfigureAwait(false);
-
-            Logger.Debug("Publishing events");
 
             //Publish to event publisher asynchronously
             foreach (var e in changesToCommit)
@@ -129,13 +115,9 @@ namespace EventSourcing.Storage
 
             if (snapshottable != null && _snapshotStorageProvider != null)
             {
-                Logger.Debug("Aggregate is snapshotable");
-
                 //Every N events we save a snapshot
                 if (ShouldCreateSnapShot(aggregate, changesToCommit))
                 {
-                    Logger.Debug("Saving snapshot");
-
                     await _snapshotStorageProvider.SaveSnapshotAsync(aggregate.GetType(), snapshottable.TakeSnapshot())
                         .ConfigureAwait(false);
                 }
@@ -162,28 +144,6 @@ namespace EventSourcing.Storage
         private static TAggregate ConstructAggregate<TAggregate>()
         {
             return (TAggregate)Activator.CreateInstance(typeof(TAggregate), true);
-        }
-    }
-
-    public class RepositoryLoggingDecorator : LoggingDecorator<RepositoryLoggingDecorator>, IRepository
-    {
-        private readonly IRepository _decorated;
-
-        protected override string TypeName => "Event Sourcing Repository";
-
-        public RepositoryLoggingDecorator(IRepository decorated)
-        {
-            _decorated = decorated;
-        }
-
-        public Task SaveAsync<TAggregate>(TAggregate aggregate) where TAggregate : Aggregate
-        {
-            return LogMethodCallAsync(() => _decorated.SaveAsync(aggregate), aggregate);
-        }
-
-        public Task<TAggregate> GetByIdAsync<TAggregate>(Guid id) where TAggregate : Aggregate
-        {
-            return LogMethodCallAsync(() => _decorated.GetByIdAsync<TAggregate>(id), id);
         }
     }
 }
