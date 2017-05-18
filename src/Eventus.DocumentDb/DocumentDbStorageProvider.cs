@@ -84,7 +84,7 @@ namespace Eventus.DocumentDb
             }
         }
 
-        public Task CommitChangesAsync(Aggregate aggregate)
+        public async Task CommitChangesAsync(Aggregate aggregate)
         {
             var events = aggregate.GetUncommittedChanges();
 
@@ -98,11 +98,10 @@ namespace Eventus.DocumentDb
                 {
                     committed++;
                     var documentEvent = CreateDocumentDbEvent(aggregate, @event, committed);
-                    return Client.CreateDocumentAsync(collectionUri, documentEvent);
+                    await Client.CreateDocumentAsync(collectionUri, documentEvent)
+                        .ConfigureAwait(false);
                 }
             }
-
-            return Task.CompletedTask;
         }
 
         private static DocumentDbAggregateEvent CreateDocumentDbEvent(Aggregate aggregate, IEvent @event, int commitNumber)
