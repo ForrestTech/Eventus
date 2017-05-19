@@ -44,7 +44,6 @@ namespace Eventus.DocumentDb
 
                 return _serializerSetting;
             }
-
         }
 
         protected DocumentDbProviderBase(DocumentClient client, string databaseId)
