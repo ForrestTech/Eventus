@@ -16,13 +16,12 @@ namespace Eventus.SqlServer
 {
     public class SqlServerEventStorageProvider : IEventStorageProvider
     {
+        private readonly string _connectionString;
         private static JsonSerializerSettings _serializerSetting;
 
-        private readonly SqlConnection _connection;
-
-        public SqlServerEventStorageProvider(SqlConnection connection)
+        public SqlServerEventStorageProvider(string connectionString)
         {
-            _connection = connection;
+            _connectionString = connectionString ?? throw new ArgumentNullException(nameof(connectionString));
         }
 
         protected static JsonSerializerSettings SerializerSettings
@@ -58,26 +57,42 @@ namespace Eventus.SqlServer
             //create snapshot table if needed
         }
 
+        private async Task<SqlConnection> GetOpenConnectionAsync()
+        {
+            var connection = new SqlConnection(_connectionString);
+            await connection.OpenAsync().ConfigureAwait(false);
+            return connection;
+        }
+
         public async Task<IEnumerable<IEvent>> GetEventsAsync(Type aggregateType, Guid aggregateId, int start = 0, int count = int.MaxValue)
         {
-            var sql = $"Select top {count} * from {TableName(aggregateType)} where AggregateId = @aggregateId and AggregateVersion >= @start order by AggregateVersion";
-            var events = await _connection.QueryAsync<AggregateEvent>(sql, new { aggregateId, start, count })
-                .ConfigureAwait(false);
+            var connection = await GetOpenConnectionAsync().ConfigureAwait(false);
 
-            var result = events.Select(DeserializeEvent);
+            using (connection)
+            {
+                var sql = $"Select top {count} * from {TableName(aggregateType)} where AggregateId = @aggregateId and AggregateVersion >= @start order by AggregateVersion";
+                var events = await connection.QueryAsync<AggregateEvent>(sql, new {aggregateId, start, count})
+                    .ConfigureAwait(false);
 
-            return result;
+                var result = events.Select(DeserializeEvent);
+                return result;
+            }
         }
 
         public async Task<IEvent> GetLastEventAsync(Type aggregateType, Guid aggregateId)
         {
-            var sql = $"Select top 1 * from {TableName(aggregateType)} where AggregateId = @aggregateId order by desc AggregateVersion";
-            var result = await _connection.QueryAsync<AggregateEvent>(sql, new { aggregateId })
-                .ConfigureAwait(false);
+            var connection = await GetOpenConnectionAsync().ConfigureAwait(false);
 
-            var @event = result.SingleOrDefault();
+            using (connection)
+            {
+                var sql = $"Select top 1 * from {TableName(aggregateType)} where AggregateId = @aggregateId order by desc AggregateVersion";
+                var result = await connection.QueryAsync<AggregateEvent>(sql, new {aggregateId})
+                    .ConfigureAwait(false);
 
-            return @event == null ? null : DeserializeEvent(@event);
+                var @event = result.SingleOrDefault();
+
+                return @event == null ? null : DeserializeEvent(@event);
+            }
         }
 
         public async Task CommitChangesAsync(Aggregate aggregate)
@@ -88,25 +103,30 @@ namespace Eventus.SqlServer
             {
                 var committed = aggregate.LastCommittedVersion;
 
-                using (var transactionScope = new TransactionScope())
+                var connection = await GetOpenConnectionAsync().ConfigureAwait(false);
+
+                using (connection)
                 {
-                    foreach (var @event in events)
+                    using (var transactionScope = new TransactionScope())
                     {
-                        committed++;
-                        //todo move to bulk insert
-                        var sql = $"insert into {TableName(aggregate.GetType())} (Id, AggregateId, TargetVersion, ClrType, AggregateVersion, TimeStamp, Data) values (@Id, @AggregateId, @TargetVersion, @ClrType, @AggregateVersion, @TimeStamp, @Data)";
-                        await _connection.ExecuteAsync(sql, new
+                        foreach (var @event in events)
                         {
-                            Id = @event.CorrelationId,
-                            @event.AggregateId,
-                            @event.TargetVersion,
-                            AggregateVersion = committed,
-                            ClrType = GetClrTypeName(@event),
-                            TimeStamp = @event.EventCommittedTimestamp,
-                            Data = SerializeEvent(@event)
-                        }).ConfigureAwait(false);
+                            committed++;
+                            //todo move to bulk insert
+                            var sql = $"insert into {TableName(aggregate.GetType())} (Id, AggregateId, TargetVersion, ClrType, AggregateVersion, TimeStamp, Data) values (@Id, @AggregateId, @TargetVersion, @ClrType, @AggregateVersion, @TimeStamp, @Data)";
+                            await connection.ExecuteAsync(sql, new
+                            {
+                                Id = @event.CorrelationId,
+                                @event.AggregateId,
+                                @event.TargetVersion,
+                                AggregateVersion = committed,
+                                ClrType = GetClrTypeName(@event),
+                                TimeStamp = @event.EventCommittedTimestamp,
+                                Data = SerializeEvent(@event)
+                            }).ConfigureAwait(false);
+                        }
+                        transactionScope.Complete();
                     }
-                    transactionScope.Complete();
                 }
             }
         }
