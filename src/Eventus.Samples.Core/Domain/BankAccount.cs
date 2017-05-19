@@ -38,7 +38,7 @@ namespace Eventus.Samples.Core.Domain
             }
         }
 
-        public void Deposit(decimal amount, Guid correlationId)
+        public void Deposit(decimal amount, Guid correlationId = new Guid())
         {
             var deposit = new FundsDepositedEvent(Id, CurrentVersion, correlationId, amount);
             ApplyEvent(deposit);

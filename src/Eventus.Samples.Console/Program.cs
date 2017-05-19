@@ -2,6 +2,7 @@
 using Eventus.Samples.Core.Commands;
 using Eventus.Samples.Core.Domain;
 using Eventus.Samples.Core.Handlers;
+using Eventus.Samples.Infrastructure;
 using Eventus.Samples.Infrastructure.Factories;
 using Serilog;
 
@@ -29,7 +30,9 @@ namespace Eventus.Samples.Console
 
             var accountId = Guid.NewGuid();
 
-            var repo = RepositoryFactory.CreateAsync(true).Result;
+            var repo = RepositoryFactory.CreateAsync(true, true).Result;
+            
+            
 
             var handler = new BankAccountCommandHandlers(repo);
 

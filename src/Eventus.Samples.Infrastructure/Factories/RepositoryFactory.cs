@@ -7,7 +7,7 @@ namespace Eventus.Samples.Infrastructure.Factories
 {
     public class RepositoryFactory
     {
-        public static Task<IRepository> CreateAsync(bool addLogging = false)
+        public static Task<IRepository> CreateAsync(bool initProvider = false, bool addLogging = false)
         {
             var provider = ConfigurationManager.AppSettings["Provider"].ToLowerInvariant();
             switch (provider)
@@ -15,7 +15,7 @@ namespace Eventus.Samples.Infrastructure.Factories
                 case Constants.Eventstore:
                     return EventStoreFactory.CreateEventStoreRepositoryAsync(addLogging);
                 case Constants.DocumentDb:
-                    return DocumentDbFactory.CreateDocumentDbRepositoryAsync(addLogging);
+                    return DocumentDbFactory.CreateDocumentDbRepositoryAsync(initProvider, addLogging);
                 default:
                     throw new ConfigurationErrorsException($"Unrecognized provider '{provider}' provide a valid provider");
             }

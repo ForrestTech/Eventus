@@ -12,16 +12,16 @@ using Microsoft.Azure.Documents.Client;
 
 namespace Eventus.Samples.Infrastructure.DocumentDb
 {
-    public class DocumentDbFactory
+    public static class DocumentDbFactory
     {
         private static DocumentClient _client;
 
-        public static async Task<IRepository> CreateDocumentDbRepositoryAsync(bool addLogging)
+        public static async Task<IRepository> CreateDocumentDbRepositoryAsync(bool initProvider, bool addLogging)
         {
             var readRepo = new ReadModelRepository();
 
             var repository = new Repository(
-                await CreateDocumentDbEventProviderAsync(addLogging).ConfigureAwait(false),
+                await CreateDocumentDbEventProviderAsync(initProvider, addLogging).ConfigureAwait(false),
                 await CreateDocumentDbSnapshotProviderAsync(addLogging).ConfigureAwait(false),
                 new DemoPublisher(
                     new DepositEventHandler(readRepo),
@@ -46,13 +46,20 @@ namespace Eventus.Samples.Infrastructure.DocumentDb
             return new DocumentDbTeardown(Client, DatabaseId);
         }
 
-        public static Task<IEventStorageProvider> CreateDocumentDbEventProviderAsync(bool addLogging)
+        public static async Task<IEventStorageProvider> CreateDocumentDbEventProviderAsync(bool initProvider, bool addLogging)
         {
-            var repo = new DocumentDbStorageProvider(Client, DatabaseId);
+            var provider = new DocumentDbStorageProvider(Client, DatabaseId);
             var result = addLogging ?
-                (IEventStorageProvider) new EventStorageProviderLoggingDecorator(repo) : 
-                repo;
-            return Task.FromResult(result);
+                (IEventStorageProvider) new EventStorageProviderLoggingDecorator(provider) : 
+                provider;
+
+            if (initProvider)
+            {
+                await StorageProviderInitialiser.InitAsync(provider)
+                    .ConfigureAwait(false);
+            }
+
+            return result;
         }
 
         public static Task<ISnapshotStorageProvider> CreateDocumentDbSnapshotProviderAsync(bool addLogging)
