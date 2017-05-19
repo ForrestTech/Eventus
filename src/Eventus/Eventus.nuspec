@@ -7,8 +7,8 @@
     <description>A framework that supports event sourcing by abstracting the persistence and supporting multiple storage mechanisms.</description>
     <authors>Richard Forrest</authors>
     <owners>Richard Forrest</owners>
-    <licenseUrl>https://github.com/feanz/EventSourcing/blob/master/LICENSE</licenseUrl>
-    <projectUrl>https://github.com/feanz/EventSourcing</projectUrl>    
+    <licenseUrl>https://github.com/feanz/Eventus/blob/master/LICENSE</licenseUrl>
+    <projectUrl>https://github.com/feanz/Eventus</projectUrl>    
     <requireLicenseAcceptance>false</requireLicenseAcceptance>    
   </metadata>
 </package>
