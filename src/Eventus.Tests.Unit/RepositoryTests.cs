@@ -105,9 +105,9 @@ namespace Eventus.Tests.Unit
                     It.Is<int>(c => c == int.MaxValue)))
                 .Returns(Task.FromResult<IEnumerable<IEvent>>(new List<IEvent>
                 {
-                    new AccountCreatedEvent(aggregateId,0,"Joe Bloggs"),
-                    new FundsDepositedEvent(aggregateId,1,10),
-                    new FundsWithdrawalEvent(aggregateId,2,5)
+                    new AccountCreatedEvent(aggregateId,  0, Guid.NewGuid(), "Joe Bloggs"),
+                    new FundsDepositedEvent(aggregateId,  1, Guid.NewGuid(), 10),
+                    new FundsWithdrawalEvent(aggregateId, 2, Guid.NewGuid(), 5)
                 }));
 
             var actual = await repo.GetByIdAsync<BankAccount>(aggregateId)
@@ -139,8 +139,8 @@ namespace Eventus.Tests.Unit
                     It.Is<int>(c => c == int.MaxValue)))
                 .Returns(Task.FromResult<IEnumerable<IEvent>>(new List<IEvent>
                 {
-                    new FundsDepositedEvent(aggregateId,1,10),
-                    new FundsWithdrawalEvent(aggregateId,2,5)
+                    new FundsDepositedEvent(aggregateId, 1, Guid.NewGuid(), 10),
+                    new FundsWithdrawalEvent(aggregateId,2, Guid.NewGuid(), 5)
                 }));
 
             var actual = await repo.GetByIdAsync<BankAccount>(aggregateId)
@@ -207,7 +207,7 @@ namespace Eventus.Tests.Unit
             var aggregate = new BankAccount();
             aggregate.LoadFromHistory(new List<IEvent>
             {
-                new AccountCreatedEvent(aggregateId, 0, "Jeff")
+                new AccountCreatedEvent(aggregateId, 0, Guid.NewGuid(), "Jeff")
             });
             aggregate.Deposit(100);
 

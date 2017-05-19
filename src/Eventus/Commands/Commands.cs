@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Eventus.Samples.Core.Commands
+namespace Eventus.Commands
 {
     public class Command : ICommand
     {

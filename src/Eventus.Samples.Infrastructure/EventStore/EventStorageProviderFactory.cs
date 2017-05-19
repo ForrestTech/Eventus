@@ -16,7 +16,7 @@ namespace Eventus.Samples.Infrastructure.EventStore
                 case Constants.Eventstore:
                     return EventStoreFactory.CreateEventStoreEventStorageProviderAsync(addLogging);
                 case Constants.DocumentDb:
-                    return DocumentDbFactory.CreateDocumentDbEventProviderAsync(addLogging);
+                    return DocumentDbFactory.CreateDocumentDbEventProviderAsync(false, addLogging);
                 default:
                     throw new ConfigurationErrorsException($"Unrecognized provider '{provider}' provide a valid provider");
             }

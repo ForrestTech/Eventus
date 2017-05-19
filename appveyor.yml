@@ -30,6 +30,7 @@ test_script:
     codecov -f "build\coverage.xml" -X gcov
 artifacts:
 - path: Eventus.*.nupkg
+- path: build\coverage.xml
 deploy:
 - provider: NuGet
   server: https://www.nuget.org/api/v2/package

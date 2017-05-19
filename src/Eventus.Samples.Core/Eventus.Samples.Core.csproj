@@ -59,8 +59,6 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Commands\Commands.cs" />
-    <Compile Include="Commands\ICommand.cs" />
     <Compile Include="Domain\TransactionType.cs" />
     <Compile Include="ReadModel\AccountSummary.cs" />
     <Compile Include="DemoPublisher.cs" />

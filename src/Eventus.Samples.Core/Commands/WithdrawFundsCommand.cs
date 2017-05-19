@@ -1,4 +1,5 @@
 ﻿using System;
+using Eventus.Commands;
 
 namespace Eventus.Samples.Core.Commands
 {

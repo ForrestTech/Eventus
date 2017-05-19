@@ -7,7 +7,7 @@ namespace Eventus.Samples.Core.Events
     {
         public string Name { get; protected set; }
 
-        public AccountCreatedEvent(Guid aggregateId, int version, string name) : base(aggregateId, version)
+        public AccountCreatedEvent(Guid aggregateId, int version, Guid correlationId, string name) : base(aggregateId, version, correlationId)
         {
             Name = name;
         }

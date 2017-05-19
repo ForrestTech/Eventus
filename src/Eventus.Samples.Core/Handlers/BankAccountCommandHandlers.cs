@@ -16,26 +16,32 @@ namespace Eventus.Samples.Core.Handlers
             _repository = repository;
         }
 
-        public async Task HandleAsync(CreateAccountCommand command)
+        public Task HandleAsync(CreateAccountCommand command)
         {
-            var account = new BankAccount(command.AggregateId, command.Name);
-            await _repository.SaveAsync(account);
+            var account = new BankAccount(command.AggregateId, command.Name, command.CorrelationId);
+            return _repository.SaveAsync(account);
         }
 
         public async Task HandleAsync(WithdrawFundsCommand command)
         {
-            var account = await _repository.GetByIdAsync<BankAccount>(command.AggregateId);
-            account.WithDrawFunds(command.Amount);
+            var account = await _repository.GetByIdAsync<BankAccount>(command.AggregateId)
+                .ConfigureAwait(false);
 
-            await _repository.SaveAsync(account);
+            account.WithDrawFunds(command.Amount, command.CorrelationId);
+
+            await _repository.SaveAsync(account)
+                .ConfigureAwait(false);
         }
 
         public async Task HandleAsync(DepostiFundsCommand command)
         {
-            var account = await _repository.GetByIdAsync<BankAccount>(command.AggregateId);
-            account.Deposit(command.Amount);
+            var account = await _repository.GetByIdAsync<BankAccount>(command.AggregateId)
+                .ConfigureAwait(false);
 
-            await _repository.SaveAsync(account);
+            account.Deposit(command.Amount, command.CorrelationId);
+
+            await _repository.SaveAsync(account)
+                .ConfigureAwait(false);
         }
     }
 }
