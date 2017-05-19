@@ -22,25 +22,25 @@ namespace Eventus.Samples.Core.Domain
             Transactions = new List<Transaction>();
         }
 
-        public BankAccount(Guid id, string name): this()
+        public BankAccount(Guid id, string name, Guid correlationId = new Guid()) : this()
         {
             //Pattern: Create the event and call ApplyEvent(Event)
-            var accountCreated = new AccountCreatedEvent(id, CurrentVersion, name);
+            var accountCreated = new AccountCreatedEvent(id, CurrentVersion, correlationId, name);
             ApplyEvent(accountCreated);
         }
 
-        public void WithDrawFunds(decimal amount)
+        public void WithDrawFunds(decimal amount, Guid correlationId = new Guid())
         {
             if (CurrentBalance >= amount)
             {
-                var withdraw = new FundsWithdrawalEvent(Id, CurrentVersion, amount);
+                var withdraw = new FundsWithdrawalEvent(Id, CurrentVersion, correlationId, amount);
                 ApplyEvent(withdraw);
             }
         }
 
-        public void Deposit(decimal amount)
+        public void Deposit(decimal amount, Guid correlationId)
         {
-            var deposit = new FundsDepositedEvent(Id, CurrentVersion, amount);
+            var deposit = new FundsDepositedEvent(Id, CurrentVersion, correlationId, amount);
             ApplyEvent(deposit);
         }
 

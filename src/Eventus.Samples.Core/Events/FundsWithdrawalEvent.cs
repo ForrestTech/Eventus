@@ -7,7 +7,7 @@ namespace Eventus.Samples.Core.Events
     {
         public decimal Amount { get; protected set; }
 
-        public FundsWithdrawalEvent(Guid aggregateId, int version, decimal amount) : base(aggregateId, version)
+        public FundsWithdrawalEvent(Guid aggregateId, int version, Guid correlationId, decimal amount) : base(aggregateId, version, correlationId)
         {
             Amount = amount;
         }

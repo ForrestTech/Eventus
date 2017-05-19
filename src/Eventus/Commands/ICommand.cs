@@ -1,7 +1,7 @@
 using System;
 using Eventus.Events;
 
-namespace Eventus.Samples.Core.Commands
+namespace Eventus.Commands
 {
     public interface ICommand : IMessage
     {
