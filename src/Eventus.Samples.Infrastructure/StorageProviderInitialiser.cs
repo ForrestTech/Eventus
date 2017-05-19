@@ -11,7 +11,7 @@ namespace Eventus.Samples.Infrastructure
     {
         public static async Task InitAsync(object provider)
         {
-            var providerToUse = ConfigurationManager.AppSettings["Provider"].ToLowerInvariant();
+            var providerToUse = ConfigurationManager.AppSettings["StorageProvider"].ToLowerInvariant();
             switch (providerToUse)
             {
                 case Constants.Eventstore:

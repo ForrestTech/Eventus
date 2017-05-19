@@ -2,7 +2,6 @@
 using Eventus.Samples.Core.Commands;
 using Eventus.Samples.Core.Domain;
 using Eventus.Samples.Core.Handlers;
-using Eventus.Samples.Infrastructure;
 using Eventus.Samples.Infrastructure.Factories;
 using Serilog;
 
@@ -26,13 +25,11 @@ namespace Eventus.Samples.Console
             var cleaner = TearDownFactory.Create();
             cleaner.TearDownAsync().Wait();
 
-            log.Information("Provider torn down");
+            log.Information("StorageProvider torn down");
 
             var accountId = Guid.NewGuid();
 
             var repo = RepositoryFactory.CreateAsync(true, true).Result;
-            
-            
 
             var handler = new BankAccountCommandHandlers(repo);
 

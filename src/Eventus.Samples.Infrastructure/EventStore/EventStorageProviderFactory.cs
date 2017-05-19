@@ -10,7 +10,7 @@ namespace Eventus.Samples.Infrastructure.EventStore
     {
         public static Task<IEventStorageProvider> CreateAsync(bool addLogging = false)
         {
-            var provider = ConfigurationManager.AppSettings["Provider"].ToLowerInvariant();
+            var provider = ConfigurationManager.AppSettings["StorageProvider"].ToLowerInvariant();
             switch (provider)
             {
                 case Constants.Eventstore:

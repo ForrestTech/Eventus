@@ -9,7 +9,7 @@ namespace Eventus.Samples.Infrastructure.Factories
     {
         public static ITeardown Create()
         {
-            var provider = ConfigurationManager.AppSettings["Provider"].ToLowerInvariant();
+            var provider = ConfigurationManager.AppSettings["StorageProvider"].ToLowerInvariant();
             switch (provider)
             {
                 case Constants.Eventstore:
