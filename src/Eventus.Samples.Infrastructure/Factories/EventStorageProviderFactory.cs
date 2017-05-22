@@ -1,15 +1,15 @@
-using System.Configuration;
+﻿using System.Configuration;
 using System.Threading.Tasks;
-using Eventus.Cleanup;
+using Eventus.Storage;
 
 namespace Eventus.Samples.Infrastructure.Factories
 {
-    public class TearDownFactory
+    public class EventStorageProviderFactory
     {
-        public static async Task<ITeardown> CreateAsync()
+        public static async Task<IEventStorageProvider> CreateAsync()
         {
             var provider = StorageProviderFactory.FromString(ConfigurationManager.AppSettings[Constants.Provider].ToLowerInvariant());
-            var repo = await provider.CreateTeardownAsync().ConfigureAwait(false);
+            var repo = await provider.CreateEventStorageProviderAsync().ConfigureAwait(false);
             return repo;
         }
     }

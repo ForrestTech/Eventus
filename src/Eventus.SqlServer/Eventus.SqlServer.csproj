@@ -49,6 +49,8 @@
   <ItemGroup>
     <Compile Include="SqlServerEventStorageProvider.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="SqlServerSnapshotStorageProvider.cs" />
+    <Compile Include="SqlServerTeardown.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Eventus\Eventus.csproj">
@@ -56,9 +58,7 @@
       <Name>Eventus</Name>
     </ProjectReference>
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Scripts\" />
-  </ItemGroup>
+  <ItemGroup />
   <ItemGroup>
     <None Include="packages.config" />
   </ItemGroup>

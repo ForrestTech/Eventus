@@ -22,14 +22,15 @@ namespace Eventus.Samples.Console
 
             log.Information("Tearing down provider");
 
-            var cleaner = TearDownFactory.Create();
+            var cleaner = TearDownFactory.CreateAsync().Result;
             cleaner.TearDownAsync().Wait();
 
-            log.Information("StorageProvider torn down");
+            log.Information("StorageProviderFactory torn down");
 
             var accountId = Guid.NewGuid();
 
-            var repo = RepositoryFactory.CreateAsync(true, true).Result;
+            var repo = RepositoryFactory.CreateAsync().Result;
+            StorageProviderInitialiser.InitAsync().Wait();
 
             var handler = new BankAccountCommandHandlers(repo);
 

@@ -52,6 +52,7 @@
     <Compile Include="Config\DocumentDbEventStoreConfig.cs" />
     <Compile Include="DocumentDbAggregateEvent.cs" />
     <Compile Include="DocumentDbEventBase.cs" />
+    <Compile Include="DocumentDbInitialiser.cs" />
     <Compile Include="DocumentDbProviderBase.cs" />
     <Compile Include="DocumentDbSnapshot.cs" />
     <Compile Include="DocumentDbSnapShotProvider.cs" />

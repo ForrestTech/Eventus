@@ -14,7 +14,7 @@ namespace EventSourcing.Tests.Integration
 
         private static Task SetupAsync()
         {
-            var cleaner = TearDownFactory.Create();
+            var cleaner = TearDownFactory.CreateAsync().Result;
             return cleaner.TearDownAsync();
         }
 

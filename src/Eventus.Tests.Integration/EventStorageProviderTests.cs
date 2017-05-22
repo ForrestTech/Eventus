@@ -4,8 +4,7 @@ using System.Threading.Tasks;
 using Eventus.Domain;
 using Eventus.Samples.Core.Domain;
 using Eventus.Samples.Core.Events;
-using Eventus.Samples.Infrastructure;
-using Eventus.Samples.Infrastructure.EventStore;
+using Eventus.Samples.Infrastructure.Factories;
 using Eventus.Storage;
 using FluentAssertions;
 using Xunit;
@@ -20,7 +19,7 @@ namespace EventSourcing.Tests.Integration
         public EventStorageProviderTests()
         {
             _provider = EventStorageProviderFactory.CreateAsync().Result;
-            StorageProviderInitialiser.InitAsync(_provider).Wait();
+            StorageProviderInitialiser.InitAsync().Wait();
         }
 
         [Fact]
