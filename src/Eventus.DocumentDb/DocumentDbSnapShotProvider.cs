@@ -88,7 +88,7 @@ namespace Eventus.DocumentDb
                 AggregateId = snapshot.AggregateId,
                 ClrType = GetClrTypeName(snapshot),
                 Version = snapshot.Version,
-                Timestamp = DateTime.UtcNow,
+                Timestamp = Clock.Now(),
                 Data = SerializeSnapshot(snapshot)
             };
         }

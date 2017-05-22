@@ -1,11 +1,11 @@
 using System;
 using System.Linq;
 using System.Threading.Tasks;
+using Eventus;
 using Eventus.Domain;
 using Eventus.Samples.Core.Domain;
 using Eventus.Samples.Core.Events;
-using Eventus.Samples.Infrastructure;
-using Eventus.Samples.Infrastructure.EventStore;
+using Eventus.Samples.Infrastructure.Factories;
 using Eventus.Storage;
 using FluentAssertions;
 using Xunit;
@@ -20,7 +20,7 @@ namespace EventSourcing.Tests.Integration
         public EventStorageProviderTests()
         {
             _provider = EventStorageProviderFactory.CreateAsync().Result;
-            StorageProviderInitialiser.InitAsync(_provider).Wait();
+            StorageProviderInitialiser.InitAsync().Wait();
         }
 
         [Fact]
@@ -155,6 +155,13 @@ namespace EventSourcing.Tests.Integration
 
         private async Task CommitChangesAsync(Aggregate aggregate)
         {
+            var changesToCommit = aggregate.GetUncommittedChanges().ToList();
+
+            foreach (var e in changesToCommit)
+            {
+                e.EventCommittedTimestamp = Clock.Now();
+            }
+
             await _provider.CommitChangesAsync(aggregate).ConfigureAwait(false);
             //as we are not using the repo we need to remember to do this
             aggregate.MarkChangesAsCommitted();

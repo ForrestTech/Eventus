@@ -14,13 +14,13 @@ namespace EventSourcing.Tests.Integration
 
         private static Task SetupAsync()
         {
-            var cleaner = TearDownFactory.Create();
-            return cleaner.TearDownAsync();
+            return StorageProviderInitialiser.InitAsync();
         }
 
         public void Dispose()
         {
-            //maybe run teardown again here.
+            var cleaner = TearDownFactory.CreateAsync().Result;
+            cleaner.TearDownAsync().Wait();
         }
     }
 

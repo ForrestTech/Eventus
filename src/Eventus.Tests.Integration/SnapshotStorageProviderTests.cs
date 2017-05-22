@@ -1,7 +1,6 @@
 using System;
 using System.Threading.Tasks;
 using Eventus.Samples.Core.Domain;
-using Eventus.Samples.Infrastructure;
 using Eventus.Samples.Infrastructure.Factories;
 using Eventus.Storage;
 using FluentAssertions;
@@ -17,7 +16,7 @@ namespace EventSourcing.Tests.Integration
         public SnapshotStorageProviderTests()
         {
             _provider = SnapshotStorageProviderFactory.CreateAsync().Result;
-            StorageProviderInitialiser.InitAsync(_provider).Wait();
+            StorageProviderInitialiser.InitAsync().Wait();
         }
 
         [Fact]

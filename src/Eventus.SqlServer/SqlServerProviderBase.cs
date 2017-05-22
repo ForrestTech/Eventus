@@ -1,18 +1,15 @@
-using System;
-using Microsoft.Azure.Documents.Client;
+﻿using System;
+using System.Data.SqlClient;
+using System.Threading.Tasks;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 using Newtonsoft.Json.Serialization;
 
-namespace Eventus.DocumentDb
+namespace Eventus.SqlServer
 {
-    public abstract class DocumentDbProviderBase
+    public abstract class SqlServerProviderBase
     {
         private static JsonSerializerSettings _serializerSetting;
-
-        protected DocumentClient Client;
-        protected string DatabaseId;
-
         protected static JsonSerializerSettings SerializerSettings
         {
             get
@@ -33,20 +30,33 @@ namespace Eventus.DocumentDb
             }
         }
 
-        protected DocumentDbProviderBase(DocumentClient client, string databaseId)
+        protected string ConnectionString;
+
+        protected async Task<SqlConnection> GetOpenConnectionAsync()
         {
-            Client = client ?? throw new ArgumentNullException(nameof(client));
-            DatabaseId = databaseId ?? throw new ArgumentNullException(nameof(databaseId));
+            var connection = new SqlConnection(ConnectionString);
+            await connection.OpenAsync().ConfigureAwait(false);
+            return connection;
         }
-        
+
+        protected SqlServerProviderBase(string connectionString)
+        {
+            ConnectionString = connectionString ?? throw new ArgumentNullException(nameof(connectionString));
+        }
+
         protected static string GetClrTypeName(object item)
         {
             return item.GetType() + "," + item.GetType().Assembly.GetName().Name;
         }
 
-        protected static string SnapshotCollectionName(Type aggregateType)
+        protected static string TableName(Type aggregateType)
         {
-            return $"{aggregateType.Name}-snapshot";
+            return aggregateType.Name;
+        }
+
+        protected static string SnapshotTableName(Type aggregateType)
+        {
+            return $"{aggregateType.Name}_Snapshot";
         }
     }
 }
