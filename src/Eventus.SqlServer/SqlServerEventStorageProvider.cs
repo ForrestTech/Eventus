@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Data.SqlClient;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Transactions;
@@ -9,59 +8,13 @@ using Eventus.Domain;
 using Eventus.Events;
 using Eventus.Storage;
 using Newtonsoft.Json;
-using Newtonsoft.Json.Converters;
-using Newtonsoft.Json.Serialization;
 
 namespace Eventus.SqlServer
 {
-    public class SqlServerEventStorageProvider : IEventStorageProvider
+    public class SqlServerEventStorageProvider : SqlServerStorageProviderBase, IEventStorageProvider
     {
-        private readonly string _connectionString;
-        private static JsonSerializerSettings _serializerSetting;
-
-        public SqlServerEventStorageProvider(string connectionString)
+        public SqlServerEventStorageProvider(string connectionString) : base(connectionString)
         {
-            _connectionString = connectionString ?? throw new ArgumentNullException(nameof(connectionString));
-        }
-
-        protected static JsonSerializerSettings SerializerSettings
-        {
-            get
-            {
-                if (_serializerSetting != null)
-                    return _serializerSetting;
-
-                _serializerSetting = new JsonSerializerSettings
-                {
-                    TypeNameHandling = TypeNameHandling.None,
-                    Formatting = Formatting.Indented,
-                    ContractResolver = new CamelCasePropertyNamesContractResolver()
-                };
-
-                _serializerSetting.Converters.Add(new StringEnumConverter());
-
-                return _serializerSetting;
-            }
-        }
-
-        public void Init()
-        {
-            //implement logic to create a table for each aggregate
-
-            //loop through aggregates provided
-
-            //check table exists
-
-            //create aggregate table
-
-            //create snapshot table if needed
-        }
-
-        private async Task<SqlConnection> GetOpenConnectionAsync()
-        {
-            var connection = new SqlConnection(_connectionString);
-            await connection.OpenAsync().ConfigureAwait(false);
-            return connection;
         }
 
         public async Task<IEnumerable<IEvent>> GetEventsAsync(Type aggregateType, Guid aggregateId, int start = 0, int count = int.MaxValue)
@@ -71,7 +24,7 @@ namespace Eventus.SqlServer
             using (connection)
             {
                 var sql = $"Select top {count} * from {TableName(aggregateType)} where AggregateId = @aggregateId and AggregateVersion >= @start order by AggregateVersion";
-                var events = await connection.QueryAsync<AggregateEvent>(sql, new {aggregateId, start, count})
+                var events = await connection.QueryAsync<SqlAggregateEvent>(sql, new { aggregateId, start, count })
                     .ConfigureAwait(false);
 
                 var result = events.Select(DeserializeEvent);
@@ -85,8 +38,8 @@ namespace Eventus.SqlServer
 
             using (connection)
             {
-                var sql = $"Select top 1 * from {TableName(aggregateType)} where AggregateId = @aggregateId order by desc AggregateVersion";
-                var result = await connection.QueryAsync<AggregateEvent>(sql, new {aggregateId})
+                var sql = $"Select top 1 * from {TableName(aggregateType)} where AggregateId = @aggregateId order by AggregateVersion desc";
+                var result = await connection.QueryAsync<SqlAggregateEvent>(sql, new { aggregateId })
                     .ConfigureAwait(false);
 
                 var @event = result.SingleOrDefault();
@@ -107,7 +60,7 @@ namespace Eventus.SqlServer
 
                 using (connection)
                 {
-                    using (var transactionScope = new TransactionScope())
+                    using (var transactionScope = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled))
                     {
                         foreach (var @event in events)
                         {
@@ -131,11 +84,11 @@ namespace Eventus.SqlServer
             }
         }
 
-        private static IEvent DeserializeEvent(AggregateEvent returnedAggregateEvent)
+        private static IEvent DeserializeEvent(SqlAggregateEvent returnedAggregateAggregateEvent)
         {
-            var returnType = Type.GetType(returnedAggregateEvent.ClrType);
+            var returnType = Type.GetType(returnedAggregateAggregateEvent.ClrType);
 
-            return (Event)JsonConvert.DeserializeObject(returnedAggregateEvent.Data, returnType, SerializerSettings);
+            return (Event)JsonConvert.DeserializeObject(returnedAggregateAggregateEvent.Data, returnType, SerializerSettings);
         }
 
         private static string SerializeEvent(IEvent @event)
@@ -143,31 +96,9 @@ namespace Eventus.SqlServer
             return JsonConvert.SerializeObject(@event, SerializerSettings);
         }
 
-        protected static string GetClrTypeName(object item)
-        {
-            return item.GetType() + "," + item.GetType().Assembly.GetName().Name;
-        }
-
-        private string TableName(Type aggregateType)
+        private static string TableName(Type aggregateType)
         {
             return aggregateType.Name;
         }
-    }
-
-    public class AggregateEvent
-    {
-        public Guid Id { get; set; }
-
-        public Guid AggregateId { get; set; }
-
-        public int TargetVersion { get; set; }
-
-        public int Version { get; set; }
-
-        public string ClrType { get; set; }
-
-        public DateTime TimeStamp { get; set; }
-
-        public string Data { get; set; }
     }
 }

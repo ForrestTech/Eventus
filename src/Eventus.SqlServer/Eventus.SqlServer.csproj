@@ -47,10 +47,14 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="SqlAggregateEvent.cs" />
+    <Compile Include="SqlEventBase.cs" />
     <Compile Include="SqlServerEventStorageProvider.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SqlServerSnapshotStorageProvider.cs" />
+    <Compile Include="SqlServerStorageProviderBase.cs" />
     <Compile Include="SqlServerTeardown.cs" />
+    <Compile Include="SqlSnapshot.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Eventus\Eventus.csproj">

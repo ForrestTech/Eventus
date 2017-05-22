@@ -70,6 +70,8 @@ namespace Eventus.Samples.Infrastructure.Factories
 
         private class SqlServerProviderFactory : StorageProviderFactory
         {
+            private readonly string _connectionString = ConfigurationManager.ConnectionStrings["Eventus"].ToString();
+
             public SqlServerProviderFactory(int value, string displayName) : base(value, displayName)
             {
             }
@@ -81,14 +83,13 @@ namespace Eventus.Samples.Infrastructure.Factories
 
             public override Task<IEventStorageProvider> CreateEventStorageProviderAsync()
             {
-                return Task.FromResult<IEventStorageProvider>(new SqlServerEventStorageProvider(ConfigurationManager
-                    .ConnectionStrings["ConnectionString"].ToString()));
+                return Task.FromResult<IEventStorageProvider>(new SqlServerEventStorageProvider(_connectionString));
             }
 
             public override Task<ISnapshotStorageProvider> CreateSnapshotStorageProviderAsync()
             {
                 return Task.FromResult<ISnapshotStorageProvider>(new SqlServerSnapshotStorageProvider(
-                    ConfigurationManager.ConnectionStrings["ConnectionString"].ToString(), 3));
+                    _connectionString, 3));
             }
 
             public override Task InitAsync()
