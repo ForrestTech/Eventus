@@ -7,7 +7,7 @@ using Newtonsoft.Json;
 
 namespace Eventus.SqlServer
 {
-    public class SqlServerSnapshotStorageProvider : SqlServerStorageProviderBase, ISnapshotStorageProvider
+    public class SqlServerSnapshotStorageProvider : SqlServerProviderBase, ISnapshotStorageProvider
     {
         public SqlServerSnapshotStorageProvider(string connectionString, int snapshotFrequency) : base(connectionString)
         {

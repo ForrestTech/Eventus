@@ -1,13 +1,23 @@
 ﻿using System.Threading.Tasks;
 using Eventus.Cleanup;
+using Respawn;
 
 namespace Eventus.SqlServer
 {
-    public class SqlServerTeardown : ITeardown
+    public class SqlServerTeardown : SqlServerProviderBase, ITeardown
     {
-        public Task TearDownAsync()
+        private static readonly Checkpoint Checkpoint = new Checkpoint();
+
+        public SqlServerTeardown(string connectionString) : base(connectionString)
+        {}
+
+        public async Task TearDownAsync()
         {
-            return Task.CompletedTask;
+            var connection = await GetOpenConnectionAsync().ConfigureAwait(false);
+            using (connection)
+            {
+                Checkpoint.Reset(connection);
+            }
         }
     }
 }

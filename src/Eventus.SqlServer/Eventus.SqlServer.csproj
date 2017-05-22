@@ -36,6 +36,9 @@
     <Reference Include="Newtonsoft.Json, Version=9.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <HintPath>..\packages\Newtonsoft.Json.9.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
     </Reference>
+    <Reference Include="Respawn, Version=0.2.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Respawn.0.2.0\lib\net45\Respawn.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Transactions" />
@@ -52,7 +55,7 @@
     <Compile Include="SqlServerEventStorageProvider.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SqlServerSnapshotStorageProvider.cs" />
-    <Compile Include="SqlServerStorageProviderBase.cs" />
+    <Compile Include="SqlServerProviderBase.cs" />
     <Compile Include="SqlServerTeardown.cs" />
     <Compile Include="SqlSnapshot.cs" />
   </ItemGroup>

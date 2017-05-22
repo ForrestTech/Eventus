@@ -7,7 +7,7 @@ using Newtonsoft.Json.Serialization;
 
 namespace Eventus.SqlServer
 {
-    public abstract class SqlServerStorageProviderBase
+    public abstract class SqlServerProviderBase
     {
         private static JsonSerializerSettings _serializerSetting;
         protected static JsonSerializerSettings SerializerSettings
@@ -39,7 +39,7 @@ namespace Eventus.SqlServer
             return connection;
         }
 
-        protected SqlServerStorageProviderBase(string connectionString)
+        protected SqlServerProviderBase(string connectionString)
         {
             ConnectionString = connectionString ?? throw new ArgumentNullException(nameof(connectionString));
         }

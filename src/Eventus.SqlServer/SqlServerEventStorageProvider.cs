@@ -11,7 +11,7 @@ using Newtonsoft.Json;
 
 namespace Eventus.SqlServer
 {
-    public class SqlServerEventStorageProvider : SqlServerStorageProviderBase, IEventStorageProvider
+    public class SqlServerEventStorageProvider : SqlServerProviderBase, IEventStorageProvider
     {
         public SqlServerEventStorageProvider(string connectionString) : base(connectionString)
         {

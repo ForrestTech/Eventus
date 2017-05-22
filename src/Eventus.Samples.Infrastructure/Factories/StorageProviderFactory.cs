@@ -78,7 +78,7 @@ namespace Eventus.Samples.Infrastructure.Factories
 
             public override Task<ITeardown> CreateTeardownAsync()
             {
-                return Task.FromResult<ITeardown>(new SqlServerTeardown());
+                return Task.FromResult<ITeardown>(new SqlServerTeardown(_connectionString));
             }
 
             public override Task<IEventStorageProvider> CreateEventStorageProviderAsync()
