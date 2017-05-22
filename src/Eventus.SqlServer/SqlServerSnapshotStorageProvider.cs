@@ -71,11 +71,6 @@ namespace Eventus.SqlServer
             }
         }
 
-        private static string SnapshotTableName(Type aggregateType)
-        {
-            return $"{aggregateType.Name}_Snapshot";
-        }
-
         private static string SerializeSnapshot(Snapshot snapshot)
         {
             var serialized = JsonConvert.SerializeObject(snapshot, SerializerSettings);

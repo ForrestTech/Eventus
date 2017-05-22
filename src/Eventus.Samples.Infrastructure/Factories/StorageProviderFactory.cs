@@ -6,8 +6,8 @@ using System.Net;
 using System.Threading.Tasks;
 using EventStore.ClientAPI;
 using Eventus.Cleanup;
+using Eventus.Config;
 using Eventus.DocumentDb;
-using Eventus.DocumentDb.Config;
 using Eventus.EventStore;
 using Eventus.Logging;
 using Eventus.Samples.Core;
@@ -20,7 +20,7 @@ using Microsoft.Azure.Documents.Client;
 
 namespace Eventus.Samples.Infrastructure.Factories
 {
-    public abstract class StorageProviderFactory 
+    public abstract class StorageProviderFactory
     {
         public static readonly StorageProviderFactory SqlServer = new SqlServerProviderFactory(0, "SqlServer");
         public static readonly StorageProviderFactory DocumentDb = new DocumentDbProviderFactory(1, "DocumentDb");
@@ -37,7 +37,7 @@ namespace Eventus.Samples.Infrastructure.Factories
 
         public static IEnumerable<StorageProviderFactory> List()
         {
-            return new[] { SqlServer, DocumentDb, EventStore };
+            return new[] {SqlServer, DocumentDb, EventStore};
         }
 
         public static StorageProviderFactory FromString(string roleString)
@@ -68,6 +68,26 @@ namespace Eventus.Samples.Infrastructure.Factories
 
         public abstract Task InitAsync();
 
+        protected virtual ProviderConfig Config
+        {
+            get
+            {
+                var pc = new ProviderConfig(new List<AggregateConfig>
+                {
+                    new AggregateConfig(typeof(BankAccount))
+                    {
+                        Settings = new
+                        {
+                            OfferThroughput = 400,
+                            SnapshotOfferThroughput = 400
+                        }
+                    }
+
+                });
+                return pc;
+            }
+        }
+
         private class SqlServerProviderFactory : StorageProviderFactory
         {
             private readonly string _connectionString = ConfigurationManager.ConnectionStrings["Eventus"].ToString();
@@ -94,7 +114,8 @@ namespace Eventus.Samples.Infrastructure.Factories
 
             public override Task InitAsync()
             {
-                return Task.CompletedTask;
+                var init = new SqlProviderIInitialiser(_connectionString);
+                return init.InitAsync(Config);
             }
         }
 
@@ -127,21 +148,8 @@ namespace Eventus.Samples.Infrastructure.Factories
             public override Task InitAsync()
             {
                 var init = new DocumentDbInitialiser(Client, DatabaseId);
-                return init.InitAsync(DocumentDbConfig);
+                return init.InitAsync(Config);
             }
-
-            private static readonly DocumentDbEventStoreConfig DocumentDbConfig = new DocumentDbEventStoreConfig
-            {
-                AggregateConfig = new List<AggregateConfig>
-                {
-                    new AggregateConfig
-                    {
-                        AggregateType = typeof(BankAccount),
-                        OfferThroughput = 400,
-                        SnapshotOfferThroughput = 400
-                    }
-                }
-            };
 
             private static DocumentClient Client => _client ?? (_client = new DocumentClient(new Uri(ConfigurationManager.AppSettings["DocumentDb.Endpoint"]), ConfigurationManager.AppSettings["DocumentDb.AuthKey"], new ConnectionPolicy { EnableEndpointDiscovery = false }));
 

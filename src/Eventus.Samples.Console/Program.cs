@@ -20,17 +20,18 @@ namespace Eventus.Samples.Console
 
             log.Information("Event sourcing sample");
 
-            log.Information("Tearing down provider");
-
-            var cleaner = TearDownFactory.CreateAsync().Result;
-            cleaner.TearDownAsync().Wait();
-
-            log.Information("StorageProviderFactory torn down");
-
             var accountId = Guid.NewGuid();
 
             var repo = RepositoryFactory.CreateAsync().Result;
+
+            log.Information("Initialising provider");
             StorageProviderInitialiser.InitAsync().Wait();
+            log.Information("Provider initialised");
+
+            log.Information("Tearing down provider");
+            var cleaner = TearDownFactory.CreateAsync().Result;
+            cleaner.TearDownAsync().Wait();
+            log.Information("StorageProviderFactory torn down");
 
             var handler = new BankAccountCommandHandlers(repo);
 

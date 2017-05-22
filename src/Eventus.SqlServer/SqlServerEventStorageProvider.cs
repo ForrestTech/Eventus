@@ -95,10 +95,5 @@ namespace Eventus.SqlServer
         {
             return JsonConvert.SerializeObject(@event, SerializerSettings);
         }
-
-        private static string TableName(Type aggregateType)
-        {
-            return aggregateType.Name;
-        }
     }
 }

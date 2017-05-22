@@ -48,5 +48,15 @@ namespace Eventus.SqlServer
         {
             return item.GetType() + "," + item.GetType().Assembly.GetName().Name;
         }
+
+        protected static string TableName(Type aggregateType)
+        {
+            return aggregateType.Name;
+        }
+
+        protected static string SnapshotTableName(Type aggregateType)
+        {
+            return $"{aggregateType.Name}_Snapshot";
+        }
     }
 }

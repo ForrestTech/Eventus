@@ -1,13 +1,14 @@
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using Eventus.DocumentDb.Config;
+using Eventus.Config;
+using Eventus.Storage;
 using Microsoft.Azure.Documents;
 using Microsoft.Azure.Documents.Client;
 
 namespace Eventus.DocumentDb
 {
-    public class DocumentDbInitialiser 
+    public class DocumentDbInitialiser : IInitialiseStorageProvider
     {
         private readonly DocumentClient _client;
         private readonly string _databaseId;
@@ -26,15 +27,15 @@ namespace Eventus.DocumentDb
             _databaseId = databaseId;
         }
 
-        public async Task InitAsync(DocumentDbEventStoreConfig config)
+        public async Task InitAsync(ProviderConfig config)
         {
             await CreateDatabaseIfNotExistsAsync().ConfigureAwait(false);
 
-            foreach (var c in config.AggregateConfig)
+            foreach (var c in config.Aggregates)
             {
-                await CreateAggregateCollectionIfNotExistsAsync(c.AggregateType, c.OfferThroughput).ConfigureAwait(false);
+                await CreateAggregateCollectionIfNotExistsAsync(c).ConfigureAwait(false);
 
-                await CreateSnapShotCollectionIfNotExistsAsync(c.AggregateType, c.SnapshotOfferThroughput).ConfigureAwait(false);
+                await CreateSnapShotCollectionIfNotExistsAsync(c).ConfigureAwait(false);
             }
         }
 
@@ -58,14 +59,14 @@ namespace Eventus.DocumentDb
             }
         }
 
-        private Task CreateAggregateCollectionIfNotExistsAsync(Type aggregateType, int throughput)
+        private Task CreateAggregateCollectionIfNotExistsAsync(AggregateConfig config)
         {
-            return CreateCollectionAsync(aggregateType.Name, throughput, PartitionKey, ExcludePaths);
+            return CreateCollectionAsync(config.AggregateType.Name, config.Settings.OfferThroughput, PartitionKey, ExcludePaths);
         }
 
-        private Task CreateSnapShotCollectionIfNotExistsAsync(Type aggregateType, int throughput)
+        private Task CreateSnapShotCollectionIfNotExistsAsync(AggregateConfig config)
         {
-            return CreateCollectionAsync(SnapshotCollectionName(aggregateType), throughput, PartitionKey, ExcludePaths);
+            return CreateCollectionAsync(SnapshotCollectionName(config.AggregateType), config.Settings.SnapshotOfferThroughput, PartitionKey, ExcludePaths);
         }
 
         private async Task CreateCollectionAsync(string collectionName, int throughput, string partitionKey, IEnumerable<string> excludePaths)
