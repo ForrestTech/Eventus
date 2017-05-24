@@ -8,8 +8,6 @@ nuget:
   account_feed: true
   project_feed: true
   disable_publish_on_pr: true
-before_build:
-- cmd: nuget restore src\Eventus.sln
 build_script:
 - ps: .\build.ps1
 after_build:
