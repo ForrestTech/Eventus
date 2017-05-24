@@ -6,7 +6,7 @@ namespace Eventus.Samples.Infrastructure.Factories
 {
     public class SnapshotStorageProviderFactory
     {
-        public static async Task<ISnapshotStorageProvider> CreateAsync(bool addLogging = false)
+        public static async Task<ISnapshotStorageProvider> CreateAsync()
         {
             var provider = StorageProviderFactory.FromString(ConfigurationManager.AppSettings[Constants.Provider].ToLowerInvariant());
             var repo = await provider.CreateSnapshotStorageProviderAsync().ConfigureAwait(false);
