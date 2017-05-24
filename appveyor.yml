@@ -4,8 +4,6 @@ pull_requests:
 skip_branch_with_pr: true
 image: Visual Studio 2017
 nuget:
-  account_feed: true
-  project_feed: true
   disable_publish_on_pr: true
 build_script:
 - ps: .\build.ps1
