@@ -26,6 +26,7 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "_SolutionItems", "_SolutionItems", "{A6A730BA-118A-43B6-8DF5-709211731D83}"
 	ProjectSection(SolutionItems) = preProject
 		..\appveyor.yml = ..\appveyor.yml
+		..\build.cake = ..\build.cake
 		Eventus\Eventus.nuspec = Eventus\Eventus.nuspec
 	EndProjectSection
 EndProject

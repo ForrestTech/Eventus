@@ -1,22 +1,26 @@
 using System;
 using System.Collections.Generic;
 using System.Configuration;
+using System.Dynamic;
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
 using EventStore.ClientAPI;
 using Eventus.Cleanup;
-using Eventus.Config;
 using Eventus.DocumentDb;
+using Eventus.DocumentDb.Config;
 using Eventus.EventStore;
 using Eventus.Logging;
 using Eventus.Samples.Core;
 using Eventus.Samples.Core.Domain;
 using Eventus.Samples.Core.EventHandlers;
 using Eventus.Samples.Core.ReadModel;
+using Eventus.Samples.Infrastructure.Config;
 using Eventus.SqlServer;
+using Eventus.SqlServer.Config;
 using Eventus.Storage;
 using Microsoft.Azure.Documents.Client;
+using AggregateConfig = Eventus.Samples.Infrastructure.Config.AggregateConfig;
 
 namespace Eventus.Samples.Infrastructure.Factories
 {
@@ -37,7 +41,7 @@ namespace Eventus.Samples.Infrastructure.Factories
 
         public static IEnumerable<StorageProviderFactory> List()
         {
-            return new[] {SqlServer, DocumentDb, EventStore};
+            return new[] { SqlServer, DocumentDb, EventStore };
         }
 
         public static StorageProviderFactory FromString(string roleString)
@@ -68,21 +72,21 @@ namespace Eventus.Samples.Infrastructure.Factories
 
         public abstract Task InitAsync();
 
+        //todo just get rid of this
         protected virtual ProviderConfig Config
         {
             get
             {
+                dynamic settings = new ExpandoObject();
+                settings.OfferThroughput = 400;
+                settings.SnapshotOfferThroughput = 400;
+
                 var pc = new ProviderConfig(new List<AggregateConfig>
                 {
                     new AggregateConfig(typeof(BankAccount))
                     {
-                        Settings = new
-                        {
-                            OfferThroughput = 400,
-                            SnapshotOfferThroughput = 400
-                        }
+                        Settings = settings
                     }
-
                 });
                 return pc;
             }
@@ -115,7 +119,18 @@ namespace Eventus.Samples.Infrastructure.Factories
             public override Task InitAsync()
             {
                 var init = new SqlProviderIInitialiser(_connectionString);
-                return init.InitAsync(Config);
+                return init.InitAsync(Translate(Config));
+            }
+
+            private static SqlServerConfig Translate(ProviderConfig config)
+            {
+                return new SqlServerConfig
+                {
+                    Aggregates = config.Aggregates.Select(x => new SqlServer.Config.AggregateConfig
+                    {
+                        AggregateType = x.AggregateType
+                    })
+                };
             }
         }
 
@@ -148,7 +163,20 @@ namespace Eventus.Samples.Infrastructure.Factories
             public override Task InitAsync()
             {
                 var init = new DocumentDbInitialiser(Client, DatabaseId);
-                return init.InitAsync(Config);
+                return init.InitAsync(Translate(Config));
+            }
+
+            private static DocumentDbConfig Translate(ProviderConfig config)
+            {
+                return new DocumentDbConfig
+                {
+                    Aggregates = config.Aggregates.Select(x => new DocumentDb.Config.AggregateConfig
+                    {
+                        AggregateType = x.AggregateType,
+                        OfferThroughput = x.Settings.OfferThroughput,
+                        SnapshotOfferThroughput = x.Settings.SnapshotOfferThroughput
+                    })
+                };
             }
 
             private static DocumentClient Client => _client ?? (_client = new DocumentClient(new Uri(ConfigurationManager.AppSettings["DocumentDb.Endpoint"]), ConfigurationManager.AppSettings["DocumentDb.AuthKey"], new ConnectionPolicy { EnableEndpointDiscovery = false }));

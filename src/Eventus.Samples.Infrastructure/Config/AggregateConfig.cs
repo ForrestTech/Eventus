@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Eventus.Config
+namespace Eventus.Samples.Infrastructure.Config
 {
     public class AggregateConfig
     {

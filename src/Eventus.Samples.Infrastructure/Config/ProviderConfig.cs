@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace Eventus.Config
+namespace Eventus.Samples.Infrastructure.Config
 {
     public class ProviderConfig
     {
