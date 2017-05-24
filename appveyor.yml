@@ -10,9 +10,8 @@ nuget:
   disable_publish_on_pr: true
 before_build:
 - cmd: nuget restore src\Eventus.sln
-build:
-  project: src\Eventus.sln
-  verbosity: minimal
+build_script:
+- ps: .\build.ps1
 after_build:
 - ps: nuget pack $env:APPVEYOR_BUILD_FOLDER\src\Eventus\Eventus.csproj  -Version $env:appveyor_build_version -properties "Configuration=$env:configuration;Platform=AnyCPU;"
 test_script:
