@@ -48,6 +48,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Config\AggregateConfig.cs" />
+    <Compile Include="Config\DocumentDbConfig.cs" />
     <Compile Include="DocumentDbAggregateEvent.cs" />
     <Compile Include="DocumentDbEventBase.cs" />
     <Compile Include="DocumentDbInitialiser.cs" />

@@ -1,33 +1,13 @@
 version: 0.1.{build}-alpha
 pull_requests:
   do_not_increment_build_number: true
+skip_branch_with_pr: true
 image: Visual Studio 2017
-configuration: Release
-platform: Any CPU
 nuget:
-  account_feed: true
-  project_feed: true
   disable_publish_on_pr: true
-before_build:
-- cmd: nuget restore src\Eventus.sln
-build:
-  project: src\Eventus.sln
-  verbosity: minimal
-after_build:
-- ps: nuget pack $env:APPVEYOR_BUILD_FOLDER\src\Eventus\Eventus.csproj  -Version $env:appveyor_build_version -properties "Configuration=$env:configuration;Platform=AnyCPU;"
-test_script:
-- ps: >-
-    mkdir build
-
-    .\tools\Opencover\OpenCover.Console.exe -register:user -target:".\tools\xunit\xunit.console.x86.exe" -targetargs:".\src\Eventus.Tests.Unit\bin\$env:CONFIGURATION\Eventus.Tests.Unit.dll -noshadow" -output:".\build\coverage.xml" -filter:"+[Eventus*]* -[Eventus]Eventus.Properties.* -[Eventus.Tests.Unit*]* -[Eventus.Samples*]*"
-
-    $env:path = ($env:path -split ";").Where({!($_ -like "*nunit*")}) -join ";"
-
-    "SET PATH=C:\\Python34;C:\\Python34\\Scripts;%PATH%"
-
-    pip install codecov
-
-    codecov -f "build\coverage.xml" -X gcov
+build_script:
+- ps: .\build.ps1 -ScriptArgs '-package-version="$env:appveyor_build_version"'
+test: off
 artifacts:
 - path: Eventus.*.nupkg
 - path: build\coverage.xml

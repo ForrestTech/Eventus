@@ -2,18 +2,17 @@
 using System.Threading.Tasks;
 using System.Transactions;
 using Dapper;
-using Eventus.Config;
-using Eventus.Storage;
+using Eventus.SqlServer.Config;
 
 namespace Eventus.SqlServer
 {
-    public class SqlProviderIInitialiser : SqlServerProviderBase, IInitialiseStorageProvider
+    public class SqlProviderIInitialiser : SqlServerProviderBase
     {
         public SqlProviderIInitialiser(string connectionString) : base(connectionString)
         {
         }
 
-        public async Task InitAsync(ProviderConfig config)
+        public async Task InitAsync(SqlServerConfig config)
         {
             //todo manage migrations of initial schema, 
             //todo pass in schema prefix

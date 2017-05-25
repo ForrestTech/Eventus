@@ -1,14 +1,13 @@
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using Eventus.Config;
-using Eventus.Storage;
+using Eventus.DocumentDb.Config;
 using Microsoft.Azure.Documents;
 using Microsoft.Azure.Documents.Client;
 
 namespace Eventus.DocumentDb
 {
-    public class DocumentDbInitialiser : IInitialiseStorageProvider
+    public class DocumentDbInitialiser 
     {
         private readonly DocumentClient _client;
         private readonly string _databaseId;
@@ -27,7 +26,8 @@ namespace Eventus.DocumentDb
             _databaseId = databaseId;
         }
 
-        public async Task InitAsync(ProviderConfig config)
+        //todo translate provider config to a static config for each provider
+        public async Task InitAsync(DocumentDbConfig config)
         {
             await CreateDatabaseIfNotExistsAsync().ConfigureAwait(false);
 
@@ -61,12 +61,12 @@ namespace Eventus.DocumentDb
 
         private Task CreateAggregateCollectionIfNotExistsAsync(AggregateConfig config)
         {
-            return CreateCollectionAsync(config.AggregateType.Name, config.Settings.OfferThroughput, PartitionKey, ExcludePaths);
+            return CreateCollectionAsync(config.AggregateType.Name, config.OfferThroughput, PartitionKey, ExcludePaths);
         }
 
         private Task CreateSnapShotCollectionIfNotExistsAsync(AggregateConfig config)
         {
-            return CreateCollectionAsync(SnapshotCollectionName(config.AggregateType), config.Settings.SnapshotOfferThroughput, PartitionKey, ExcludePaths);
+            return CreateCollectionAsync(SnapshotCollectionName(config.AggregateType), config.SnapshotOfferThroughput, PartitionKey, ExcludePaths);
         }
 
         private async Task CreateCollectionAsync(string collectionName, int throughput, string partitionKey, IEnumerable<string> excludePaths)

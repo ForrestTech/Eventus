@@ -7,8 +7,8 @@
     <ProjectGuid>{85AC6BB7-D1AD-4DB6-8B6A-76822073D226}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>EventSourcing.Tests.Integration</RootNamespace>
-    <AssemblyName>EventSourcing.Tests.Integration</AssemblyName>
+    <RootNamespace>Eventus.Tests.Integration</RootNamespace>
+    <AssemblyName>Eventus.Tests.Integration</AssemblyName>
     <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>

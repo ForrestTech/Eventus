@@ -48,7 +48,7 @@ namespace Eventus.EventStore
 
         protected static EventData SerializeEvent(IEvent @event, int commitNumber)
         {
-            var header = new EventstoreMetaDataHeader()
+            var header = new EventstoreMetaDataHeader
             {
                 ClrType = GetClrTypeName(@event),
                 CommitNumber = commitNumber

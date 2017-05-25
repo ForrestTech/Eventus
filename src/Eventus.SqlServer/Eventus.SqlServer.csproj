@@ -50,6 +50,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Config\AggregateConfig.cs" />
+    <Compile Include="Config\SqlServerConfig.cs" />
     <Compile Include="SqlAggregateEvent.cs" />
     <Compile Include="SqlEventBase.cs" />
     <Compile Include="SqlProviderIInitialiser.cs" />
