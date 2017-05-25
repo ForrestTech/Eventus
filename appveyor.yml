@@ -8,7 +8,7 @@ nuget:
 build_script:
 - ps: .\build.ps1
 after_build:
-- ps: nuget pack $env:APPVEYOR_BUILD_FOLDER\src\Eventus\Eventus.csproj  -Version $env:appveyor_build_version -properties "Configuration=$env:configuration;Platform=AnyCPU;"
+- ps: nuget pack $env:APPVEYOR_BUILD_FOLDER\src\Eventus\Eventus.csproj  -Version $env:appveyor_build_version -properties "Configuration=$env:configuration;Platform=AnyCPU"
 artifacts:
 - path: Eventus.*.nupkg
 - path: build\coverage.xml

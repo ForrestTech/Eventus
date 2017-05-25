@@ -39,7 +39,11 @@ Task("Build")
     {
       // Use MSBuild
       MSBuild("./src/Eventus.sln", settings =>
-        settings.SetConfiguration(configuration));
+        settings.SetConfiguration(configuration)
+		.SetVerbosity(Verbosity.Minimal)
+        .UseToolVersion(MSBuildToolVersion.VS2017)
+		.SetPlatformTarget(PlatformTarget.MSIL)
+		.SetMSBuildPlatform(MSBuildPlatform.Automatic));
     }
     else
     {
