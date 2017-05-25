@@ -29,7 +29,9 @@ Task("Restore-NuGet-Packages")
     .IsDependentOn("Clean")
     .Does(() =>
 {
-    NuGetRestore("./src/Eventus.sln");
+    NuGetRestore("./src/Eventus.sln", new NuGetRestoreSettings{
+		Verbosity = NuGetVerbosity.Quiet 
+	});
 });
 
 Task("Build")
