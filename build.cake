@@ -6,6 +6,7 @@
 
 var target = Argument("target", "Default");
 var configuration = Argument("configuration", "Release");
+var packageVersion = Argument("package-version", "0.1.0");
 
 //////////////////////////////////////////////////////////////////////
 // PREPARATION
@@ -60,6 +61,18 @@ Task("Unit-Tests")
     XUnit2("./src/**/bin/" + configuration + "/*.Tests.Unit.dll");
 });
 
+Task("Pack")
+    .IsDependentOn("Unit-Tests")
+    .Does(() =>
+{
+    NuGetPack("./src/Eventus/Eventus.csproj", new NuGetPackSettings{
+		Version = packageVersion,
+		Properties = new Dictionary<string,string>{
+			{ "Configuration", configuration }
+		}
+	});
+});
+
 Task("Integration-Tests")
     .IsDependentOn("Unit-Tests")
     .Does(() =>
@@ -103,7 +116,7 @@ Task("Integration-Tests")
 //////////////////////////////////////////////////////////////////////
 
 Task("Default")
-    .IsDependentOn("Unit-Tests");
+    .IsDependentOn("Pack");
 
 //////////////////////////////////////////////////////////////////////
 // EXECUTION
