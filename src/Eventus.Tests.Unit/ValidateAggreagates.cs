@@ -1,53 +1,32 @@
 ﻿using System;
-using System.CodeDom;
-using System.Collections.Generic;
-using System.Linq;
 using System.Reflection;
-using Eventus.Domain;
 using Eventus.Events;
+using Eventus.Exceptions;
 using Eventus.Samples.Core.Domain;
+using Eventus.Test;
+using FluentAssertions;
 using Xunit;
 
 namespace Eventus.Tests.Unit
 {
-    public class ValidateAggregates
+    public class TestSupport
     {
         [Fact]
-        public void Foo()
+        public void Validate_that_aggregates_support_all_events()
         {
-            //validate that every event has an application method in an aggregate
-
-            //get all domain events
-            var domainAssembly = Assembly.GetAssembly(typeof(BankAccount));
-
-            var eventType = typeof(Event);
-            var events = domainAssembly.GetTypes()
-                .Where(t => t != eventType && eventType.IsAssignableFrom(t));
-
-            //get all aggregates
-            var aggregateType = typeof(Aggregate);
-            var aggregates = domainAssembly.GetTypes()
-                .Where(t => t != aggregateType && aggregateType.IsAssignableFrom(t));
-
-            //get aggregate apply methods
-            var aggregateMethods = aggregates.SelectMany(a => a.GetMethodsBySig(typeof(void), true, typeof(IEvent))).Select(m => m.GetParameters().First());
-
-            var errors = new List<string>();
-
-            foreach (var @event in events)
-            {
-                var noMethodForType = aggregateMethods.All(m => m.ParameterType != @event);
-
-                if (noMethodForType)
-                {
-                    errors.Add($"No method found to handle the event {@event.Name}");
-                }
-            }
-
-            if (errors.Any())
-            {
-                throw new Exception("Some domain events don't have a method on any aggregate");
-            }
+            ValidateAggregates.AssertThatAggregatesSupportAllEvents(Assembly.GetAssembly(typeof(BankAccount)));
         }
+
+        [Fact]
+        public void Validate_that_events_without_methods_throw_exception()
+        {
+            Action act = () => ValidateAggregates.AssertThatAggregatesSupportAllEvents(Assembly.GetAssembly(typeof(EventWithoutMethod)), Assembly.GetAssembly(typeof(BankAccount)));
+
+            act.ShouldThrow<AggregateEventNotSupportException>()
+                .Where(e => e.Message.Contains("EventWithoutMethod"));
+        }
+
+        public class EventWithoutMethod : Event
+        { }
     }
 }

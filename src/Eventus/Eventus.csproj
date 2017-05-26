@@ -55,6 +55,7 @@
     <Compile Include="Events\IEvent.cs" />
     <Compile Include="Events\IMessage.cs" />
     <Compile Include="Exceptions\AggregateEventOnApplyMethodMissingException.cs" />
+    <Compile Include="Exceptions\AggregateEventNotSupportException.cs" />
     <Compile Include="Exceptions\ConcurrencyException.cs" />
     <Compile Include="Events\Event.cs" />
     <Compile Include="Exceptions\AggregateCreationException.cs" />
@@ -71,6 +72,7 @@
     <Compile Include="Storage\Repository.cs" />
     <Compile Include="Storage\ISnapshottable.cs" />
     <Compile Include="Storage\Snapshot.cs" />
+    <Compile Include="Test\ValidateAggregates.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
