@@ -7,7 +7,7 @@ using Eventus.Events;
 
 namespace Eventus
 {
-    public static class ReflectionHelper
+    internal static class ReflectionHelper
     {
         private static readonly ConcurrentDictionary<Type, ConcurrentDictionary<Type, string>>
             AggregateEventHandlerCache =
