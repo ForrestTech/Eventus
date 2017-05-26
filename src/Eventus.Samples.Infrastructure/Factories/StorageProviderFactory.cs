@@ -118,7 +118,7 @@ namespace Eventus.Samples.Infrastructure.Factories
 
             public override Task InitAsync()
             {
-                var init = new SqlProviderIInitialiser(_connectionString);
+                var init = new SqlProviderInitialiser(_connectionString);
                 return init.InitAsync(Translate(Config));
             }
 

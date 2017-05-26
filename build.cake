@@ -113,6 +113,25 @@ Task("Integration-Tests")
 	XUnit2("./src/Eventus.Tests.Integration/bin/" + configuration + "/Eventus.Tests.Integration.dll");
 });
 
+
+Task("CI-Sql-Test")
+    .IsDependentOn("Pack")
+    .Does(() =>
+{
+	//Run DocumentDb
+	TransformConfig(
+		"./src/Eventus.Tests.Integration/bin/" + configuration + "/Eventus.Tests.Integration.dll.config",
+		"./src/Eventus.Tests.Integration/bin/" + configuration + "/Eventus.Tests.Integration.dll.config",
+		new TransformationCollection {
+			{ "configuration/appSettings/add[@key='Provider']/@value","SqlServer" },
+			{ "configuration/connectionStrings/add[@name='Eventus']/@connectionString","Server=(local)\\SQL2016;Database=master;User ID=sa;Password=Password12!" }
+		});
+
+	Information("Running SqlServer integration tests");
+
+	XUnit2("./src/Eventus.Tests.Integration/bin/" + configuration + "/Eventus.Tests.Integration.dll");
+});
+
 //////////////////////////////////////////////////////////////////////
 // TASK TARGETS
 //////////////////////////////////////////////////////////////////////
