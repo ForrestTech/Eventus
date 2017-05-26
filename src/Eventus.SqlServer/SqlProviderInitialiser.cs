@@ -6,9 +6,9 @@ using Eventus.SqlServer.Config;
 
 namespace Eventus.SqlServer
 {
-    public class SqlProviderIInitialiser : SqlServerProviderBase
+    public class SqlProviderInitialiser : SqlServerProviderBase
     {
-        public SqlProviderIInitialiser(string connectionString) : base(connectionString)
+        public SqlProviderInitialiser(string connectionString) : base(connectionString)
         {
         }
 

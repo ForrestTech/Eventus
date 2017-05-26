@@ -7,7 +7,7 @@ using Eventus.Samples.Infrastructure.Factories;
 using FluentAssertions;
 using Xunit;
 
-namespace EventSourcing.Tests.Integration
+namespace Eventus.Tests.Integration
 {
     [Collection(StorageProvidersCollection.Name)]
     public class Scenario 

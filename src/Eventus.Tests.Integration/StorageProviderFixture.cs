@@ -3,7 +3,7 @@ using System.Threading.Tasks;
 using Eventus.Samples.Infrastructure.Factories;
 using Xunit;
 
-namespace EventSourcing.Tests.Integration
+namespace Eventus.Tests.Integration
 {
     public class StorageProviderFixture : IDisposable
     {

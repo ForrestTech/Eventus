@@ -1,7 +1,6 @@
 using System;
 using System.Linq;
 using System.Threading.Tasks;
-using Eventus;
 using Eventus.Domain;
 using Eventus.Samples.Core.Domain;
 using Eventus.Samples.Core.Events;
@@ -10,7 +9,7 @@ using Eventus.Storage;
 using FluentAssertions;
 using Xunit;
 
-namespace EventSourcing.Tests.Integration
+namespace Eventus.Tests.Integration
 {
     [Collection(StorageProvidersCollection.Name)]
     public class EventStorageProviderTests

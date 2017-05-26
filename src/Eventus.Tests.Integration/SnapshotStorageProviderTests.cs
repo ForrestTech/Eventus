@@ -6,7 +6,7 @@ using Eventus.Storage;
 using FluentAssertions;
 using Xunit;
 
-namespace EventSourcing.Tests.Integration
+namespace Eventus.Tests.Integration
 {
     [Collection(StorageProvidersCollection.Name)]
     public class SnapshotStorageProviderTests

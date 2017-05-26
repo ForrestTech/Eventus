@@ -54,7 +54,7 @@
     <Compile Include="Config\SqlServerConfig.cs" />
     <Compile Include="SqlAggregateEvent.cs" />
     <Compile Include="SqlEventBase.cs" />
-    <Compile Include="SqlProviderIInitialiser.cs" />
+    <Compile Include="SqlProviderInitialiser.cs" />
     <Compile Include="SqlServerEventStorageProvider.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SqlServerSnapshotStorageProvider.cs" />
