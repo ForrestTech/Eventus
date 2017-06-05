@@ -9,8 +9,3 @@
 | Coverage | [![Coverage Status](https://coveralls.io/repos/github/feanz/Eventus/badge.svg)](https://coveralls.io/github/feanz/Eventus) |
 
 A framework for creating updating and storing event sourced aggregates using a range of storage providers.
-
-
-
-
-
