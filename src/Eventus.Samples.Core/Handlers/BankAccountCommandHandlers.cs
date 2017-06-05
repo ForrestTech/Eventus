@@ -7,7 +7,7 @@ namespace Eventus.Samples.Core.Handlers
 {
     public class BankAccountCommandHandlers : IHandleCommands<CreateAccountCommand>,
         IHandleCommands<WithdrawFundsCommand>,
-        IHandleCommands<DepostiFundsCommand>
+        IHandleCommands<DepositFundsCommand>
     {
         private readonly IRepository _repository;
 
@@ -33,7 +33,7 @@ namespace Eventus.Samples.Core.Handlers
                 .ConfigureAwait(false);
         }
 
-        public async Task HandleAsync(DepostiFundsCommand command)
+        public async Task HandleAsync(DepositFundsCommand command)
         {
             var account = await _repository.GetByIdAsync<BankAccount>(command.AggregateId)
                 .ConfigureAwait(false);

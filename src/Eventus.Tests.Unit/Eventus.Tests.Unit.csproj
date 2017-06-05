@@ -73,7 +73,9 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AggregateHelperTests.cs" />
     <Compile Include="AggregateTests.cs" />
+    <Compile Include="CommandTests.cs" />
     <Compile Include="Fixture\AutoMoqDataAttribute.cs" />
     <Compile Include="Fixture\NoneSnapshotable.cs" />
     <Compile Include="Fixture\NonSnapshotableCreatedEvent.cs" />

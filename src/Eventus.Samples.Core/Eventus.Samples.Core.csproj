@@ -74,7 +74,7 @@
     <Compile Include="Handlers\BankAccountCommandHandlers.cs" />
     <Compile Include="Domain\BankAccountSnapshot.cs" />
     <Compile Include="Commands\CreateAccountCommand.cs" />
-    <Compile Include="Commands\DepostiFundsCommand.cs" />
+    <Compile Include="Commands\DepositFundsCommand.cs" />
     <Compile Include="Events\FundsDepositedEvent.cs" />
     <Compile Include="Events\FundsWithdrawalEvent.cs" />
     <Compile Include="IHandleCommands.cs" />

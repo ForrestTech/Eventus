@@ -3,11 +3,11 @@ using Eventus.Commands;
 
 namespace Eventus.Samples.Core.Commands
 {
-    public class DepostiFundsCommand : Command
+    public class DepositFundsCommand : Command
     {
         public decimal Amount { get; }
 
-        public DepostiFundsCommand(Guid correlationId, Guid accountId, decimal amount)
+        public DepositFundsCommand(Guid correlationId, Guid accountId, decimal amount)
             : base(correlationId, accountId)
         {
             Amount = amount;

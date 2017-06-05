@@ -23,10 +23,10 @@ namespace Eventus.Tests.Integration
             const string joeBloggs = "Joe Bloggs";
 
             await handler.HandleAsync(new CreateAccountCommand(Guid.NewGuid(), accountId, joeBloggs)).ConfigureAwait(false);
-            await handler.HandleAsync(new DepostiFundsCommand(Guid.NewGuid(), accountId, 10)).ConfigureAwait(false);
-            await handler.HandleAsync(new DepostiFundsCommand(Guid.NewGuid(), accountId, 35)).ConfigureAwait(false);
+            await handler.HandleAsync(new DepositFundsCommand(Guid.NewGuid(), accountId, 10)).ConfigureAwait(false);
+            await handler.HandleAsync(new DepositFundsCommand(Guid.NewGuid(), accountId, 35)).ConfigureAwait(false);
             await handler.HandleAsync(new WithdrawFundsCommand(Guid.NewGuid(), accountId, 25)).ConfigureAwait(false);
-            await handler.HandleAsync(new DepostiFundsCommand(Guid.NewGuid(), accountId, 5)).ConfigureAwait(false);
+            await handler.HandleAsync(new DepositFundsCommand(Guid.NewGuid(), accountId, 5)).ConfigureAwait(false);
             await handler.HandleAsync(new WithdrawFundsCommand(Guid.NewGuid(), accountId, 10)).ConfigureAwait(false);
 
             var actual = await repo.GetByIdAsync<BankAccount>(accountId).ConfigureAwait(false);

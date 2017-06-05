@@ -1,5 +1,9 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
+using Eventus.Domain;
+using Eventus.Events;
+using Eventus.Exceptions;
 using Eventus.Samples.Core.Domain;
 using Eventus.Samples.Core.Events;
 using FluentAssertions;
@@ -9,6 +13,26 @@ namespace Eventus.Tests.Unit
 {
     public class AggregateTests
     {
+        [Fact]
+        public void Aggregates_are_equal_if_there_ids_match()
+        {
+            var accountId = Guid.NewGuid();
+
+            var first = new BankAccount(accountId, "Jim");
+            var second = new BankAccount(accountId, "Kate");
+
+            first.Should().Be(second);
+        }
+
+        [Fact]
+        public void Aggregates_are_not_equal_if_there_ids_dont_match()
+        {
+            var first = new BankAccount(Guid.NewGuid(), "Jim");
+            var second = new BankAccount(Guid.NewGuid(), "Kate");
+
+            first.Should().NotBe(second);
+        }
+
         [Fact]
         public void Aggregate_should_have_uncommitted_changes_when_an_event_is_applied()
         {
@@ -85,5 +109,33 @@ namespace Eventus.Tests.Unit
 
             aggregate.LastCommittedVersion.Should().Be(0);
         }
+
+        [Fact]
+        public void Aggregate_cant_have_invalid_events_applied()
+        {
+            var aggregate = new BankAccount(Guid.NewGuid(), "Joe Bloggs");
+
+            aggregate.Invoking(x => x.LoadFromHistory(new List<IEvent> { new EventWithoutMatchingAggregate() }))
+                .ShouldThrow<AggregateEventOnApplyMethodMissingException>();
+        }
+
+
+        [Fact]
+        public void Aggregate_cant_have_invalid_events_applied_when_there_is_no_apply_method()
+        {
+            var aggregate = new TestAggregate();
+
+            aggregate.Invoking(x => x.LoadFromHistory(new List<IEvent> { new TestAggregateEvent() }))
+                .ShouldThrow<AggregateEventOnApplyMethodMissingException>();
+        }
+
+        private class EventWithoutMatchingAggregate : Event
+        { }
+
+        private class TestAggregate : Aggregate
+        {}
+
+        private class TestAggregateEvent : Event
+        { }
     }
 }
