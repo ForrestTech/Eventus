@@ -1,1 +1,1 @@
-src\packages\OpenCover.4.6.519\tools\OpenCover.Console.exe -register:user -filter:"+[Eventus]* -[Eventus]Eventus.Logging.* -[Eventus]Eventus.LibLog.*" -target:"src\packages\xunit.runner.console.2.2.0\tools\xunit.console.exe" -targetargs:"src\Eventus.Tests.Unit\bin\Debug\Eventus.Tests.Unit.dll -noshadow" -output:coverage.xml
+./build.ps1 -Target Coverage
