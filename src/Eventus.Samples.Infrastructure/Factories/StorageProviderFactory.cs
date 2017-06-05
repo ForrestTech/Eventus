@@ -118,19 +118,8 @@ namespace Eventus.Samples.Infrastructure.Factories
 
             public override Task InitAsync()
             {
-                var init = new SqlProviderInitialiser(_connectionString);
-                return init.InitAsync(Translate(Config));
-            }
-
-            private static SqlServerConfig Translate(ProviderConfig config)
-            {
-                return new SqlServerConfig
-                {
-                    Aggregates = config.Aggregates.Select(x => new SqlServer.Config.AggregateConfig
-                    {
-                        AggregateType = x.AggregateType
-                    })
-                };
+                var init = new SqlProviderInitialiser(new SqlServerConfig(_connectionString));
+                return init.InitAsync();
             }
         }
 
@@ -162,21 +151,8 @@ namespace Eventus.Samples.Infrastructure.Factories
 
             public override Task InitAsync()
             {
-                var init = new DocumentDbInitialiser(Client, DatabaseId);
-                return init.InitAsync(Translate(Config));
-            }
-
-            private static DocumentDbConfig Translate(ProviderConfig config)
-            {
-                return new DocumentDbConfig
-                {
-                    Aggregates = config.Aggregates.Select(x => new DocumentDb.Config.AggregateConfig
-                    {
-                        AggregateType = x.AggregateType,
-                        OfferThroughput = x.Settings.OfferThroughput,
-                        SnapshotOfferThroughput = x.Settings.SnapshotOfferThroughput
-                    })
-                };
+                var init = new DocumentDbInitialiser(Client, new DocumentDbConfig(DatabaseId, 400, 400));
+                return init.InitAsync();
             }
 
             private static DocumentClient Client => _client ?? (_client = new DocumentClient(new Uri(ConfigurationManager.AppSettings["DocumentDb.Endpoint"]), ConfigurationManager.AppSettings["DocumentDb.AuthKey"], new ConnectionPolicy { EnableEndpointDiscovery = false }));

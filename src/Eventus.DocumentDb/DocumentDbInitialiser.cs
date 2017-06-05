@@ -1,37 +1,38 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Reflection;
 using System.Threading.Tasks;
 using Eventus.DocumentDb.Config;
+using Eventus.Domain;
+using Eventus.Storage;
 using Microsoft.Azure.Documents;
 using Microsoft.Azure.Documents.Client;
 
 namespace Eventus.DocumentDb
 {
-    public class DocumentDbInitialiser 
+    public class DocumentDbInitialiser : IStorageProviderInitialiser
     {
         private readonly DocumentClient _client;
-        private readonly string _databaseId;
-        private const string PartitionKey = "/aggregateId";
-        private static readonly List<string> ExcludePaths = new List<string>
-        {
-            "/data/*",
-            "/clrType/*",
-            "/targetVersion/*",
-            "/timestamp/*"
-        };
+        private readonly DocumentDbConfig _config;
 
-        public DocumentDbInitialiser(DocumentClient client, string databaseId)
+        public DocumentDbInitialiser(DocumentClient client, DocumentDbConfig config)
         {
             _client = client;
-            _databaseId = databaseId;
+            _config = config;
         }
 
-        //todo translate provider config to a static config for each provider
-        public async Task InitAsync(DocumentDbConfig config)
+        public async Task InitAsync()
         {
+
+            //todo find a way to merge custom code config with default config
+            var aggregateTypes = await DetectAggregatesAsync().ConfigureAwait(false);
+
+            var aggregates = await BuildAggregateConfigsAsync(aggregateTypes).ConfigureAwait(false);
+
             await CreateDatabaseIfNotExistsAsync().ConfigureAwait(false);
 
-            foreach (var c in config.Aggregates)
+            foreach (var c in aggregates)
             {
                 await CreateAggregateCollectionIfNotExistsAsync(c).ConfigureAwait(false);
 
@@ -39,18 +40,32 @@ namespace Eventus.DocumentDb
             }
         }
 
-        private async Task CreateDatabaseIfNotExistsAsync()
+        protected virtual Task<IEnumerable<Type>> DetectAggregatesAsync()
+        {
+            var aggregateTypes = AggregateHelper.GetAggregateTypes();
+
+            return Task.FromResult(aggregateTypes);
+        }
+
+        protected virtual Task<IEnumerable<AggregateConfig>> BuildAggregateConfigsAsync(IEnumerable<Type> aggregateTypes)
+        {
+            var aggregateConfigs = aggregateTypes.Select(t => new AggregateConfig(t, _config.DefaultThroughput, _config.DefaultSnapshotThroughput));
+
+            return Task.FromResult(aggregateConfigs);
+        }
+
+        protected virtual async Task CreateDatabaseIfNotExistsAsync()
         {
             try
             {
-                await _client.ReadDatabaseAsync(UriFactory.CreateDatabaseUri(_databaseId))
+                await _client.ReadDatabaseAsync(UriFactory.CreateDatabaseUri(_config.DatabaseId))
                     .ConfigureAwait(false);
             }
             catch (DocumentClientException e)
             {
                 if (e.StatusCode == System.Net.HttpStatusCode.NotFound)
                 {
-                    await _client.CreateDatabaseAsync(new Database { Id = _databaseId }).ConfigureAwait(false);
+                    await _client.CreateDatabaseAsync(new Database { Id = _config.DatabaseId }).ConfigureAwait(false);
                 }
                 else
                 {
@@ -59,21 +74,21 @@ namespace Eventus.DocumentDb
             }
         }
 
-        private Task CreateAggregateCollectionIfNotExistsAsync(AggregateConfig config)
+        protected virtual Task CreateAggregateCollectionIfNotExistsAsync(AggregateConfig config)
         {
-            return CreateCollectionAsync(config.AggregateType.Name, config.OfferThroughput, PartitionKey, ExcludePaths);
+            return CreateCollectionAsync(config.AggregateType.Name, config.OfferThroughput);
         }
 
-        private Task CreateSnapShotCollectionIfNotExistsAsync(AggregateConfig config)
+        protected virtual Task CreateSnapShotCollectionIfNotExistsAsync(AggregateConfig config)
         {
-            return CreateCollectionAsync(SnapshotCollectionName(config.AggregateType), config.SnapshotOfferThroughput, PartitionKey, ExcludePaths);
+            return CreateCollectionAsync(SnapshotCollectionName(config.AggregateType), config.SnapshotOfferThroughput);
         }
 
-        private async Task CreateCollectionAsync(string collectionName, int throughput, string partitionKey, IEnumerable<string> excludePaths)
+        protected virtual async Task CreateCollectionAsync(string collectionName, int throughput)
         {
             try
             {
-                await _client.ReadDocumentCollectionAsync(UriFactory.CreateDocumentCollectionUri(_databaseId, collectionName))
+                await _client.ReadDocumentCollectionAsync(UriFactory.CreateDocumentCollectionUri(_config.DatabaseId, collectionName))
                     .ConfigureAwait(false);
             }
             catch (DocumentClientException e)
@@ -88,7 +103,7 @@ namespace Eventus.DocumentDb
 
                     collection.IndexingPolicy.IncludedPaths.Add(new IncludedPath { Path = "/*" });
 
-                    foreach (var path in excludePaths)
+                    foreach (var path in _config.ExcludePaths )
                     {
                         collection.IndexingPolicy.ExcludedPaths.Add(new ExcludedPath
                         {
@@ -96,13 +111,13 @@ namespace Eventus.DocumentDb
                         });
                     }
 
-                    if (!string.IsNullOrWhiteSpace(partitionKey))
+                    if (!string.IsNullOrWhiteSpace(_config.PartitionKey))
                     {
-                        collection.PartitionKey.Paths.Add(partitionKey);
+                        collection.PartitionKey.Paths.Add(_config.PartitionKey);
                     }
 
                     await _client.CreateDocumentCollectionAsync(
-                        UriFactory.CreateDatabaseUri(_databaseId),
+                        UriFactory.CreateDatabaseUri(_config.DatabaseId),
                         collection,
                         new RequestOptions { OfferThroughput = throughput }).ConfigureAwait(false);
                 }
@@ -113,7 +128,7 @@ namespace Eventus.DocumentDb
             }
         }
 
-        protected static string SnapshotCollectionName(Type aggregateType)
+        protected virtual string SnapshotCollectionName(Type aggregateType)
         {
             return $"{aggregateType.Name}-snapshot";
         }
