@@ -22,16 +22,12 @@ namespace Eventus.SqlServer
 
         public async Task InitAsync()
         {
-            //todo manage migrations of initial schema, 
-            //todo pass in schema prefix
-            var aggregateTypes = await DetectAggregatesAsync().ConfigureAwait(false);
+            var aggregateTypes = DetectAggregates();
 
-            var aggregates = await BuildAggregateConfigsAsync(aggregateTypes).ConfigureAwait(false);
+            var aggregates = BuildAggregateConfigs(aggregateTypes);
 
-            var connection = await GetOpenConnectionAsync()
-                .ConfigureAwait(false);
+            var connection = await GetOpenConnectionAsync().ConfigureAwait(false);
 
-            //todo move to bulk action if it gets slow
             using (connection)
             {
                 using (var transactionScope = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled))
@@ -48,18 +44,18 @@ namespace Eventus.SqlServer
             }
         }
 
-        protected virtual Task<IEnumerable<Type>> DetectAggregatesAsync()
+        protected virtual IEnumerable<Type> DetectAggregates()
         {
             var aggregateTypes = AggregateHelper.GetAggregateTypes();
 
-            return Task.FromResult(aggregateTypes);
+            return aggregateTypes;
         }
 
-        protected virtual Task<IEnumerable<AggregateConfig>> BuildAggregateConfigsAsync(IEnumerable<Type> aggregateTypes)
+        protected virtual IEnumerable<AggregateConfig> BuildAggregateConfigs(IEnumerable<Type> aggregateTypes)
         {
             var aggregateConfigs = aggregateTypes.Select(t => new AggregateConfig(t));
 
-            return Task.FromResult(aggregateConfigs);
+            return aggregateConfigs;
         }
 
         protected virtual Task CreateTableForAggregateAsync(IDbConnection connection, AggregateConfig aggregateConfig)

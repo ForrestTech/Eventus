@@ -34,8 +34,7 @@ namespace Eventus.Tests.Integration
 
             var actual = await _provider.GetLastEventAsync(aggregate.GetType(), aggregateId)
                 .ConfigureAwait(false);
-
-            //todo support time mocking
+            
             actual.AggregateId.Should().Be(aggregateId);
             actual.TargetVersion.Should().Be(-1);
             actual.Should().BeOfType<AccountCreatedEvent>();

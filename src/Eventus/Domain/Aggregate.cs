@@ -78,7 +78,6 @@ namespace Eventus.Domain
 
         protected virtual void ApplyEvent(IEvent @event, bool isNew)
         {
-            //todo validate events can be applied to this aggregate
             if (_eventHandlerCache.ContainsKey(@event.GetType()))
             {
                 var methodName = _eventHandlerCache[@event.GetType()];

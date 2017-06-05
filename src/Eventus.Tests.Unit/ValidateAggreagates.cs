@@ -9,7 +9,7 @@ using Xunit;
 
 namespace Eventus.Tests.Unit
 {
-    public class TestSupport
+    public class ValidateAggregatesTests
     {
         [Fact]
         public void Validate_that_aggregates_support_all_events()

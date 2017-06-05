@@ -56,9 +56,12 @@
     <Compile Include="Config\AggregateConfig.cs" />
     <Compile Include="Config\ProviderConfig.cs" />
     <Compile Include="Constants.cs" />
+    <Compile Include="Factories\DocumentDbProviderFactory.cs" />
     <Compile Include="Factories\EventStorageProviderFactory.cs" />
+    <Compile Include="Factories\EventStorageProviderFactory1.cs" />
     <Compile Include="Factories\RepositoryFactory.cs" />
     <Compile Include="Factories\SnapshotStorageProviderFactory.cs" />
+    <Compile Include="Factories\SqlServerProviderFactory.cs" />
     <Compile Include="Factories\StorageProviderFactory.cs" />
     <Compile Include="Factories\TearDownFactory.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

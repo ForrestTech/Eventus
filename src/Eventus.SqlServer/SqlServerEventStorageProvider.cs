@@ -65,7 +65,6 @@ namespace Eventus.SqlServer
                         foreach (var @event in events)
                         {
                             committed++;
-                            //todo move to bulk insert
                             var sql = $"insert into {TableName(aggregate.GetType())} (Id, AggregateId, TargetVersion, ClrType, AggregateVersion, TimeStamp, Data) values (@Id, @AggregateId, @TargetVersion, @ClrType, @AggregateVersion, @TimeStamp, @Data)";
                             await connection.ExecuteAsync(sql, new
                             {

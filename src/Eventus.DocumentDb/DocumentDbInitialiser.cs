@@ -24,11 +24,9 @@ namespace Eventus.DocumentDb
 
         public async Task InitAsync()
         {
+            var aggregateTypes = DetectAggregates();
 
-            //todo find a way to merge custom code config with default config
-            var aggregateTypes = await DetectAggregatesAsync().ConfigureAwait(false);
-
-            var aggregates = await BuildAggregateConfigsAsync(aggregateTypes).ConfigureAwait(false);
+            var aggregates = BuildAggregateConfigs(aggregateTypes);
 
             await CreateDatabaseIfNotExistsAsync().ConfigureAwait(false);
 
@@ -40,18 +38,18 @@ namespace Eventus.DocumentDb
             }
         }
 
-        protected virtual Task<IEnumerable<Type>> DetectAggregatesAsync()
+        protected virtual IEnumerable<Type> DetectAggregates()
         {
             var aggregateTypes = AggregateHelper.GetAggregateTypes();
 
-            return Task.FromResult(aggregateTypes);
+            return aggregateTypes;
         }
 
-        protected virtual Task<IEnumerable<AggregateConfig>> BuildAggregateConfigsAsync(IEnumerable<Type> aggregateTypes)
+        protected virtual IEnumerable<AggregateConfig> BuildAggregateConfigs(IEnumerable<Type> aggregateTypes)
         {
             var aggregateConfigs = aggregateTypes.Select(t => new AggregateConfig(t, _config.DefaultThroughput, _config.DefaultSnapshotThroughput));
 
-            return Task.FromResult(aggregateConfigs);
+            return aggregateConfigs;
         }
 
         protected virtual async Task CreateDatabaseIfNotExistsAsync()
@@ -95,15 +93,25 @@ namespace Eventus.DocumentDb
             {
                 if (e.StatusCode == System.Net.HttpStatusCode.NotFound)
                 {
-                    //todo pass in index policy
                     var collection = new DocumentCollection
                     {
                         Id = collectionName
                     };
 
-                    collection.IndexingPolicy.IncludedPaths.Add(new IncludedPath { Path = "/*" });
+                    //allow child implementation to set custom index polices 
+                    var indexPolicy = CreateCustomIndexPolicy();
+                    if (indexPolicy != null)
+                    {
+                        collection.IndexingPolicy = indexPolicy;
+                    }
 
-                    foreach (var path in _config.ExcludePaths )
+                    //include a default include path if an excludes are set
+                    if (_config.ExcludePaths.Any())
+                    {
+                        collection.IndexingPolicy.IncludedPaths.Add(new IncludedPath { Path = "/*" });
+                    }
+
+                    foreach (var path in _config.ExcludePaths)
                     {
                         collection.IndexingPolicy.ExcludedPaths.Add(new ExcludedPath
                         {
@@ -126,6 +134,11 @@ namespace Eventus.DocumentDb
                     throw;
                 }
             }
+        }
+
+        protected virtual IndexingPolicy CreateCustomIndexPolicy()
+        {
+            return null;
         }
 
         protected virtual string SnapshotCollectionName(Type aggregateType)
