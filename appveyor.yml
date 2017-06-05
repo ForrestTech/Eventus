@@ -8,6 +8,7 @@ services:
 nuget:
   disable_publish_on_pr: true
 build_script:
+# Run full build, unit tests, sql integration tests and nuget package 
 - ps: .\build.ps1 -target CI-Sql-Test -ScriptArgs '-package-version="$env:appveyor_build_version"'
 test: off
 artifacts:
@@ -19,3 +20,6 @@ deploy:
     secure: IjuS8PTdvnV6jLVruUFHFCaOpk4HSH05V5k0D0TRTZRON4Gt9IKK+im3NAjuWs7h
   on:
     branch: master
+environment:
+    COVERALLS_REPO_TOKEN:  
+       secure: Xr+EYSpLkGI6fLy4uPdGuI5nVZRcqUZakaswMMn2kkZ5iyFI/p6pHQ5dOJ3hlY4N

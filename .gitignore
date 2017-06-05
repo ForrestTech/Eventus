@@ -252,3 +252,6 @@ paket-files/
 *.sln.iml
 
 build
+tools
+
+coverage.xml

@@ -1,5 +1,6 @@
 #tool "nuget:?package=xunit.runner.console"
 #addin "MagicChunks"
+#addin "Cake.Powershell"
 //////////////////////////////////////////////////////////////////////
 // ARGUMENTS
 //////////////////////////////////////////////////////////////////////
@@ -63,8 +64,24 @@ Task("Unit-Tests")
     XUnit2("./src/**/bin/" + configuration + "/*.Tests.Unit.dll");
 });
 
+Task("Coverage")
+	.Description("Create coverage report")
+	.IsDependentOn("Unit-Tests")
+	.Does(() =>
+{
+	StartPowershellScript(@"src\packages\OpenCover.4.6.519\tools\OpenCover.Console.exe -register:user -filter:'+[Eventus]* -[Eventus]Eventus.Logging.* -[Eventus]Eventus.LibLog.*' -target:'src\packages\xunit.runner.console.2.2.0\tools\xunit.console.exe' -targetargs:'src\Eventus.Tests.Unit\bin\" + configuration  + @"\Eventus.Tests.Unit.dll -noshadow' -output:coverage.xml");
+});
+
+Task("Upload-coverage")
+	.Description("Upload coverage to coverall")
+	.IsDependentOn("Coverage")
+	.Does(() =>
+{
+	StartPowershellScript(@"src\packages\coveralls.io.1.3.4\tools\coveralls.net.exe --opencover coverage.xml");
+});
+
 Task("Pack")
-    .IsDependentOn("Unit-Tests")
+    .IsDependentOn("Coverage")
     .Does(() =>
 {
     NuGetPack("./src/Eventus/Eventus.csproj", new NuGetPackSettings{
@@ -115,7 +132,7 @@ Task("Integration-Tests")
 
 
 Task("CI-Sql-Test")
-    .IsDependentOn("Pack")
+    .IsDependentOn("Upload-coverage")
     .Does(() =>
 {
 	//Run DocumentDb
