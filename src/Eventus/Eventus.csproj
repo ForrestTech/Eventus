@@ -45,6 +45,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AggregateHelper.cs" />
     <Compile Include="App_Packages\LibLog.4.2\LibLog.cs" />
     <Compile Include="Cleanup\ITeardown.cs" />
     <Compile Include="Clock.cs" />
@@ -69,6 +70,7 @@
     <Compile Include="Storage\IEventStorageProvider.cs" />
     <Compile Include="Storage\IRepository.cs" />
     <Compile Include="Storage\ISnapshotStorageProvider.cs" />
+    <Compile Include="Storage\IStorageProviderInitialiser.cs" />
     <Compile Include="Storage\Repository.cs" />
     <Compile Include="Storage\ISnapshottable.cs" />
     <Compile Include="Storage\Snapshot.cs" />

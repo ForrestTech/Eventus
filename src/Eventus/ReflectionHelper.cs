@@ -3,14 +3,14 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using System.Threading.Tasks;
 using Eventus.Events;
 
 namespace Eventus
 {
     internal static class ReflectionHelper
     {
-        private static readonly ConcurrentDictionary<Type, ConcurrentDictionary<Type, string>>
-            AggregateEventHandlerCache =
+        private static readonly ConcurrentDictionary<Type, ConcurrentDictionary<Type, string>> AggregateEventHandlerCache =
                 new ConcurrentDictionary<Type, ConcurrentDictionary<Type, string>>();
 
         public static Dictionary<Type, string> FindEventHandlerMethodsInAggregate(Type aggregateType)

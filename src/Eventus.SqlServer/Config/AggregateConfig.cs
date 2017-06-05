@@ -4,6 +4,11 @@ namespace Eventus.SqlServer.Config
 {
     public class AggregateConfig
     {
-        public Type AggregateType { get; set; }
+        public AggregateConfig(Type aggregateType)
+        {
+            AggregateType = aggregateType ?? throw new ArgumentNullException(nameof(aggregateType));
+        }
+
+        public Type AggregateType { get; }
     }
 }
