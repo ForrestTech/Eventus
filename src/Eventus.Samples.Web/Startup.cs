@@ -10,6 +10,7 @@ using Eventus.Samples.Web.Data;
 using Eventus.Samples.Web.Models;
 using Eventus.Samples.Web.Services;
 using Microsoft.AspNetCore.Mvc;
+using Serilog;
 
 namespace Eventus.Samples.Web
 {
@@ -21,6 +22,12 @@ namespace Eventus.Samples.Web
                 .SetBasePath(env.ContentRootPath)
                 .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
                 .AddJsonFile($"appsettings.{env.EnvironmentName}.json", optional: true);
+
+            Log.Logger = new LoggerConfiguration()
+                .MinimumLevel.Debug()
+                .Enrich.FromLogContext()
+                .WriteTo.Seq("http://localhost:5341")
+                .CreateLogger();
 
             if (env.IsDevelopment())
             {
@@ -70,6 +77,8 @@ namespace Eventus.Samples.Web
         {
             loggerFactory.AddConsole(Configuration.GetSection("Logging"));
             loggerFactory.AddDebug();
+
+            loggerFactory.AddSerilog();
 
             if (env.IsDevelopment())
             {
