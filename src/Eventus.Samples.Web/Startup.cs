@@ -10,8 +10,10 @@ using Microsoft.Extensions.Logging;
 using Eventus.Samples.Web.Data;
 using Eventus.Samples.Web.Models;
 using Eventus.Samples.Web.Services;
+using Microsoft.AspNetCore.Hosting.Internal;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.PlatformAbstractions;
+using Newtonsoft.Json;
 using Serilog;
 using Swashbuckle.AspNetCore.Swagger;
 
@@ -40,14 +42,15 @@ namespace Eventus.Samples.Web
 
             builder.AddEnvironmentVariables();
             Configuration = builder.Build();
+            HostingEnvironment = env;
         }
 
         public IConfigurationRoot Configuration { get; }
+        public IHostingEnvironment HostingEnvironment { get; }
 
-        // This method gets called by the runtime. Use this method to add services to the container.
+
         public void ConfigureServices(IServiceCollection services)
         {
-            // Add framework services.
             services.AddDbContext<ApplicationDbContext>(options =>
                 options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
 
@@ -68,7 +71,16 @@ namespace Eventus.Samples.Web
             {
                 options.SslPort = 44374;
                 options.Filters.Add(new RequireHttpsAttribute());
-            });
+            }).AddJsonOptions(options =>
+            {
+                options.SerializerSettings.ContractResolver = new Newtonsoft.Json.Serialization.DefaultContractResolver();
+                options.SerializerSettings.Converters.Add(new Newtonsoft.Json.Converters.StringEnumConverter());
+
+                if (HostingEnvironment.IsDevelopment())
+                {
+                    options.SerializerSettings.Formatting = Formatting.Indented;
+                }
+            }); 
 
             // Add application services.
             services.AddTransient<IEmailSender, MailGunEmailSender>();
