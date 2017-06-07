@@ -33,6 +33,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "_SolutionItems", "_Solution
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Eventus.SqlServer", "Eventus.SqlServer\Eventus.SqlServer.csproj", "{4F55B4CF-8726-4FC3-BFAB-F5807A466847}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Eventus.Samples.Web", "Eventus.Samples.Web\Eventus.Samples.Web.csproj", "{E0D508C6-06AC-4071-8A86-A90D7D8E68B9}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -75,6 +77,10 @@ Global
 		{4F55B4CF-8726-4FC3-BFAB-F5807A466847}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{4F55B4CF-8726-4FC3-BFAB-F5807A466847}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{4F55B4CF-8726-4FC3-BFAB-F5807A466847}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E0D508C6-06AC-4071-8A86-A90D7D8E68B9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E0D508C6-06AC-4071-8A86-A90D7D8E68B9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E0D508C6-06AC-4071-8A86-A90D7D8E68B9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E0D508C6-06AC-4071-8A86-A90D7D8E68B9}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -85,5 +91,6 @@ Global
 		{71F6058B-41FF-4F08-A461-32F73F03BAAC} = {C8D1A53A-2E83-4CB8-9621-205D2A376E4F}
 		{02C0C5DD-AD27-4068-8030-A1E5BD50731E} = {C8D1A53A-2E83-4CB8-9621-205D2A376E4F}
 		{3B969917-CC06-47BD-A3F7-6E5D3B9FC9F7} = {75C36474-611B-44B3-A48E-392C364EC27B}
+		{E0D508C6-06AC-4071-8A86-A90D7D8E68B9} = {C8D1A53A-2E83-4CB8-9621-205D2A376E4F}
 	EndGlobalSection
 EndGlobal
