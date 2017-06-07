@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using System.Reflection;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
@@ -10,7 +11,7 @@ using Microsoft.Extensions.Logging;
 using Eventus.Samples.Web.Data;
 using Eventus.Samples.Web.Models;
 using Eventus.Samples.Web.Services;
-using Microsoft.AspNetCore.Hosting.Internal;
+using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.PlatformAbstractions;
 using Newtonsoft.Json;
@@ -80,9 +81,10 @@ namespace Eventus.Samples.Web
                 {
                     options.SerializerSettings.Formatting = Formatting.Indented;
                 }
-            }); 
+            });
 
-            // Add application services.
+            services.AddMediatR(Assembly.GetEntryAssembly());
+
             services.AddTransient<IEmailSender, MailGunEmailSender>();
             services.AddTransient<ISmsSender, TwilioSmsSender>();
             
