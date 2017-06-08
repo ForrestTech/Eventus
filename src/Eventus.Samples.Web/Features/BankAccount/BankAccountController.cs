@@ -2,9 +2,11 @@
 using System.Threading.Tasks;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
+using Eventus.Samples.Core.ReadModel;
 
 namespace Eventus.Samples.Web.Features.BankAccount
 {
+    [Authorize]
     public class BankAccountController : Controller
     {
         private readonly IMediator _mediator;

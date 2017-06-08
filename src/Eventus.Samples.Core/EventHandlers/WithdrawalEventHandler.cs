@@ -7,33 +7,22 @@ namespace Eventus.Samples.Core.EventHandlers
 {
     public class WithdrawalEventHandler : IHandleEvent<FundsWithdrawalEvent>
     {
-        private readonly IReadModelRepository _repository;
+        private readonly IBankAccountReadModelRepository _repository;
 
-        public WithdrawalEventHandler(IReadModelRepository repository)
+        public WithdrawalEventHandler(IBankAccountReadModelRepository repository)
         {
             _repository = repository;
         }
 
         public async Task Handle(FundsWithdrawalEvent @event)
         {
-            var readmodel = await _repository.GetAsync() ?? new TopAccountsReadModel();
+            var account = await _repository.GetAsync(@event.AggregateId)
+                .ConfigureAwait(false) ?? new BankAccountSummary();
 
-            var account = readmodel.Accounts.SingleOrDefault(x => x.Id == @event.AggregateId);
+            account.Balance -= @event.Amount;
 
-            if (account == null)
-            {
-                readmodel.Accounts.Add(new AccountSummary
-                {
-                    Balance = @event.Amount,
-                    Id = @event.AggregateId
-                });
-            }
-            else
-            {
-                account.Balance -= @event.Amount;
-            }
-
-            await _repository.SaveAsync(readmodel);
+            await _repository.SaveAsync(account)
+                .ConfigureAwait(false);
         }
     }
 }

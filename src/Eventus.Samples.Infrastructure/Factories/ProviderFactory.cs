@@ -42,7 +42,7 @@ namespace Eventus.Samples.Infrastructure.Factories
 
         public virtual async Task<IRepository> CreateRepositoryAsync()
         {
-            var readRepo = new ReadModelRepository();
+            var readRepo = new BankAccountReadModelRepository();
 
             var repo = new RepositoryLoggingDecorator(
                 new Repository(

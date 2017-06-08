@@ -60,15 +60,16 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Domain\TransactionType.cs" />
+    <Compile Include="EventHandlers\AccountCreatedEventHandler.cs" />
     <Compile Include="ReadModel\AccountSummary.cs" />
     <Compile Include="DemoPublisher.cs" />
     <Compile Include="EventHandlers\DepositEventHandler.cs" />
     <Compile Include="EventHandlers\WithdrawalEventHandler.cs" />
     <Compile Include="EventHandlers\IHandleEvent.cs" />
-    <Compile Include="ReadModel\IReadModelRepository.cs" />
+    <Compile Include="ReadModel\BankAccountReadModelRepository.cs" />
+    <Compile Include="ReadModel\BankAccountSummary.cs" />
+    <Compile Include="ReadModel\IBankAccountReadModelRepository.cs" />
     <Compile Include="EventHandlers\NullEventPublisher.cs" />
-    <Compile Include="ReadModel\ReadModelRepository.cs" />
-    <Compile Include="ReadModel\TopAccountsReadModel.cs" />
     <Compile Include="Events\AccountCreatedEvent.cs" />
     <Compile Include="Domain\BankAccount.cs" />
     <Compile Include="Handlers\BankAccountCommandHandlers.cs" />

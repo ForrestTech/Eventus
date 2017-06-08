@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Threading.Tasks;
 using MediatR;
+using Eventus.Samples.Core.ReadModel;
 
 namespace Eventus.Samples.Web.Features.BankAccount
 {
@@ -13,14 +14,19 @@ namespace Eventus.Samples.Web.Features.BankAccount
 
         public class Handler : IAsyncRequestHandler<Query, BankAccountSummary>
         {
-            public Task<BankAccountSummary> Handle(Query message)
+            private readonly IBankAccountReadModelRepository _repository;
+
+            public Handler(IBankAccountReadModelRepository repository)
             {
-                return Task.FromResult(new BankAccountSummary
-                {
-                    Id = message.Id,
-                    AccountName = "Joe",
-                    CurrentBalance = 100
-                });
+                _repository = repository;
+            }
+
+            public async Task<BankAccountSummary> Handle(Query message)
+            {
+                var account = await _repository.GetAsync(message.Id)
+                    .ConfigureAwait(false);
+
+                return account;
             }
         }
     }
