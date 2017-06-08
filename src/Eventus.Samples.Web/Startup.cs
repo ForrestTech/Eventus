@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Reflection;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -9,10 +11,13 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Eventus.Samples.Web.Data;
-using Eventus.Samples.Web.Models;
+using Eventus.Samples.Web.Features.Account;
 using Eventus.Samples.Web.Services;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.ApplicationModels;
+using Microsoft.AspNetCore.Mvc.Controllers;
+using Microsoft.AspNetCore.Mvc.Razor;
 using Microsoft.Extensions.PlatformAbstractions;
 using Newtonsoft.Json;
 using Serilog;
@@ -37,7 +42,6 @@ namespace Eventus.Samples.Web
 
             if (env.IsDevelopment())
             {
-                // For more details on using the user secret store see https://go.microsoft.com/fwlink/?LinkID=532709
                 builder.AddUserSecrets<Startup>();
             }
 
@@ -47,8 +51,8 @@ namespace Eventus.Samples.Web
         }
 
         public IConfigurationRoot Configuration { get; }
-        public IHostingEnvironment HostingEnvironment { get; }
 
+        public IHostingEnvironment HostingEnvironment { get; }
 
         public void ConfigureServices(IServiceCollection services)
         {
@@ -81,13 +85,14 @@ namespace Eventus.Samples.Web
                 {
                     options.SerializerSettings.Formatting = Formatting.Indented;
                 }
-            });
+
+            }).AddFeatureFolders();
 
             services.AddMediatR(Assembly.GetEntryAssembly());
 
             services.AddTransient<IEmailSender, MailGunEmailSender>();
             services.AddTransient<ISmsSender, TwilioSmsSender>();
-            
+
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new Info { Title = "Eventus Sample Web", Version = "v1" });
@@ -135,7 +140,7 @@ namespace Eventus.Samples.Web
             });
 
             app.UseSwagger();
-            
+
             app.UseSwaggerUI(c =>
             {
                 c.SwaggerEndpoint("/swagger/v1/swagger.json", "Eventus Sample Web");

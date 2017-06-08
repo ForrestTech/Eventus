@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Eventus.Samples.Web.Features.Account;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
-using Eventus.Samples.Web.Models;
 
 namespace Eventus.Samples.Web.Data
 {
