@@ -16,6 +16,7 @@
     <DocumentationFile>bin\Debug\eventus.xml</DocumentationFile>
   </PropertyGroup>
   <ItemGroup>
+    <PackageReference Include="FluentValidation.AspNetCore" Version="7.0.3" />
     <PackageReference Include="mailgun_csharp" Version="0.6.0" />
     <PackageReference Include="MediatR" Version="3.0.1" />
     <PackageReference Include="MediatR.Extensions.Microsoft.DependencyInjection" Version="2.0.0" />
@@ -46,6 +47,11 @@
     <DotNetCliToolReference Include="Microsoft.EntityFrameworkCore.Tools.DotNet" Version="1.0.1" />
     <DotNetCliToolReference Include="Microsoft.Extensions.SecretManager.Tools" Version="1.0.1" />
     <DotNetCliToolReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Tools" Version="1.0.1" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Eventus.Samples.Core\Eventus.Samples.Core.csproj" />
+    <ProjectReference Include="..\Eventus.Samples.Infrastructure\Eventus.Samples.Infrastructure.csproj" />
+    <ProjectReference Include="..\Eventus\Eventus.csproj" />
   </ItemGroup>
 
 </Project>

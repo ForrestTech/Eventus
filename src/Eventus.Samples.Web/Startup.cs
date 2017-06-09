@@ -1,6 +1,9 @@
 ﻿using System;
 using System.IO;
 using System.Reflection;
+using Eventus.Samples.Core.Handlers;
+using Eventus.Samples.Core.ReadModel;
+using Eventus.Samples.Infrastructure.Factories;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
@@ -11,6 +14,7 @@ using Microsoft.Extensions.Logging;
 using Eventus.Samples.Web.Data;
 using Eventus.Samples.Web.Features.Account;
 using Eventus.Samples.Web.Services;
+using FluentValidation.AspNetCore;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.PlatformAbstractions;
@@ -52,14 +56,14 @@ namespace Eventus.Samples.Web
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddDbContext<ApplicationDbContext>(options =>
-                options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
+                options.UseSqlServer(Configuration.GetConnectionString("Eventus")));
 
-            services.AddIdentity<ApplicationUser, IdentityRole>(config =>
+            services.AddIdentity<ApplicationUser, IdentityRole>(options =>
                 {
-                    config.Password.RequireNonAlphanumeric = false;
-                    config.SignIn.RequireConfirmedEmail = true;
-                    config.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(10);
-                    config.Lockout.MaxFailedAccessAttempts = 10;
+                    options.Password.RequireNonAlphanumeric = false;
+                    options.SignIn.RequireConfirmedEmail = true;
+                    options.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(10);
+                    options.Lockout.MaxFailedAccessAttempts = 10;
                 })
                 .AddEntityFrameworkStores<ApplicationDbContext>()
                 .AddDefaultTokenProviders();
@@ -71,7 +75,8 @@ namespace Eventus.Samples.Web
             {
                 options.SslPort = 44374;
                 options.Filters.Add(new RequireHttpsAttribute());
-            }).AddJsonOptions(options =>
+            })
+            .AddJsonOptions(options =>
             {
                 options.SerializerSettings.ContractResolver = new Newtonsoft.Json.Serialization.DefaultContractResolver();
                 options.SerializerSettings.Converters.Add(new Newtonsoft.Json.Converters.StringEnumConverter());
@@ -80,13 +85,19 @@ namespace Eventus.Samples.Web
                 {
                     options.SerializerSettings.Formatting = Formatting.Indented;
                 }
+            })
+            .AddFeatureFolders()
+            .AddFluentValidation(options => options.RegisterValidatorsFromAssemblyContaining<Startup>());
 
-            }).AddFeatureFolders();
-
-            services.AddMediatR(Assembly.GetEntryAssembly());
+            services.AddMediatR(Assembly.GetEntryAssembly(), Assembly.GetAssembly(typeof(BankAccountCommandHandlers)));
 
             services.AddTransient<IEmailSender, MailGunEmailSender>();
             services.AddTransient<ISmsSender, TwilioSmsSender>();
+            services.AddTransient<IBankAccountReadModelRepository, BankAccountReadModelRepository>();
+
+            var repo = RepositoryFactory.CreateAsync(Configuration["Provider"]).Result;
+            services.AddSingleton(repo);
+
 
             services.AddSwaggerGen(c =>
             {

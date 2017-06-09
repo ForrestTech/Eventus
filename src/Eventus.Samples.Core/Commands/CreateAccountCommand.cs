@@ -1,9 +1,10 @@
 ﻿using System;
 using Eventus.Commands;
+using MediatR;
 
 namespace Eventus.Samples.Core.Commands
 {
-    public class CreateAccountCommand : Command
+    public class CreateAccountCommand : Command, IRequest
     {
         public string Name { get; }
 

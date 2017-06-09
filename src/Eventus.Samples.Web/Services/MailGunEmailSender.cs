@@ -25,7 +25,7 @@ namespace Eventus.Samples.Web.Services
                 })
                 .SetSubject(subject)
                 .SetFromAddress(new Recipient { Email = _emailOptions.EmailFrom, DisplayName = "Eventus" })
-                .SetTextBody(message)
+                .SetHtmlBody(message)
                 .GetMessage();
 
             return mg.SendMessageAsync(_emailOptions.EmailDomain, mail);
