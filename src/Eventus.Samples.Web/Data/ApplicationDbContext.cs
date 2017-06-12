@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Eventus.Samples.Web.Features.Account;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
+using Eventus.Samples.Core.ReadModel;
 
 namespace Eventus.Samples.Web.Data
 {
@@ -22,5 +23,7 @@ namespace Eventus.Samples.Web.Data
             // For example, you can rename the ASP.NET Identity table names and more.
             // Add your customizations after calling base.OnModelCreating(builder);
         }
+
+        public DbSet<Eventus.Samples.Core.ReadModel.BankAccountSummary> BankAccountSummary { get; set; }
     }
 }
