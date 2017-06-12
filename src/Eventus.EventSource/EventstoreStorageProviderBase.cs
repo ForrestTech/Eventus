@@ -16,14 +16,18 @@ namespace Eventus.EventStore
 
         protected EventstoreStorageProviderBase(IEventStoreConnection connection, Func<string> getStreamNamePrefix)
         {
-            Connection = connection;
+            Connection = connection ?? throw new ArgumentNullException(nameof(connection));
             _getStreamNamePrefix = getStreamNamePrefix;
         }
 
         protected string AggregateIdToStreamName(Type t, Guid id)
         {
             //Ensure first character of type name is in lower camel case
-            var prefix = _getStreamNamePrefix();
+            var prefix = "";
+            if (_getStreamNamePrefix != null)
+            {
+                prefix = _getStreamNamePrefix();
+            }
 
             return $"{char.ToLower(prefix[0])}{prefix.Substring(1)}-{t.Name}-{id:N}";
         }
