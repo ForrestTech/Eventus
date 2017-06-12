@@ -8,7 +8,8 @@
     <authors>Richard Forrest</authors>
     <owners>Richard Forrest</owners>
     <licenseUrl>https://github.com/feanz/Eventus/blob/master/LICENSE</licenseUrl>
-    <projectUrl>https://github.com/feanz/Eventus</projectUrl>    
+    <projectUrl>https://github.com/feanz/Eventus</projectUrl>
+    <iconUrl>https://raw.githubusercontent.com/feanz/Eventus/master/logo.png</iconUrl>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>    
   </metadata>
 </package>
