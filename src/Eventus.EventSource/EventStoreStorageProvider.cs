@@ -14,7 +14,7 @@ namespace Eventus.EventStore
         //There is a max limit of 4096 messages per read in eventstore so use paging
         private const int EventStorePageSize = 200;
 
-        public EventstoreStorageProvider(IEventStoreConnection connection, Func<string> getStreamNamePrefix)
+        public EventstoreStorageProvider(IEventStoreConnection connection, Func<string> getStreamNamePrefix = null)
             : base(connection, getStreamNamePrefix)
         {
         }

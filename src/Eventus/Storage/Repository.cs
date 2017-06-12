@@ -18,11 +18,11 @@ namespace Eventus.Storage
         private readonly ISnapshotStorageProvider _snapshotStorageProvider;
         private readonly IEventPublisher _eventPublisher;
 
-        public Repository(IEventStorageProvider eventStorageProvider, ISnapshotStorageProvider snapshotStorageProvider, IEventPublisher eventPublisher)
+        public Repository(IEventStorageProvider eventStorageProvider, ISnapshotStorageProvider snapshotStorageProvider, IEventPublisher eventPublisher = null)
         {
             _eventStorageProvider = eventStorageProvider ?? throw new ArgumentNullException(nameof(eventStorageProvider));
             _snapshotStorageProvider = snapshotStorageProvider ?? throw new ArgumentNullException(nameof(snapshotStorageProvider));
-            _eventPublisher = eventPublisher ?? throw new ArgumentNullException(nameof(eventPublisher));
+            _eventPublisher = eventPublisher;
         }
 
         public async Task<TAggregate> GetByIdAsync<TAggregate>(Guid id) where TAggregate : Aggregate
@@ -104,10 +104,13 @@ namespace Eventus.Storage
                 .ConfigureAwait(false);
 
             //Publish to event publisher asynchronously
-            foreach (var e in changesToCommit)
+            if (_eventPublisher != null)
             {
-                await _eventPublisher.PublishAsync(e)
-                    .ConfigureAwait(false);
+                foreach (var e in changesToCommit)
+                {
+                    await _eventPublisher.PublishAsync(e)
+                        .ConfigureAwait(false);
+                }
             }
 
             //If the Aggregate implements snapshottable

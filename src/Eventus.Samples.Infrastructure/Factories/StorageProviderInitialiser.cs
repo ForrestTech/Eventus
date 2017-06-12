@@ -7,7 +7,7 @@ namespace Eventus.Samples.Infrastructure.Factories
     {
         public static Task InitAsync()
         {
-            var provider = StorageProviderFactory.FromString(ConfigurationManager.AppSettings[Constants.Provider]);
+            var provider = ProviderFactory.FromString(ConfigurationManager.AppSettings[Constants.Provider]);
             return provider.InitAsync();
         }
     }

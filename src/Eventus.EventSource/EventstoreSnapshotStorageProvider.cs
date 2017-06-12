@@ -8,9 +8,11 @@ namespace Eventus.EventStore
 {
     public class EventstoreSnapshotStorageProvider : EventstoreStorageProviderBase, ISnapshotStorageProvider
     {
-        public EventstoreSnapshotStorageProvider(IEventStoreConnection connection, Func<string> getStreamNamePrefix, int snapshotFrequency)
+        public EventstoreSnapshotStorageProvider(IEventStoreConnection connection, int snapshotFrequency, Func<string> getStreamNamePrefix = null)
             : base(connection, getStreamNamePrefix)
         {
+            if (snapshotFrequency <= 2) throw new ArgumentOutOfRangeException(nameof(snapshotFrequency));
+
             SnapshotFrequency = snapshotFrequency;
         }
 
