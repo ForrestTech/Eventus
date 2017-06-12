@@ -8,7 +8,7 @@ namespace Eventus.Samples.Infrastructure.Factories
     {
         public static async Task<IRepository> CreateAsync()
         {
-            var provider = StorageProviderFactory.FromString(ConfigurationManager.AppSettings[Constants.Provider].ToLowerInvariant());
+            var provider = ProviderFactory.FromString(ConfigurationManager.AppSettings[Constants.Provider].ToLowerInvariant());
             var repo = await provider.CreateRepositoryAsync().ConfigureAwait(false);
             return repo;
         }

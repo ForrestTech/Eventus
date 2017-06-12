@@ -5,9 +5,9 @@ using Eventus.SqlServer;
 using Eventus.SqlServer.Config;
 using Eventus.Storage;
 
-namespace Eventus.Samples.Infrastructure.Factories
+namespace Eventus.Samples.Infrastructure.Factories.StorageProviders
 {
-    public class SqlServerProviderFactory : StorageProviderFactory
+    public class SqlServerProviderFactory : ProviderFactory
     {
         private readonly string _connectionString = ConfigurationManager.ConnectionStrings["Eventus"].ToString();
 

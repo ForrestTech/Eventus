@@ -8,13 +8,13 @@ using Eventus.EventStore;
 using Eventus.Logging;
 using Eventus.Storage;
 
-namespace Eventus.Samples.Infrastructure.Factories
+namespace Eventus.Samples.Infrastructure.Factories.StorageProviders
 {
-    public class EventStorageProviderFactory : StorageProviderFactory
+    public class EventProviderFactory : ProviderFactory
     {
         private static IEventStoreConnection _connection;
 
-        public EventStorageProviderFactory(int value, string name) : base(value, name)
+        public EventProviderFactory(int value, string name) : base(value, name)
         {
         }
 
