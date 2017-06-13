@@ -56,16 +56,11 @@
     <Compile Include="Config\AggregateConfig.cs" />
     <Compile Include="Config\ProviderConfig.cs" />
     <Compile Include="Constants.cs" />
-    <Compile Include="Factories\StorageProviders\DocumentDbProviderFactory.cs" />
-    <Compile Include="Factories\RepositoryFactory.cs" />
-    <Compile Include="Factories\SnapshotStorageProviderFactory.cs" />
-    <Compile Include="Factories\StorageProviders\SqlServerProviderFactory.cs" />
+    <Compile Include="Factories\Providers\DocumentDbProviderFactory.cs" />
+    <Compile Include="Factories\Providers\SqlServerProviderFactory.cs" />
     <Compile Include="Factories\ProviderFactory.cs" />
-    <Compile Include="Factories\StorageProviders\EventProviderFactory.cs" />
-    <Compile Include="Factories\StorageProviderFactory.cs" />
-    <Compile Include="Factories\TearDownFactory.cs" />
+    <Compile Include="Factories\Providers\EventProviderFactory.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Factories\StorageProviderInitialiser.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Eventus.DocumentDb\Eventus.DocumentDb.csproj">

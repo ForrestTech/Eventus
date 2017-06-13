@@ -8,7 +8,7 @@ using Eventus.Logging;
 using Eventus.Storage;
 using Microsoft.Azure.Documents.Client;
 
-namespace Eventus.Samples.Infrastructure.Factories.StorageProviders
+namespace Eventus.Samples.Infrastructure.Factories.Providers
 {
     public class DocumentDbProviderFactory : ProviderFactory
     {

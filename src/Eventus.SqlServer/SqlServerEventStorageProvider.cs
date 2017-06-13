@@ -17,7 +17,7 @@ namespace Eventus.SqlServer
         {
         }
 
-        public async Task<IEnumerable<IEvent>> GetEventsAsync(Type aggregateType, Guid aggregateId, int start = 0, int count = int.MaxValue)
+        public async Task<IEnumerable<IEvent>> GetEventsAsync(Type aggregateType, Guid aggregateId, int start, int count)
         {
             var connection = await GetOpenConnectionAsync().ConfigureAwait(false);
 

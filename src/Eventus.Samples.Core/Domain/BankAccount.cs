@@ -22,14 +22,22 @@ namespace Eventus.Samples.Core.Domain
             Transactions = new List<Transaction>();
         }
 
-        public BankAccount(Guid id, string name, Guid correlationId = new Guid()) : this()
+        public BankAccount(Guid id, string name) : this(id, name, Guid.NewGuid())
+        { }
+
+        public BankAccount(Guid id, string name, Guid correlationId) : this()
         {
             //Pattern: Create the event and call ApplyEvent(Event)
             var accountCreated = new AccountCreatedEvent(id, CurrentVersion, correlationId, name);
             ApplyEvent(accountCreated);
         }
 
-        public void WithDrawFunds(decimal amount, Guid correlationId = new Guid())
+        public void WithDrawFunds(decimal amount)
+        {
+            WithDrawFunds(amount, Guid.NewGuid());
+        }
+
+        public void WithDrawFunds(decimal amount, Guid correlationId)
         {
             if (CurrentBalance >= amount)
             {
@@ -38,7 +46,12 @@ namespace Eventus.Samples.Core.Domain
             }
         }
 
-        public void Deposit(decimal amount, Guid correlationId = new Guid())
+        public void Deposit(decimal amount)
+        {
+            Deposit(amount, Guid.NewGuid());
+        }
+
+        public void Deposit(decimal amount, Guid correlationId)
         {
             var deposit = new FundsDepositedEvent(Id, CurrentVersion, correlationId, amount);
             ApplyEvent(deposit);
@@ -60,7 +73,7 @@ namespace Eventus.Samples.Core.Domain
             Transactions.Add(newTransaction);
         }
 
-        private void OnFundsWithdrawl(FundsWithdrawalEvent @event)
+        private void OnFundsWithdrawal(FundsWithdrawalEvent @event)
         {
             var newTransaction = new Transaction(TransactionType.Withdrawal, @event.AggregateId, @event.Amount);
             Transactions.Add(newTransaction);

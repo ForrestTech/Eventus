@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.Linq;
 using System.Threading.Tasks;
 using Eventus.Cleanup;
@@ -7,7 +8,7 @@ using Eventus.Logging;
 using Eventus.Samples.Core;
 using Eventus.Samples.Core.EventHandlers;
 using Eventus.Samples.Core.ReadModel;
-using Eventus.Samples.Infrastructure.Factories.StorageProviders;
+using Eventus.Samples.Infrastructure.Factories.Providers;
 using Eventus.Storage;
 
 namespace Eventus.Samples.Infrastructure.Factories
@@ -26,6 +27,8 @@ namespace Eventus.Samples.Infrastructure.Factories
             Value = value;
             Name = name;
         }
+
+        public static ProviderFactory Current => FromString(ConfigurationManager.AppSettings[Constants.Provider].ToLowerInvariant());
 
         public static IEnumerable<ProviderFactory> List()
         {

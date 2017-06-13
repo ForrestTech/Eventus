@@ -18,7 +18,16 @@ namespace Eventus.Events
         {
         }
 
-        public Event(Guid aggregateId, int targetVersion, Guid correlationId = new Guid(), int eventClassVersion = 1)
+        public Event(Guid aggregateId, int targetVersion) : this(aggregateId, targetVersion, Guid.NewGuid())
+        {
+        }
+
+        public Event(Guid aggregateId, int targetVersion, Guid correlationId) : this(aggregateId, targetVersion, correlationId, 1)
+        {
+        }
+
+
+        public Event(Guid aggregateId, int targetVersion, Guid correlationId, int eventClassVersion)
         {
             AggregateId = aggregateId;
             TargetVersion = targetVersion;

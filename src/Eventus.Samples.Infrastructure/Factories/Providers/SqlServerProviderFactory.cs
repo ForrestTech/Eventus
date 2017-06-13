@@ -5,7 +5,7 @@ using Eventus.SqlServer;
 using Eventus.SqlServer.Config;
 using Eventus.Storage;
 
-namespace Eventus.Samples.Infrastructure.Factories.StorageProviders
+namespace Eventus.Samples.Infrastructure.Factories.Providers
 {
     public class SqlServerProviderFactory : ProviderFactory
     {

@@ -15,8 +15,8 @@ namespace Eventus.Tests.Integration
 
         public SnapshotStorageProviderTests()
         {
-            _provider = SnapshotStorageProviderFactory.CreateAsync().Result;
-            StorageProviderInitialiser.InitAsync().Wait();
+            _provider = ProviderFactory.Current.CreateSnapshotStorageProviderAsync().Result;
+            ProviderFactory.Current.InitAsync().Wait();
         }
 
         [Fact]

@@ -1,6 +1,5 @@
 ﻿using System.Threading.Tasks;
 using Eventus.Commands;
-using Eventus.Samples.Core.Commands;
 
 namespace Eventus.Samples.Core
 {
