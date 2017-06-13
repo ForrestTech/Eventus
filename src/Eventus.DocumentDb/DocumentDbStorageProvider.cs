@@ -18,7 +18,7 @@ namespace Eventus.DocumentDb
         public DocumentDbStorageProvider(DocumentClient client, string databaseId) : base(client, databaseId)
         { }
 
-        public async Task<IEnumerable<IEvent>> GetEventsAsync(Type aggregateType, Guid aggregateId, int start = 0, int count = int.MaxValue)
+        public async Task<IEnumerable<IEvent>> GetEventsAsync(Type aggregateType, Guid aggregateId, int start, int count)
         {
             try
             {

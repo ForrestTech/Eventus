@@ -10,9 +10,12 @@ namespace Eventus.Commands
 
         public int TargetVersion { get; }
 
-        public Command(Guid correlationId, Guid aggregateId, int targetVersion = -1)
+        public Command(Guid correlationId, Guid aggregateId) : this(correlationId, aggregateId, -1)
+        { }
+
+        public Command(Guid correlationId, Guid aggregateId, int targetVersion)
         {
-            if(correlationId == Guid.Empty) throw new ArgumentException(nameof(correlationId));
+            if (correlationId == Guid.Empty) throw new ArgumentException(nameof(correlationId));
             if (aggregateId == Guid.Empty) throw new ArgumentException(nameof(aggregateId));
 
             CorrelationId = correlationId;

@@ -8,7 +8,7 @@ namespace Eventus.Storage
 {
     public interface IEventStorageProvider 
     {
-        Task<IEnumerable<IEvent>> GetEventsAsync(Type aggregateType, Guid aggregateId, int start = 0, int count = int.MaxValue);
+        Task<IEnumerable<IEvent>> GetEventsAsync(Type aggregateType, Guid aggregateId, int start, int count);
 
         Task<IEvent> GetLastEventAsync(Type aggregateType, Guid aggregateId);
 

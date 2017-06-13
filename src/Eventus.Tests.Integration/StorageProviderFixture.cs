@@ -14,12 +14,12 @@ namespace Eventus.Tests.Integration
 
         private static Task SetupAsync()
         {
-            return StorageProviderInitialiser.InitAsync();
+            return ProviderFactory.Current.InitAsync();
         }
 
         public void Dispose()
         {
-            var cleaner = TearDownFactory.CreateAsync().Result;
+            var cleaner = ProviderFactory.Current.CreateTeardownAsync().Result;
             cleaner.TearDownAsync().Wait();
         }
     }

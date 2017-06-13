@@ -1,7 +1,7 @@
 ﻿namespace Eventus.Samples.Infrastructure
 {
-    public class Constants
+    public static class Constants
     {
-        public const string Provider = "Provider";
+        public static readonly string Provider = "Provider";
     }
 }

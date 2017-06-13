@@ -17,8 +17,9 @@ namespace Eventus.Tests.Integration
         {
             var accountId = Guid.NewGuid();
 
-            var repo = await RepositoryFactory.CreateAsync()
+            var repo = await ProviderFactory.Current.CreateRepositoryAsync()
                 .ConfigureAwait(false);
+
             var handler = new BankAccountCommandHandlers(repo);
             const string joeBloggs = "Joe Bloggs";
 

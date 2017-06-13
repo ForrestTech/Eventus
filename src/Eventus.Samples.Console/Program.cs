@@ -7,9 +7,9 @@ using Serilog;
 
 namespace Eventus.Samples.Console
 {
-    class Program
+    internal static class Program
     {
-        static void Main(string[] args)
+        private static void Main()
         {
             var log = new LoggerConfiguration()
                 .WriteTo.ColoredConsole(outputTemplate: "{Timestamp:HH:mm} [{Level}] ({Name:l}) {Message}{NewLine}{Exception}")
@@ -22,14 +22,15 @@ namespace Eventus.Samples.Console
 
             var accountId = Guid.NewGuid();
 
-            var repo = RepositoryFactory.CreateAsync().Result;
+            var providerFactory = ProviderFactory.Current;
+            var repo = providerFactory.CreateRepositoryAsync().Result;
 
             log.Information("Initialising provider");
-            StorageProviderInitialiser.InitAsync().Wait();
+            providerFactory.InitAsync().Wait();
             log.Information("Provider initialised");
 
             log.Information("Tearing down provider");
-            var cleaner = TearDownFactory.CreateAsync().Result;
+            var cleaner = providerFactory.CreateTeardownAsync().Result;
             cleaner.TearDownAsync().Wait();
             log.Information("StorageProviderFactory torn down");
 

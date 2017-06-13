@@ -8,7 +8,7 @@ using Eventus.EventStore;
 using Eventus.Logging;
 using Eventus.Storage;
 
-namespace Eventus.Samples.Infrastructure.Factories.StorageProviders
+namespace Eventus.Samples.Infrastructure.Factories.Providers
 {
     public class EventProviderFactory : ProviderFactory
     {

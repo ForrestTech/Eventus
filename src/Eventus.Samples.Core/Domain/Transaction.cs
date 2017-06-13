@@ -2,7 +2,7 @@
 
 namespace Eventus.Samples.Core.Domain
 {
-    public class Transaction
+    public class Transaction : IEquatable<Transaction>
     {
         public Transaction(TransactionType type, Guid id, decimal amount)
         {
@@ -11,11 +11,11 @@ namespace Eventus.Samples.Core.Domain
             Amount = amount;
         }
 
-        public TransactionType Type { get;  }
+        public TransactionType Type { get; }
 
         public Guid Id { get; }
 
-        public decimal Amount { get;  }
+        public decimal Amount { get; }
 
         protected bool Equals(Transaction other)
         {
@@ -26,19 +26,26 @@ namespace Eventus.Samples.Core.Domain
         {
             if (ReferenceEquals(null, obj)) return false;
             if (ReferenceEquals(this, obj)) return true;
-            if (obj.GetType() != this.GetType()) return false;
-            return Equals((Transaction) obj);
+            return obj.GetType() == GetType() && Equals((Transaction)obj);
         }
 
         public override int GetHashCode()
         {
             unchecked
             {
-                var hashCode = (int) Type;
+                var hashCode = (int)Type;
                 hashCode = (hashCode * 397) ^ Id.GetHashCode();
                 hashCode = (hashCode * 397) ^ Amount.GetHashCode();
                 return hashCode;
             }
+        }
+
+        bool IEquatable<Transaction>.Equals(Transaction other)
+        {
+            return other != null && 
+                Type == other.Type &&
+                Id == other.Id &&
+                Amount == other.Amount;
         }
     }
 }

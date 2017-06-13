@@ -14,12 +14,19 @@ namespace Eventus.EventStore
         //There is a max limit of 4096 messages per read in eventstore so use paging
         private const int EventStorePageSize = 200;
 
-        public EventstoreStorageProvider(IEventStoreConnection connection, Func<string> getStreamNamePrefix = null)
+        public EventstoreStorageProvider(IEventStoreConnection connection) : this(connection, null)
+        {}
+
+        public EventstoreStorageProvider(IEventStoreConnection connection, Func<string> getStreamNamePrefix)
             : base(connection, getStreamNamePrefix)
+        {}
+
+        public Task<IEnumerable<IEvent>> GetEventAsync(Type aggregateType, Guid aggregateId)
         {
+            return GetEventsAsync(aggregateType, aggregateId, 0, int.MaxValue);
         }
 
-        public async Task<IEnumerable<IEvent>> GetEventsAsync(Type aggregateType, Guid aggregateId, int start = 0, int count = int.MaxValue)
+        public async Task<IEnumerable<IEvent>> GetEventsAsync(Type aggregateType, Guid aggregateId, int start, int count)
         {
             var events = await ReadEventsAsync(aggregateType, aggregateId, start, count)
                 .ConfigureAwait(false);
