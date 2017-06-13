@@ -80,18 +80,6 @@ Task("Upload-coverage")
 	StartPowershellScript(@"src\packages\coveralls.io.1.3.4\tools\coveralls.net.exe --opencover coverage.xml");
 });
 
-Task("Pack")
-    .IsDependentOn("Coverage")
-    .Does(() =>
-{
-    NuGetPack("./src/Eventus/Eventus.csproj", new NuGetPackSettings{
-		Version = packageVersion,
-		Properties = new Dictionary<string,string>{
-			{ "Configuration", configuration }
-		}
-	});
-});
-
 Task("Integration-Tests")
     .IsDependentOn("Unit-Tests")
     .Does(() =>
@@ -149,15 +137,19 @@ Task("CI-Sql-Test")
 	XUnit2("./src/Eventus.Tests.Integration/bin/" + configuration + "/Eventus.Tests.Integration.dll");
 });
 
-//////////////////////////////////////////////////////////////////////
-// TASK TARGETS
-//////////////////////////////////////////////////////////////////////
+Task("Pack")
+    .IsDependentOn("CI-Sql-Test")
+    .Does(() =>
+{
+    NuGetPack("./src/Eventus/Eventus.csproj", new NuGetPackSettings{
+		Version = packageVersion,
+		Properties = new Dictionary<string,string>{
+			{ "Configuration", configuration }
+		}
+	});
+});
 
 Task("Default")
     .IsDependentOn("Pack");
-
-//////////////////////////////////////////////////////////////////////
-// EXECUTION
-//////////////////////////////////////////////////////////////////////
 
 RunTarget(target);
