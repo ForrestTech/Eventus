@@ -9,7 +9,7 @@ nuget:
   disable_publish_on_pr: true
 build_script:
 # Run full build, unit tests, sql integration tests and nuget package 
-- ps: .\build.ps1 -target CI-Sql-Test -ScriptArgs '-package-version="$env:appveyor_build_version"'
+- ps: .\build.ps1 -target Pack -ScriptArgs '-package-version="$env:appveyor_build_version"'
 test: off
 artifacts:
 - path: Eventus.*.nupkg
