@@ -1,4 +1,4 @@
-﻿@model Eventus.Samples.Web.Features.BankAccount.Commands.CreateAccountCommand
+﻿@model Eventus.Samples.Web.Features.BankAccount.Create.Command
 @{
     ViewData["Title"] = "Create Bank Account";
 }
@@ -6,9 +6,10 @@
 <h2>@ViewData["Title"].</h2>
 
 <form asp-controller="BankAccount" asp-action="Create" method="post" class="form-horizontal">
-    <h4>Create a new bank account.</h4>
+    <h4>Give your new account a name.</h4>
     <hr />
     <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+    <input asp-for="AggregateId" type="hidden"/>
     <div class="form-group">
         <label asp-for="AccountName" class="col-md-2 control-label"></label>
         <div class="col-md-10">

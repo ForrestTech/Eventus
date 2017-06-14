@@ -1,14 +1,11 @@
 ﻿using System.Threading.Tasks;
-using Eventus.Samples.Core.Commands;
+using Eventus.Samples.Contracts.BankAccount.Commands;
 using Eventus.Samples.Core.Domain;
 using Eventus.Storage;
-using MediatR;
 
 namespace Eventus.Samples.Core.Handlers
 {
-    public class BankAccountCommandHandlers : IAsyncRequestHandler<CreateAccountCommand>,
-        IAsyncRequestHandler<WithdrawFundsCommand>,
-        IAsyncRequestHandler<DepositFundsCommand>
+    public class BankAccountCommandHandlers 
     {
         private readonly IRepository _repository;
 

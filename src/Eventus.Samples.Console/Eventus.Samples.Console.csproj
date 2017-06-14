@@ -71,6 +71,10 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\Eventus.Samples.Contracts\Eventus.Samples.Contracts.csproj">
+      <Project>{2a320b66-02ab-4969-90aa-4ecad997badd}</Project>
+      <Name>Eventus.Samples.Contracts</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Eventus.Samples.Core\Eventus.Samples.Core.csproj">
       <Project>{B0D6E886-4FB4-4297-BD50-C712AF24CE7B}</Project>
       <Name>Eventus.Samples.Core</Name>

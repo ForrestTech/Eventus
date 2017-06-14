@@ -1,6 +1,6 @@
 ﻿using System.Threading.Tasks;
-using Mailgun.Messages;
-using Mailgun.Service;
+using FluentEmail.Core;
+using FluentEmail.Mailgun;
 using Microsoft.Extensions.Options;
 
 namespace Eventus.Samples.Web.Services
@@ -12,23 +12,24 @@ namespace Eventus.Samples.Web.Services
         public MailGunEmailSender(IOptionsSnapshot<EmailOptions> emailOptions)
         {
             _emailOptions = emailOptions.Value;
+
+            var sender = new MailgunSender(
+                _emailOptions.EmailDomain,
+                _emailOptions.MailGunAPIKey
+            );
+
+            Email.DefaultSender = sender;
         }
 
         public Task SendEmailAsync(string email, string subject, string message)
         {
-            var mg = new MessageService(_emailOptions.MailGunAPIKey);
+            var mail = Email
+                .From(_emailOptions.EmailFrom)
+                .To(email)
+                .Subject(subject)
+                .Body(message, true);
 
-            var mail = new MessageBuilder()
-                .AddToRecipient(new Recipient
-                {
-                    Email = email
-                })
-                .SetSubject(subject)
-                .SetFromAddress(new Recipient { Email = _emailOptions.EmailFrom, DisplayName = "Eventus" })
-                .SetHtmlBody(message)
-                .GetMessage();
-
-            return mg.SendMessageAsync(_emailOptions.EmailDomain, mail);
+            return mail.SendAsync();
         }
     }
 }

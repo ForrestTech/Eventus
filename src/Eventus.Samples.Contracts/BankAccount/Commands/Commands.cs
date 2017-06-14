@@ -1,14 +1,14 @@
 ﻿using System;
 
-namespace Eventus.Commands
+namespace Eventus.Samples.Contracts.BankAccount.Commands
 {
     public class Command : ICommand
     {
-        public Guid CorrelationId { get; }
+        public Guid CorrelationId { get; set; }
 
-        public Guid AggregateId { get; }
+        public Guid AggregateId { get; set; }
 
-        public int TargetVersion { get; }
+        public int TargetVersion { get; set; }
 
         public Command(Guid correlationId, Guid aggregateId) : this(correlationId, aggregateId, -1)
         { }

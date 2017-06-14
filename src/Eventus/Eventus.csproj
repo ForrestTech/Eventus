@@ -49,12 +49,9 @@
     <Compile Include="App_Packages\LibLog.4.2\LibLog.cs" />
     <Compile Include="Cleanup\ITeardown.cs" />
     <Compile Include="Clock.cs" />
-    <Compile Include="Commands\Commands.cs" />
-    <Compile Include="Commands\ICommand.cs" />
     <Compile Include="Domain\Aggregate.cs" />
     <Compile Include="EventBus\IEventPublisher.cs" />
     <Compile Include="Events\IEvent.cs" />
-    <Compile Include="Events\IMessage.cs" />
     <Compile Include="Exceptions\AggregateEventOnApplyMethodMissingException.cs" />
     <Compile Include="Exceptions\AggregateEventNotSupportException.cs" />
     <Compile Include="Exceptions\ConcurrencyException.cs" />

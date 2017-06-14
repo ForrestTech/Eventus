@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Threading.Tasks;
+using Eventus.Samples.Contracts.BankAccount;
 using Eventus.Samples.Web.Features.Account;
 using MediatR;
 using Microsoft.AspNetCore.Identity;
@@ -25,7 +26,7 @@ namespace Eventus.Samples.Web.Features.BankAccount
         /// <param name="accountId">Bank Account ID</param>
         /// <response code="200">Returns the bank account summary</response>
         [HttpGet("bankaccount/{accountId:guid}")]
-        [ProducesResponseType(typeof(Get.BankAccountSummary), 200)]
+        [ProducesResponseType(typeof(BankAccountSummary), 200)]
         public async Task<IActionResult> BankAccount([FromRoute]Get.Query query)
         {
             var account = await _mediator.Send(query).ConfigureAwait(false);

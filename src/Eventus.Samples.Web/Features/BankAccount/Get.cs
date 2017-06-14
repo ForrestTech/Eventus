@@ -2,6 +2,7 @@
 using System.Threading.Tasks;
 using MediatR;
 using ServiceStack.Redis;
+using Eventus.Samples.Contracts.BankAccount;
 
 namespace Eventus.Samples.Web.Features.BankAccount
 {
@@ -18,7 +19,8 @@ namespace Eventus.Samples.Web.Features.BankAccount
 
             public Handler()
             {
-                _redisManagerPool = new RedisManagerPool("localhost:6379");
+                //todo move to config
+                _redisManagerPool = new RedisManagerPool("Password1@redis-15191.c1.eu-west-1-3.ec2.cloud.redislabs.com:15191");
             }
 
             public Task<BankAccountSummary> Handle(Query message)
@@ -32,15 +34,6 @@ namespace Eventus.Samples.Web.Features.BankAccount
                     return Task.FromResult(account);
                 }
             }
-        }
-
-        public class BankAccountSummary
-        {
-            public Guid Id { get; set; }
-
-            public string Name { get; set; }
-
-            public decimal Balance { get; set; }
         }
     }
 }

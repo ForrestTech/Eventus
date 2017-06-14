@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Threading.Tasks;
+using Eventus.Samples.Web.Services;
 using FluentValidation;
 using MediatR;
 
@@ -24,15 +25,19 @@ namespace Eventus.Samples.Web.Features.BankAccount
             }
         }
 
-        public class Handler : IAsyncRequestHandler<BaseCommand>
+        public class Handler : IAsyncRequestHandler<Command>
         {
-            public Handler()
-            {
+            private readonly RabbitMQClient _client;
 
+            public Handler(RabbitMQClient client)
+            {
+                _client = client;
             }
 
-            public Task Handle(BaseCommand message)
+            public Task Handle(Command message)
             {
+                _client.Send("eventus.account.create", message);
+
                 return Task.CompletedTask;
             }
         }

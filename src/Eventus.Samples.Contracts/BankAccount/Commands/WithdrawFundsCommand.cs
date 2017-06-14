@@ -1,12 +1,10 @@
 ﻿using System;
-using Eventus.Commands;
-using MediatR;
 
-namespace Eventus.Samples.Core.Commands
+namespace Eventus.Samples.Contracts.BankAccount.Commands
 {
-    public class WithdrawFundsCommand : Command, IRequest
+    public class WithdrawFundsCommand : Command
     {
-        public decimal Amount { get; }
+        public decimal Amount { get; set; }
 
         public WithdrawFundsCommand(Guid correlationId, Guid accountId, decimal amount)
             : base(correlationId, accountId)

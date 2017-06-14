@@ -90,6 +90,9 @@ namespace Eventus.Samples.Web
 
             services.AddTransient<IEmailSender, MailGunEmailSender>();
             services.AddTransient<ISmsSender, TwilioSmsSender>();
+
+            //todo add details about all secrets to readme
+            services.AddSingleton(x => new RabbitMQClient(Configuration["RabbitMQUri"]));
             
             services.AddSwaggerGen(c =>
             {

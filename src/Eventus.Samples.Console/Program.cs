@@ -1,5 +1,5 @@
 ﻿using System;
-using Eventus.Samples.Core.Commands;
+using Eventus.Samples.Contracts.BankAccount.Commands;
 using Eventus.Samples.Core.Domain;
 using Eventus.Samples.Core.Handlers;
 using Eventus.Samples.Infrastructure.Factories;

@@ -1,12 +1,10 @@
 ﻿using System;
-using Eventus.Commands;
-using MediatR;
 
-namespace Eventus.Samples.Core.Commands
+namespace Eventus.Samples.Contracts.BankAccount.Commands
 {
-    public class CreateAccountCommand : Command, IRequest
+    public class CreateAccountCommand : Command
     {
-        public string Name { get; }
+        public string Name { get; set; }
 
         public CreateAccountCommand(Guid correlationId, Guid accountId, string name)
             : base(correlationId, accountId)

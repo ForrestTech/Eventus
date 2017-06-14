@@ -2,7 +2,7 @@ using System;
 
 namespace Eventus.Events
 {
-    public interface IEvent : IMessage
+    public interface IEvent 
     {
         /// <summary>
         /// Target version of the Aggregate this event will be applied against
@@ -23,5 +23,10 @@ namespace Eventus.Events
         /// This is used to handle versioning of events over time when refactoring or feature additions are done
         /// </summary>
         int ClassVersion { get; set; }
+
+        /// <summary>
+        /// Unique Id to correlate actions
+        /// </summary>
+        Guid CorrelationId { get; }
     }
 }
