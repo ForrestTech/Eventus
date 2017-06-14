@@ -95,7 +95,7 @@ namespace Eventus.Samples.Web
             services.AddTransient<ISmsSender, TwilioSmsSender>();
             services.AddTransient<IBankAccountReadModelRepository, BankAccountReadModelRepository>();
 
-            var repo = RepositoryFactory.CreateAsync(Configuration["Provider"]).Result;
+            var repo = ProviderFactory.FromString(Configuration["Provider"]).CreateRepositoryAsync().Result;
             services.AddSingleton(repo);
 
 
