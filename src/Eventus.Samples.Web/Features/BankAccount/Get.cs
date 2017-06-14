@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Threading.Tasks;
 using MediatR;
-using Eventus.Samples.Core.ReadModel;
+using ServiceStack.Redis;
 
 namespace Eventus.Samples.Web.Features.BankAccount
 {
@@ -14,20 +14,33 @@ namespace Eventus.Samples.Web.Features.BankAccount
 
         public class Handler : IAsyncRequestHandler<Query, BankAccountSummary>
         {
-            private readonly IBankAccountReadModelRepository _repository;
+            private readonly RedisManagerPool _redisManagerPool;
 
-            public Handler(IBankAccountReadModelRepository repository)
+            public Handler()
             {
-                _repository = repository;
+                _redisManagerPool = new RedisManagerPool("localhost:6379");
             }
 
-            public async Task<BankAccountSummary> Handle(Query message)
+            public Task<BankAccountSummary> Handle(Query message)
             {
-                var account = await _repository.GetAsync(message.Id)
-                    .ConfigureAwait(false);
+                using (var client = _redisManagerPool.GetClient())
+                {
+                    var accountSummaryClient = client.As<BankAccountSummary>();
 
-                return account;
+                    var account = accountSummaryClient.GetById(message.Id);
+
+                    return Task.FromResult(account);
+                }
             }
+        }
+
+        public class BankAccountSummary
+        {
+            public Guid Id { get; set; }
+
+            public string Name { get; set; }
+
+            public decimal Balance { get; set; }
         }
     }
 }

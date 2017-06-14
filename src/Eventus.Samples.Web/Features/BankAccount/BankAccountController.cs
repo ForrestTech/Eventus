@@ -1,7 +1,5 @@
 ﻿using System;
 using System.Threading.Tasks;
-using Eventus.Samples.Core.Commands;
-using Eventus.Samples.Core.ReadModel;
 using Eventus.Samples.Web.Features.Account;
 using MediatR;
 using Microsoft.AspNetCore.Identity;
@@ -27,13 +25,10 @@ namespace Eventus.Samples.Web.Features.BankAccount
         /// <param name="accountId">Bank Account ID</param>
         /// <response code="200">Returns the bank account summary</response>
         [HttpGet("bankaccount/{accountId:guid}")]
-        [ProducesResponseType(typeof(BankAccountSummary), 200)]
-        public async Task<IActionResult> BankAccount(Guid accountId)
+        [ProducesResponseType(typeof(Get.BankAccountSummary), 200)]
+        public async Task<IActionResult> BankAccount([FromRoute]Get.Query query)
         {
-            var account = await _mediator.Send(new Get.Query
-            {
-                Id = accountId
-            }).ConfigureAwait(false);
+            var account = await _mediator.Send(query).ConfigureAwait(false);
 
             if (account == null)
             {
@@ -48,29 +43,32 @@ namespace Eventus.Samples.Web.Features.BankAccount
         /// </summary>
         /// <response code="200">Create bank account details</response>
         [HttpGet("bankaccount")]
-        public IActionResult Create()
+        public async Task<IActionResult> Create()
         {
-            return View();
+            var account = await _userManager.FindByNameAsync(User.Identity.Name)
+                .ConfigureAwait(false);
+
+            var viewModel = new Create.Command
+            {
+                AggregateId = Guid.Parse(account.Id)
+            };
+
+            return View(viewModel);
         }
 
         /// <summary>
         /// Create Bank Account
         /// </summary>
-        /// <param name="command">Command to create bank account</param>
+        /// <param name="baseCommand">Command to create bank account</param>
         /// <response code="303">Redirect to the bank account summary</response>
         [HttpPost("bankaccount")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create(CreateAccountViewModel viewModel)
+        public async Task<IActionResult> Create(Create.Command baseCommand)
         {
-            var account = await _userManager.FindByNameAsync(User.Identity.Name)
-                .ConfigureAwait(false);
-
-            var command = new CreateAccountCommand(Guid.NewGuid(), Guid.Parse(account.Id), viewModel.AccountName);
-
-            await _mediator.Send(command)
+            await _mediator.Send(baseCommand)
                 .ConfigureAwait(false);
             
-            return RedirectToAction(nameof(BankAccount), new { accountId = command.AggregateId });
+            return RedirectToAction(nameof(BankAccount), new { accountId = baseCommand.AggregateId });
         }
 
         /// <summary>
@@ -103,8 +101,10 @@ namespace Eventus.Samples.Web.Features.BankAccount
         /// <response code="303">Redirect to the bank account summary</response>
         [HttpPost("bankaccount/{accountId:guid}/deposit")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Deposit(Guid accountId, DepositFundsCommand command)
+        public async Task<IActionResult> Deposit(Guid accountId, Deposit.Command command)
         {
+            command.AggregateId = accountId;
+
             await _mediator.Send(command).ConfigureAwait(false);
 
             //todo create a transaction status endpoint
@@ -117,7 +117,6 @@ namespace Eventus.Samples.Web.Features.BankAccount
         /// <param name="accountId">The id of the bank account</param>
         /// <response code="200">View for withdrawal</response>
         [HttpGet("bankaccount/{accountId:guid}/withdrawal")]
-        [ValidateAntiForgeryToken]
         public async Task<IActionResult> Withdrawal(Guid accountId)
         {
             var account = await _mediator.Send(new Get.Query
@@ -140,8 +139,10 @@ namespace Eventus.Samples.Web.Features.BankAccount
         /// <param name="command">The withdrawal command</param>
         /// <response code="303">Redirect to the bank account summary</response>
         [HttpPost("bankaccount/{accountId:guid}/deposit")]
-        public async Task<IActionResult> Withdrawal(Guid accountId, WithdrawFundsCommand command)
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Withdrawal(Guid accountId, Withdrawal.Command command)
         {
+            command.AggregateId = accountId;
             await _mediator.Send(command).ConfigureAwait(false);
 
             //todo create a transaction status endpoint

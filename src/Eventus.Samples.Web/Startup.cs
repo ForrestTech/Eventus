@@ -1,9 +1,6 @@
 ﻿using System;
 using System.IO;
 using System.Reflection;
-using Eventus.Samples.Core.Handlers;
-using Eventus.Samples.Core.ReadModel;
-using Eventus.Samples.Infrastructure.Factories;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
@@ -89,16 +86,11 @@ namespace Eventus.Samples.Web
             .AddFeatureFolders()
             .AddFluentValidation(options => options.RegisterValidatorsFromAssemblyContaining<Startup>());
 
-            services.AddMediatR(Assembly.GetEntryAssembly(), Assembly.GetAssembly(typeof(BankAccountCommandHandlers)));
+            services.AddMediatR(Assembly.GetEntryAssembly());
 
             services.AddTransient<IEmailSender, MailGunEmailSender>();
             services.AddTransient<ISmsSender, TwilioSmsSender>();
-            services.AddTransient<IBankAccountReadModelRepository, BankAccountReadModelRepository>();
-
-            var repo = ProviderFactory.FromString(Configuration["Provider"]).CreateRepositoryAsync().Result;
-            services.AddSingleton(repo);
-
-
+            
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new Info { Title = "Eventus Sample Web", Version = "v1" });

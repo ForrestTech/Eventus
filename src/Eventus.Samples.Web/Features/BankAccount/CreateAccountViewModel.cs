@@ -1,9 +1,9 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System;
 
 namespace Eventus.Samples.Web.Features.BankAccount
 {
     public class CreateAccountViewModel
     {
-        public string AccountName { get; set; }
+        public Guid AggregateId { get; set; }
     }
 }
