@@ -9,7 +9,7 @@ namespace Eventus.Samples.Infrastructure.Factories.Providers
 {
     public class SqlServerProviderFactory : ProviderFactory
     {
-        private readonly string _connectionString = ConfigurationManager.ConnectionStrings["Eventus"].ToString();
+        private readonly string _connectionString = ConfigurationManager.ConnectionStrings["Eventus"] != null ? ConfigurationManager.ConnectionStrings["Eventus"].ToString() : "Server=(localdb)\\MSSQLLocalDB;Initial Catalog=Eventus;Integrated Security=True";
 
         public SqlServerProviderFactory(int value, string displayName) : base(value, displayName)
         {
