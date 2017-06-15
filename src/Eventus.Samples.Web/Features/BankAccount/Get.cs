@@ -10,7 +10,7 @@ namespace Eventus.Samples.Web.Features.BankAccount
     {
         public class Query : IRequest<BankAccountSummary>
         {
-            public Guid Id { get; set; }
+            public Guid AccountId { get; set; }
         }
 
         public class Handler : IAsyncRequestHandler<Query, BankAccountSummary>
@@ -29,7 +29,7 @@ namespace Eventus.Samples.Web.Features.BankAccount
                 {
                     var accountSummaryClient = client.As<BankAccountSummary>();
 
-                    var account = accountSummaryClient.GetById(message.Id);
+                    var account = accountSummaryClient.GetById(message.AccountId);
 
                     return Task.FromResult(account);
                 }

@@ -10,6 +10,9 @@ namespace Eventus.Samples.Contracts.BankAccount.Commands
 
         public int TargetVersion { get; set; }
 
+        public Command()
+        {}
+
         public Command(Guid correlationId, Guid aggregateId) : this(correlationId, aggregateId, -1)
         { }
 

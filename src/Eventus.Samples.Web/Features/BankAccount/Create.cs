@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Threading.Tasks;
+using Eventus.Samples.Contracts.BankAccount.Commands;
 using Eventus.Samples.Web.Services;
 using FluentValidation;
 using MediatR;
@@ -8,10 +9,10 @@ namespace Eventus.Samples.Web.Features.BankAccount
 {
     public class Create
     {
-        //use command specified in the web solution, this means we dont need to add MediatR to the contracts folder
+        //Using command specified in the web solution, this means we don't need to add MediatR to the contracts project
         public class Command : BaseCommand
         {
-            public Guid AggregateId { get; set; }
+            public Guid AccountId { get; set; }
 
             public string AccountName { get; set; }
         }
@@ -21,7 +22,7 @@ namespace Eventus.Samples.Web.Features.BankAccount
             public Validator()
             {
                 RuleFor(x => x.AccountName).NotEmpty();
-                RuleFor(x => x.AggregateId).NotEmpty();
+                RuleFor(x => x.AccountId).NotEmpty();
                 RuleFor(x => x.CorrelationId).NotEmpty();
             }
         }
@@ -37,7 +38,8 @@ namespace Eventus.Samples.Web.Features.BankAccount
 
             public Task Handle(Command message)
             {
-                _client.Send("eventus.account.create", message);
+                //todo move queue name to constants
+                _client.Send("eventus.account.create", new CreateAccountCommand(message.CorrelationId, message.AccountId, message.AccountName));
 
                 return Task.CompletedTask;
             }

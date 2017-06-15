@@ -21,6 +21,12 @@ using Swashbuckle.AspNetCore.Swagger;
 
 namespace Eventus.Samples.Web
 {
+    //todo Create service to process commands
+    //todo create readmodel project
+    //todo Move the population of the readmodel to the service
+    //todo Handle the readmodel not having data and falling back to event store
+    //todo Possible seperate client for the readmodel that can be shared
+    //todo move everything to config
     public class Startup
     {
         public Startup(IHostingEnvironment env)
@@ -122,6 +128,8 @@ namespace Eventus.Samples.Web
             {
                 app.UseExceptionHandler("/Home/Error");
             }
+
+            app.UseMiddleware<StackifyMiddleware.RequestTracerMiddleware>();
 
             app.UseStaticFiles();
 

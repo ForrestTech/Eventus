@@ -1,4 +1,4 @@
-﻿@model Eventus.Samples.Core.Commands.DepositFundsCommand
+﻿@model Eventus.Samples.Web.Features.BankAccount.Deposit.Command
 
 @{
     ViewData["Title"] = "Deposit";
@@ -11,7 +11,7 @@
         <h4>Deposit</h4>
         <hr />
         <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-        <input type="hidden" asp-for="AggregateId" />
+        <input type="hidden" asp-for="AccountId" />
         <div class="form-group">
             <label asp-for="Amount" class="col-md-2 control-label"></label>
             <div class="col-md-10">

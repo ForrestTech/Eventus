@@ -37,6 +37,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Eventus.Samples.Web", "Even
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Eventus.Samples.Contracts", "Eventus.Samples.Contracts\Eventus.Samples.Contracts.csproj", "{2A320B66-02AB-4969-90AA-4ECAD997BADD}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Eventus.Samples.CommandProcessor", "Eventus.Samples.CommandProcessor\Eventus.Samples.CommandProcessor.csproj", "{D7E2B10B-51F6-4897-868A-2EE0510A188D}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -87,6 +89,10 @@ Global
 		{2A320B66-02AB-4969-90AA-4ECAD997BADD}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{2A320B66-02AB-4969-90AA-4ECAD997BADD}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{2A320B66-02AB-4969-90AA-4ECAD997BADD}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D7E2B10B-51F6-4897-868A-2EE0510A188D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D7E2B10B-51F6-4897-868A-2EE0510A188D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D7E2B10B-51F6-4897-868A-2EE0510A188D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D7E2B10B-51F6-4897-868A-2EE0510A188D}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -99,5 +105,6 @@ Global
 		{3B969917-CC06-47BD-A3F7-6E5D3B9FC9F7} = {75C36474-611B-44B3-A48E-392C364EC27B}
 		{E0D508C6-06AC-4071-8A86-A90D7D8E68B9} = {C8D1A53A-2E83-4CB8-9621-205D2A376E4F}
 		{2A320B66-02AB-4969-90AA-4ECAD997BADD} = {C8D1A53A-2E83-4CB8-9621-205D2A376E4F}
+		{D7E2B10B-51F6-4897-868A-2EE0510A188D} = {C8D1A53A-2E83-4CB8-9621-205D2A376E4F}
 	EndGlobalSection
 EndGlobal

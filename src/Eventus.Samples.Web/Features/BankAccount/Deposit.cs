@@ -12,14 +12,14 @@ namespace Eventus.Samples.Web.Features.BankAccount
         {
             public decimal Amount { get; set; }
 
-            public Guid AggregateId { get; set; }
+            public Guid AccountId { get; set; }
         }
 
         public class Validator : AbstractValidator<Command>
         {
             public Validator()
             {
-                RuleFor(x => x.AggregateId).NotEmpty();
+                RuleFor(x => x.AccountId).NotEmpty();
                 RuleFor(x => x.CorrelationId).NotEmpty();
                 RuleFor(x => x.Amount).GreaterThan(0);
             }
@@ -36,7 +36,7 @@ namespace Eventus.Samples.Web.Features.BankAccount
 
             public Task Handle(Command message)
             {
-                _client.Send("eventus.account.create", message);
+                _client.Send("eventus.account.deposit", message);
 
                 return Task.CompletedTask;
             }

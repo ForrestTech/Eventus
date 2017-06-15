@@ -51,7 +51,7 @@ namespace Eventus.Samples.Web.Features.BankAccount
 
             var viewModel = new Create.Command
             {
-                AggregateId = Guid.Parse(account.Id)
+                AccountId = Guid.Parse(account.Id)
             };
 
             return View(viewModel);
@@ -69,7 +69,7 @@ namespace Eventus.Samples.Web.Features.BankAccount
             await _mediator.Send(baseCommand)
                 .ConfigureAwait(false);
             
-            return RedirectToAction(nameof(BankAccount), new { accountId = baseCommand.AggregateId });
+            return RedirectToAction(nameof(BankAccount), new { accountId = baseCommand.AccountId });
         }
 
         /// <summary>
@@ -83,7 +83,7 @@ namespace Eventus.Samples.Web.Features.BankAccount
         {
             var account = await _mediator.Send(new Get.Query
             {
-                Id = accountId
+                AccountId = accountId
             }).ConfigureAwait(false);
 
             if (account == null)
@@ -104,12 +104,12 @@ namespace Eventus.Samples.Web.Features.BankAccount
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Deposit(Guid accountId, Deposit.Command command)
         {
-            command.AggregateId = accountId;
+            command.AccountId = accountId;
 
             await _mediator.Send(command).ConfigureAwait(false);
 
             //todo create a transaction status endpoint
-            return RedirectToAction(nameof(BankAccount), new { accountId = command.AggregateId });
+            return RedirectToAction(nameof(BankAccount), new { accountId = command.AccountId });
         }
 
         /// <summary>
@@ -122,7 +122,7 @@ namespace Eventus.Samples.Web.Features.BankAccount
         {
             var account = await _mediator.Send(new Get.Query
             {
-                Id = accountId
+                AccountId = accountId
             }).ConfigureAwait(false);
 
             if (account == null)
@@ -143,11 +143,11 @@ namespace Eventus.Samples.Web.Features.BankAccount
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Withdrawal(Guid accountId, Withdrawal.Command command)
         {
-            command.AggregateId = accountId;
+            command.AccountId = accountId;
             await _mediator.Send(command).ConfigureAwait(false);
 
             //todo create a transaction status endpoint
-            return RedirectToAction(nameof(BankAccount), new { accountId = command.AggregateId });
+            return RedirectToAction(nameof(BankAccount), new { accountId = command.AccountId });
         }
     }
 }
