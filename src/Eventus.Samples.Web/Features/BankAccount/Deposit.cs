@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Threading.Tasks;
+using Eventus.Samples.Contracts;
+using Eventus.Samples.Contracts.BankAccount.Commands;
 using Eventus.Samples.Web.Services;
 using FluentValidation;
 using MediatR;
@@ -36,7 +38,7 @@ namespace Eventus.Samples.Web.Features.BankAccount
 
             public Task Handle(Command message)
             {
-                _client.Send("eventus.account.deposit", message);
+                _client.Send(Resources.BankAccountQueueName, DepositFundsCommand.Create(message.CorrelationId, message.AccountId, message.Amount));
 
                 return Task.CompletedTask;
             }

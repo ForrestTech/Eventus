@@ -39,6 +39,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Eventus.Samples.Contracts",
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Eventus.Samples.CommandProcessor", "Eventus.Samples.CommandProcessor\Eventus.Samples.CommandProcessor.csproj", "{D7E2B10B-51F6-4897-868A-2EE0510A188D}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Eventus.Samples.ReadLayer", "Eventus.Samples.ReadLayer\Eventus.Samples.ReadLayer.csproj", "{E0331FFC-E30A-4E8C-919D-AA99BE0AD52B}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -93,6 +95,10 @@ Global
 		{D7E2B10B-51F6-4897-868A-2EE0510A188D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D7E2B10B-51F6-4897-868A-2EE0510A188D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D7E2B10B-51F6-4897-868A-2EE0510A188D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E0331FFC-E30A-4E8C-919D-AA99BE0AD52B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E0331FFC-E30A-4E8C-919D-AA99BE0AD52B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E0331FFC-E30A-4E8C-919D-AA99BE0AD52B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E0331FFC-E30A-4E8C-919D-AA99BE0AD52B}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -106,5 +112,6 @@ Global
 		{E0D508C6-06AC-4071-8A86-A90D7D8E68B9} = {C8D1A53A-2E83-4CB8-9621-205D2A376E4F}
 		{2A320B66-02AB-4969-90AA-4ECAD997BADD} = {C8D1A53A-2E83-4CB8-9621-205D2A376E4F}
 		{D7E2B10B-51F6-4897-868A-2EE0510A188D} = {C8D1A53A-2E83-4CB8-9621-205D2A376E4F}
+		{E0331FFC-E30A-4E8C-919D-AA99BE0AD52B} = {C8D1A53A-2E83-4CB8-9621-205D2A376E4F}
 	EndGlobalSection
 EndGlobal

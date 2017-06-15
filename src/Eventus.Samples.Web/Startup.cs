@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IO;
 using System.Reflection;
+using Eventus.Samples.ReadLayer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
@@ -96,10 +97,11 @@ namespace Eventus.Samples.Web
 
             services.AddTransient<IEmailSender, MailGunEmailSender>();
             services.AddTransient<ISmsSender, TwilioSmsSender>();
+            services.AddTransient(x => new BankAccountReadRepository(Configuration["RedisConnectionString"]));
 
             //todo add details about all secrets to readme
             services.AddSingleton(x => new RabbitMQClient(Configuration["RabbitMQUri"]));
-            
+
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new Info { Title = "Eventus Sample Web", Version = "v1" });

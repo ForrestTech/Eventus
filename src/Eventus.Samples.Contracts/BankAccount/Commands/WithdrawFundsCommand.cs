@@ -6,10 +6,9 @@ namespace Eventus.Samples.Contracts.BankAccount.Commands
     {
         public decimal Amount { get; set; }
 
-        public WithdrawFundsCommand(Guid correlationId, Guid accountId, decimal amount)
-            : base(correlationId, accountId)
+        public static WithdrawFundsCommand Create(Guid correlationToken, Guid aggregateId, decimal amount)
         {
-            Amount = amount;
+            return new WithdrawFundsCommand { CorrelationId = correlationToken, AggregateId = aggregateId, Amount = amount };
         }
     }
 }

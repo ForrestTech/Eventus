@@ -53,6 +53,7 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Eventus.Samples.Contracts\Eventus.Samples.Contracts.csproj" />
+    <ProjectReference Include="..\Eventus.Samples.ReadLayer\Eventus.Samples.ReadLayer.csproj" />
   </ItemGroup>
 
 </Project>

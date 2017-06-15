@@ -1,5 +1,7 @@
 ﻿using System;
+using System.ComponentModel;
 using System.Threading.Tasks;
+using Eventus.Samples.Contracts;
 using Eventus.Samples.Contracts.BankAccount.Commands;
 using Eventus.Samples.Web.Services;
 using FluentValidation;
@@ -14,6 +16,7 @@ namespace Eventus.Samples.Web.Features.BankAccount
         {
             public Guid AccountId { get; set; }
 
+            [DisplayName("Account Name")]
             public string AccountName { get; set; }
         }
 
@@ -38,8 +41,12 @@ namespace Eventus.Samples.Web.Features.BankAccount
 
             public Task Handle(Command message)
             {
-                //todo move queue name to constants
-                _client.Send("eventus.account.create", new CreateAccountCommand(message.CorrelationId, message.AccountId, message.AccountName));
+                _client.Send(Resources.BankAccountQueueName, new CreateAccountCommand
+                {
+                    CorrelationId = message.CorrelationId,
+                    AggregateId = message.AccountId,
+                    Name = message.AccountName
+                });
 
                 return Task.CompletedTask;
             }

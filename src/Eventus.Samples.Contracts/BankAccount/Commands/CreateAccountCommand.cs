@@ -6,13 +6,9 @@ namespace Eventus.Samples.Contracts.BankAccount.Commands
     {
         public string Name { get; set; }
 
-        public CreateAccountCommand()
-        {}
-
-        public CreateAccountCommand(Guid correlationId, Guid accountId, string name)
-            : base(correlationId, accountId)
+        public static CreateAccountCommand Create(Guid correlationToken, Guid aggregateId, string name)
         {
-            Name = name;
+            return new CreateAccountCommand {CorrelationId = correlationToken, AggregateId = aggregateId, Name = name};
         }
     }
 }

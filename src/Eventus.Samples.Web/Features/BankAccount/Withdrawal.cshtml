@@ -6,23 +6,19 @@
 
 <h2>Withdrawal</h2>
 
-<form asp-action="Withdrawal">
-    <div class="form-horizontal">
-        <h4>Deposit</h4>
-        <hr />
-        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-        <input type="hidden" asp-for="AccountId" />
-        <div class="form-group">
-            <label asp-for="Amount" class="col-md-2 control-label"></label>
-            <div class="col-md-10">
-                <input asp-for="Amount" class="form-control" />
-                <span asp-validation-for="Amount" class="text-danger"></span>
-            </div>
+<form asp-controller="BankAccount" asp-action="Withdrawal" method="post" class="form-horizontal">
+    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+    <input type="hidden" asp-for="AccountId" />
+    <div class="form-group">
+        <label asp-for="Amount" class="col-md-2 control-label"></label>
+        <div class="col-md-10">
+            <input asp-for="Amount" class="form-control" />
+            <span asp-validation-for="Amount" class="text-danger"></span>
         </div>
-        <div class="form-group">
-            <div class="col-md-offset-2 col-md-10">
-                <input type="submit" value="Withdrawal" class="btn btn-default" />
-            </div>
+    </div>
+    <div class="form-group">
+        <div class="col-md-offset-2 col-md-10">
+            <input type="submit" value="Withdrawal" class="btn btn-default" />
         </div>
     </div>
 </form>

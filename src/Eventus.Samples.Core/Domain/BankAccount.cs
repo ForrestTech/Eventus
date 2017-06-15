@@ -32,12 +32,12 @@ namespace Eventus.Samples.Core.Domain
             ApplyEvent(accountCreated);
         }
 
-        public void WithDrawFunds(decimal amount)
+        public void Withdraw(decimal amount)
         {
-            WithDrawFunds(amount, Guid.NewGuid());
+            Withdraw(amount, Guid.NewGuid());
         }
 
-        public void WithDrawFunds(decimal amount, Guid correlationId)
+        public void Withdraw(decimal amount, Guid correlationId)
         {
             if (CurrentBalance >= amount)
             {

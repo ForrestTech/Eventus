@@ -25,7 +25,7 @@ namespace Eventus.Samples.Core.Handlers
             var account = await _repository.GetByIdAsync<BankAccount>(message.AggregateId)
                 .ConfigureAwait(false);
 
-            account.WithDrawFunds(message.Amount, message.CorrelationId);
+            account.Withdraw(message.Amount, message.CorrelationId);
 
             await _repository.SaveAsync(account)
                 .ConfigureAwait(false);

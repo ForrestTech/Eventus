@@ -38,12 +38,12 @@ namespace Eventus.Samples.Console
 
             log.Information("Running set of commands");
 
-            handler.Handle(new CreateAccountCommand(Guid.NewGuid(), accountId, "Joe Bloggs")).Wait();
-            handler.Handle(new DepositFundsCommand(Guid.NewGuid(), accountId, 10)).Wait();
-            handler.Handle(new DepositFundsCommand(Guid.NewGuid(), accountId, 35)).Wait();
-            handler.Handle(new WithdrawFundsCommand(Guid.NewGuid(), accountId, 25)).Wait();
-            handler.Handle(new DepositFundsCommand(Guid.NewGuid(), accountId, 5)).Wait();
-            handler.Handle(new WithdrawFundsCommand(Guid.NewGuid(), accountId, 10)).Wait();
+            handler.Handle(CreateAccountCommand.Create(Guid.NewGuid(), accountId, "Joe Bloggs")).Wait();
+            handler.Handle(DepositFundsCommand.Create(Guid.NewGuid(), accountId, 10)).Wait();
+            handler.Handle(DepositFundsCommand.Create(Guid.NewGuid(), accountId, 35)).Wait();
+            handler.Handle(WithdrawFundsCommand.Create(Guid.NewGuid(), accountId, 25)).Wait();
+            handler.Handle(DepositFundsCommand.Create(Guid.NewGuid(), accountId, 5)).Wait();
+            handler.Handle(WithdrawFundsCommand.Create(Guid.NewGuid(), accountId, 10)).Wait();
 
             log.Information("Commands Run");
 

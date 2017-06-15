@@ -23,12 +23,12 @@ namespace Eventus.Tests.Integration
             var handler = new BankAccountCommandHandlers(repo);
             const string joeBloggs = "Joe Bloggs";
 
-            await handler.Handle(new CreateAccountCommand(Guid.NewGuid(), accountId, joeBloggs)).ConfigureAwait(false);
-            await handler.Handle(new DepositFundsCommand(Guid.NewGuid(), accountId, 10)).ConfigureAwait(false);
-            await handler.Handle(new DepositFundsCommand(Guid.NewGuid(), accountId, 35)).ConfigureAwait(false);
-            await handler.Handle(new WithdrawFundsCommand(Guid.NewGuid(), accountId, 25)).ConfigureAwait(false);
-            await handler.Handle(new DepositFundsCommand(Guid.NewGuid(), accountId, 5)).ConfigureAwait(false);
-            await handler.Handle(new WithdrawFundsCommand(Guid.NewGuid(), accountId, 10)).ConfigureAwait(false);
+            await handler.Handle(CreateAccountCommand.Create(Guid.NewGuid(), accountId, joeBloggs)).ConfigureAwait(false);
+            await handler.Handle(DepositFundsCommand.Create(Guid.NewGuid(), accountId, 10)).ConfigureAwait(false);
+            await handler.Handle(DepositFundsCommand.Create(Guid.NewGuid(), accountId, 35)).ConfigureAwait(false);
+            await handler.Handle(WithdrawFundsCommand.Create(Guid.NewGuid(), accountId, 25)).ConfigureAwait(false);
+            await handler.Handle(DepositFundsCommand.Create(Guid.NewGuid(), accountId, 5)).ConfigureAwait(false);
+            await handler.Handle(WithdrawFundsCommand.Create(Guid.NewGuid(), accountId, 10)).ConfigureAwait(false);
 
             var actual = await repo.GetByIdAsync<BankAccount>(accountId).ConfigureAwait(false);
 

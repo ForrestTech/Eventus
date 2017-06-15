@@ -1,4 +1,5 @@
-﻿using System.Text;
+﻿using System.Reflection;
+using System.Text;
 using Newtonsoft.Json;
 using RabbitMQ.Client;
 
@@ -22,10 +23,14 @@ namespace Eventus.Samples.Web.Services
                     CreateQueue(channel, queueName);
                     var body = SerialiseContent(message);
 
-                    //todo add type properties
+                    var properties = channel.CreateBasicProperties();
+                    var type = message.GetType();
+
+                    properties.Type = type.FullName + ":" + type.GetTypeInfo().Assembly.GetName().Name;
+
                     channel.BasicPublish(exchange: "",
                         routingKey: queueName,
-                        basicProperties: null,
+                        basicProperties: properties,
                         body: body);
                 }
             }

@@ -78,7 +78,6 @@ namespace Eventus.Samples.Web.Features.BankAccount
         /// <param name="accountId">The id of the bank account</param>
         /// <response code="200">View for depositing</response>
         [HttpGet("bankaccount/{accountId:guid}/deposit")]
-        [ValidateAntiForgeryToken]
         public async Task<IActionResult> Deposit(Guid accountId)
         {
             var account = await _mediator.Send(new Get.Query
@@ -102,10 +101,8 @@ namespace Eventus.Samples.Web.Features.BankAccount
         /// <response code="303">Redirect to the bank account summary</response>
         [HttpPost("bankaccount/{accountId:guid}/deposit")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Deposit(Guid accountId, Deposit.Command command)
+        public async Task<IActionResult> Deposit(Deposit.Command command)
         {
-            command.AccountId = accountId;
-
             await _mediator.Send(command).ConfigureAwait(false);
 
             //todo create a transaction status endpoint
@@ -139,11 +136,10 @@ namespace Eventus.Samples.Web.Features.BankAccount
         /// <param name="accountId">Bank Account ID</param>
         /// <param name="command">The withdrawal command</param>
         /// <response code="303">Redirect to the bank account summary</response>
-        [HttpPost("bankaccount/{accountId:guid}/deposit")]
+        [HttpPost("bankaccount/{accountId:guid}/withdrawal")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Withdrawal(Guid accountId, Withdrawal.Command command)
+        public async Task<IActionResult> Withdrawal(Withdrawal.Command command)
         {
-            command.AccountId = accountId;
             await _mediator.Send(command).ConfigureAwait(false);
 
             //todo create a transaction status endpoint

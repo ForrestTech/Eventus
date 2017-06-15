@@ -5,9 +5,6 @@ using System.Linq;
 using System.Threading.Tasks;
 using Eventus.Cleanup;
 using Eventus.Logging;
-using Eventus.Samples.Core;
-using Eventus.Samples.Core.EventHandlers;
-using Eventus.Samples.Core.ReadModel;
 using Eventus.Samples.Infrastructure.Factories.Providers;
 using Eventus.Storage;
 
@@ -42,15 +39,9 @@ namespace Eventus.Samples.Infrastructure.Factories
 
         public virtual async Task<IRepository> CreateRepositoryAsync()
         {
-            var readRepo = new BankAccountReadModelRepository();
-
-            var repo = new RepositoryLoggingDecorator(
-                new Repository(
+            var repo = new RepositoryLoggingDecorator(new Repository(
                     await CreateEventStorageProviderAsync().ConfigureAwait(false),
-                    await CreateSnapshotStorageProviderAsync().ConfigureAwait(false),
-                    new DemoPublisher(
-                        new DepositEventHandler(readRepo),
-                        new WithdrawalEventHandler(readRepo))));
+                    await CreateSnapshotStorageProviderAsync().ConfigureAwait(false)));
 
             return repo;
         }
