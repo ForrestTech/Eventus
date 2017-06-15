@@ -3,6 +3,7 @@ using Eventus.Samples.Contracts;
 using Eventus.Samples.Contracts.BankAccount.Commands;
 using Eventus.Samples.Infrastructure.Factories;
 using Eventus.Samples.ReadLayer;
+using Serilog;
 
 namespace Eventus.Samples.CommandProcessor
 {
@@ -28,6 +29,8 @@ namespace Eventus.Samples.CommandProcessor
 
         public void Start()
         {
+            Log.Information("Command Processor Started");
+
             _bus.Receive(Resources.BankAccountQueueName, x => x
                 .Add<CreateAccountCommand>(command => _createAccountHandler.Handle(command))
                 .Add<DepositFundsCommand>(command => _depositHandler.Handle(command))
@@ -36,6 +39,7 @@ namespace Eventus.Samples.CommandProcessor
 
         public void Stop()
         {
+            Log.Information("Command Processor Stopped");
         }
     }
 }

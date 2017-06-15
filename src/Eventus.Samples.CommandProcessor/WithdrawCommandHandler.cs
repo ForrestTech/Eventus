@@ -3,6 +3,7 @@ using Eventus.Samples.Contracts.BankAccount.Commands;
 using Eventus.Samples.Core.Domain;
 using Eventus.Samples.ReadLayer;
 using Eventus.Storage;
+using Serilog;
 
 namespace Eventus.Samples.CommandProcessor
 {
@@ -19,6 +20,8 @@ namespace Eventus.Samples.CommandProcessor
 
         public async Task Handle(WithdrawFundsCommand command)
         {
+            Log.Information("Handling withdrawal command for {aggregate} correlationId:{correlationId}", command.AggregateId, command.CorrelationId);
+
             var account = await _repo.GetByIdAsync<BankAccount>(command.AggregateId)
                 .ConfigureAwait(false);
 

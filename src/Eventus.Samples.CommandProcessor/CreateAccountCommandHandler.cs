@@ -4,6 +4,7 @@ using Eventus.Samples.Contracts.BankAccount.Commands;
 using Eventus.Samples.Core.Domain;
 using Eventus.Samples.ReadLayer;
 using Eventus.Storage;
+using Serilog;
 
 namespace Eventus.Samples.CommandProcessor
 {
@@ -20,6 +21,8 @@ namespace Eventus.Samples.CommandProcessor
 
         public async Task Handle(CreateAccountCommand command)
         {
+            Log.Information("Handling account created command for {aggregate} correlationId:{correlationId}", command.AggregateId, command.CorrelationId);
+
             var account = new BankAccount(command.AggregateId, command.Name);
             await _repo.SaveAsync(account)
                 .ConfigureAwait(false);
