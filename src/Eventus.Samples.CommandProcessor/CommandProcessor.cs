@@ -1,3 +1,4 @@
+using System.Configuration;
 using EasyNetQ;
 using Eventus.Samples.Contracts;
 using Eventus.Samples.Contracts.BankAccount.Commands;
@@ -16,11 +17,10 @@ namespace Eventus.Samples.CommandProcessor
 
         public CommandProcessor()
         {
-            //todo move to secret config 
-            _bus = RabbitHutch.CreateBus("amqp://hixcoooi:e1cfuLboejhi-Cwm1POIXQ3F3HyA8iyv@puma.rmq.cloudamqp.com/hixcoooi");
+            _bus = RabbitHutch.CreateBus(ConfigurationManager.AppSettings["RabbitMQUri"]);
 
             var eventRepo = ProviderFactory.Current.CreateRepositoryAsync().Result;
-            var readRepo = new BankAccountReadRepository("Password1@redis-15191.c1.eu-west-1-3.ec2.cloud.redislabs.com:15191");
+            var readRepo = new BankAccountReadRepository(ConfigurationManager.AppSettings["RedisConnectionString"]);
 
             _createAccountHandler = new CreateAccountCommandHandler(eventRepo, readRepo);
             _depositHandler = new DepositCommandHandler(eventRepo, readRepo);
