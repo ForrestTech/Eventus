@@ -1,0 +1,28 @@
+﻿@model Eventus.Samples.Contracts.BankAccount.BankAccountSummary
+@{
+    ViewData["Title"] = "Account Summary";
+}
+
+<h2>@ViewData["Title"].</h2>
+<hr />
+<input type="hidden" asp-for="Id" />
+<dl class="dl-horizontal">
+    <dt>Name:</dt>
+    <dd>@Model.Name</dd>
+    <dt>Balance:</dt>
+    <dd id="balance">@Model.Balance</dd>
+</dl>
+<h3>Actions</h3>
+<a asp-controller="BankAccount" asp-action="Deposit" class="btn btn-primary">Deposit</a>
+<a asp-controller="BankAccount" asp-action="Withdrawal" class="btn btn-primary">Withdrawal</a>
+
+@section Scripts
+{
+    <environment names="Development">
+        <script src="~/js/BankAccount/Details.js" asp-append-version="true"></script>
+    </environment>
+    <environment names="Staging,Production">
+        <script src="~/js/BankAccount/Details.min.js" asp-append-version="true"></script>
+    </environment>
+}
+

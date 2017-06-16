@@ -60,33 +60,24 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Domain\TransactionType.cs" />
-    <Compile Include="ReadModel\AccountSummary.cs" />
-    <Compile Include="DemoPublisher.cs" />
-    <Compile Include="EventHandlers\DepositEventHandler.cs" />
-    <Compile Include="EventHandlers\WithdrawalEventHandler.cs" />
-    <Compile Include="EventHandlers\IHandleEvent.cs" />
-    <Compile Include="ReadModel\IReadModelRepository.cs" />
-    <Compile Include="EventHandlers\NullEventPublisher.cs" />
-    <Compile Include="ReadModel\ReadModelRepository.cs" />
-    <Compile Include="ReadModel\TopAccountsReadModel.cs" />
     <Compile Include="Events\AccountCreatedEvent.cs" />
     <Compile Include="Domain\BankAccount.cs" />
     <Compile Include="Handlers\BankAccountCommandHandlers.cs" />
     <Compile Include="Domain\BankAccountSnapshot.cs" />
-    <Compile Include="Commands\CreateAccountCommand.cs" />
-    <Compile Include="Commands\DepositFundsCommand.cs" />
     <Compile Include="Events\FundsDepositedEvent.cs" />
     <Compile Include="Events\FundsWithdrawalEvent.cs" />
-    <Compile Include="IHandleCommands.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Domain\Transaction.cs" />
-    <Compile Include="Commands\WithdrawFundsCommand.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\Eventus.Samples.Contracts\Eventus.Samples.Contracts.csproj">
+      <Project>{2a320b66-02ab-4969-90aa-4ecad997badd}</Project>
+      <Name>Eventus.Samples.Contracts</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Eventus\Eventus.csproj">
       <Project>{15110214-3710-40e3-b3aa-8450c6466568}</Project>
       <Name>Eventus</Name>

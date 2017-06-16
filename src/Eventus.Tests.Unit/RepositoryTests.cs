@@ -313,7 +313,7 @@ namespace Eventus.Tests.Unit
             //3  uncommitted changes
             var aggregate = new BankAccount(aggregateId, "Joe Bloggs");
             aggregate.Deposit(100);
-            aggregate.WithDrawFunds(10);
+            aggregate.Withdraw(10);
 
             //frequency is greater than uncommitted changes
             snapshotProvider.Setup(x => x.SnapshotFrequency).Returns(4);
@@ -343,7 +343,7 @@ namespace Eventus.Tests.Unit
         {
             var aggregate = new BankAccount(aggregateId, "Joe Bloggs");
             aggregate.Deposit(100);
-            aggregate.WithDrawFunds(10);
+            aggregate.Withdraw(10);
             return aggregate;
         }
     }

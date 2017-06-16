@@ -1,5 +1,5 @@
 ﻿using System;
-using Eventus.Samples.Core.Commands;
+using Eventus.Samples.Contracts.BankAccount.Commands;
 using Eventus.Samples.Core.Domain;
 using Eventus.Samples.Core.Handlers;
 using Eventus.Samples.Infrastructure.Factories;
@@ -38,12 +38,12 @@ namespace Eventus.Samples.Console
 
             log.Information("Running set of commands");
 
-            handler.HandleAsync(new CreateAccountCommand(Guid.NewGuid(), accountId, "Joe Bloggs")).Wait();
-            handler.HandleAsync(new DepositFundsCommand(Guid.NewGuid(), accountId, 10)).Wait();
-            handler.HandleAsync(new DepositFundsCommand(Guid.NewGuid(), accountId, 35)).Wait();
-            handler.HandleAsync(new WithdrawFundsCommand(Guid.NewGuid(), accountId, 25)).Wait();
-            handler.HandleAsync(new DepositFundsCommand(Guid.NewGuid(), accountId, 5)).Wait();
-            handler.HandleAsync(new WithdrawFundsCommand(Guid.NewGuid(), accountId, 10)).Wait();
+            handler.Handle(CreateAccountCommand.Create(Guid.NewGuid(), accountId, "Joe Bloggs")).Wait();
+            handler.Handle(DepositFundsCommand.Create(Guid.NewGuid(), accountId, 10)).Wait();
+            handler.Handle(DepositFundsCommand.Create(Guid.NewGuid(), accountId, 35)).Wait();
+            handler.Handle(WithdrawFundsCommand.Create(Guid.NewGuid(), accountId, 25)).Wait();
+            handler.Handle(DepositFundsCommand.Create(Guid.NewGuid(), accountId, 5)).Wait();
+            handler.Handle(WithdrawFundsCommand.Create(Guid.NewGuid(), accountId, 10)).Wait();
 
             log.Information("Commands Run");
 

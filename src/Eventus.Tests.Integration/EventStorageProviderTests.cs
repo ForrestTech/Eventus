@@ -48,7 +48,7 @@ namespace Eventus.Tests.Integration
             var aggregate = new BankAccount(aggregateId, "Account Name");
             aggregate.Deposit(10);
             aggregate.Deposit(15);
-            aggregate.WithDrawFunds(5);
+            aggregate.Withdraw(5);
 
             await CommitChangesAsync(aggregate)
                 .ConfigureAwait(false);
@@ -72,7 +72,7 @@ namespace Eventus.Tests.Integration
             var aggregate = new BankAccount(aggregateId, "Account Name");
             aggregate.Deposit(10);
             aggregate.Deposit(15);
-            aggregate.WithDrawFunds(5);
+            aggregate.Withdraw(5);
 
             await CommitChangesAsync(aggregate)
                 .ConfigureAwait(false);
@@ -92,7 +92,7 @@ namespace Eventus.Tests.Integration
             var aggregate = new BankAccount(aggregateId, "Account Name");
             aggregate.Deposit(10);
             aggregate.Deposit(15);
-            aggregate.WithDrawFunds(5);
+            aggregate.Withdraw(5);
 
             await CommitChangesAsync(aggregate)
                 .ConfigureAwait(false);
@@ -111,7 +111,7 @@ namespace Eventus.Tests.Integration
             var aggregate = new BankAccount(aggregateId, "Account Name");
             aggregate.Deposit(10);
             aggregate.Deposit(15);
-            aggregate.WithDrawFunds(5);
+            aggregate.Withdraw(5);
 
             await CommitChangesAsync(aggregate)
                 .ConfigureAwait(false);
@@ -142,7 +142,7 @@ namespace Eventus.Tests.Integration
 
             await CommitChangesAsync(aggregate).ConfigureAwait(false);
 
-            aggregate.WithDrawFunds(5);
+            aggregate.Withdraw(5);
 
             await CommitChangesAsync(aggregate).ConfigureAwait(false);
 

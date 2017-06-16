@@ -13,6 +13,9 @@ namespace Eventus.Samples.Infrastructure.Factories.Providers
     public class DocumentDbProviderFactory : ProviderFactory
     {
         private static DocumentClient _client;
+        private static readonly string DatabaseId = ConfigurationManager.AppSettings["DocumentDb.DatabaseId"] != null ? ConfigurationManager.AppSettings["DocumentDb.DatabaseId"] : "Eventus";
+        private static readonly string Endpoint = ConfigurationManager.AppSettings["DocumentDb.Endpoint"] != null ? ConfigurationManager.AppSettings["DocumentDb.Endpoint"] : "https://localhost:8081/";
+        private static readonly string AuthKey = ConfigurationManager.AppSettings["DocumentDb.AuthKey"] != null ? ConfigurationManager.AppSettings["DocumentDb.AuthKey"] : "C2y6yDjf5/R+ob0N8A7Cgv30VRDJIWEHLM+4QDU5DE2nQ9nDuVTqobD4b8mGGyPMbIZnqyMsEcaGQy67XIw/Jw==";
 
         public DocumentDbProviderFactory(int value, string displayName) : base(value, displayName)
         {
@@ -41,13 +44,7 @@ namespace Eventus.Samples.Infrastructure.Factories.Providers
             return init.InitAsync();
         }
 
-        private static DocumentClient Client => _client ?? (_client =
-                                                    new DocumentClient(
-                                                        new Uri(ConfigurationManager
-                                                            .AppSettings["DocumentDb.Endpoint"]),
-                                                        ConfigurationManager.AppSettings["DocumentDb.AuthKey"],
-                                                        new ConnectionPolicy { EnableEndpointDiscovery = false }));
+        private static DocumentClient Client => _client ?? (_client = new DocumentClient(new Uri(Endpoint), AuthKey, new ConnectionPolicy { EnableEndpointDiscovery = false }));
 
-        private static readonly string DatabaseId = ConfigurationManager.AppSettings["DocumentDb.DatabaseId"];
     }
 }

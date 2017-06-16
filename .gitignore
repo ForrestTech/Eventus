@@ -255,3 +255,4 @@ build
 tools
 
 coverage.xml
+appSettingsSecrets.config
