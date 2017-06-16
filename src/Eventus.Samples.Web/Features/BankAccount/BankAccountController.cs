@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using Eventus.Samples.Contracts.BankAccount;
 using Eventus.Samples.Web.Features.Account;
 using MediatR;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 
@@ -36,7 +37,12 @@ namespace Eventus.Samples.Web.Features.BankAccount
                 return RedirectToAction(nameof(Create));
             }
 
-            return View("Details", account);
+            if (Request.IsForView())
+            {
+                return View("Details", account);
+            }
+
+            return Ok(account);
         }
 
         /// <summary>

@@ -91,7 +91,7 @@ namespace Eventus.Samples.Web
 
             services.AddTransient<IEmailSender, MailGunEmailSender>();
             services.AddTransient<ISmsSender, TwilioSmsSender>();
-            services.AddTransient(x => new BankAccountReadRepository(Configuration["RedisConnectionString"]));
+            services.AddSingleton(x => new BankAccountReadRepository(Configuration["RedisConnectionString"]));
 
             //todo add details about all secrets to readme
             services.AddSingleton(x => new RabbitMQClient(Configuration["RabbitMQUri"]));

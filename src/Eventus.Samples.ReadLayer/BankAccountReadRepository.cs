@@ -10,6 +10,7 @@ namespace Eventus.Samples.ReadLayer
 
         public BankAccountReadRepository(string connectionString)
         {
+            //todo inject this
             _redisManagerPool = new RedisManagerPool(connectionString);
         }
 

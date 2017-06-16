@@ -15,7 +15,12 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
     <DocumentationFile>bin\Debug\eventus.xml</DocumentationFile>
   </PropertyGroup>
+
   <ItemGroup>
+    <Content Include="wwwroot\js\BankAccount\Details.js" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="BuildBundlerMinifier" Version="2.4.337" />
     <PackageReference Include="FluentEmail.Mailgun" Version="2.1.0" />
     <PackageReference Include="FluentValidation.AspNetCore" Version="7.0.3" />
     <PackageReference Include="MediatR" Version="3.0.1" />
