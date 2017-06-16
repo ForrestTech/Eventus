@@ -10,6 +10,8 @@
 
   <PropertyGroup>
     <UserSecretsId>aspnet-Eventus.Samples.Web-2ea9d849-4374-4ab5-84ec-65542e819077</UserSecretsId>
+    <ApplicationInsightsResourceId>/subscriptions/7396018e-4b2d-4a50-add0-b0b2e3d31505/resourcegroups/Default-ApplicationInsights-EastUS/providers/microsoft.insights/components/Eventus.Samples.Web</ApplicationInsightsResourceId>
+    <ApplicationInsightsAnnotationResourceId>/subscriptions/7396018e-4b2d-4a50-add0-b0b2e3d31505/resourcegroups/Default-ApplicationInsights-EastUS/providers/microsoft.insights/components/Eventus.Samples.Web</ApplicationInsightsAnnotationResourceId>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
@@ -59,6 +61,9 @@
   <ItemGroup>
     <ProjectReference Include="..\Eventus.Samples.Contracts\Eventus.Samples.Contracts.csproj" />
     <ProjectReference Include="..\Eventus.Samples.ReadLayer\Eventus.Samples.ReadLayer.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <WCFMetadata Include="Connected Services" />
   </ItemGroup>
 
 </Project>

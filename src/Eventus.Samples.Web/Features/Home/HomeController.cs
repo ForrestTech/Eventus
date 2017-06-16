@@ -7,7 +7,6 @@ namespace Eventus.Samples.Web.Features.Home
     {
         public IActionResult Index()
         {
-            throw new Exception("Bad");
             return View();
         }
 
