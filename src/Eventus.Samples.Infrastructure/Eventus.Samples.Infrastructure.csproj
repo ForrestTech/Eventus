@@ -53,8 +53,6 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Config\AggregateConfig.cs" />
-    <Compile Include="Config\ProviderConfig.cs" />
     <Compile Include="Constants.cs" />
     <Compile Include="Factories\Providers\DocumentDbProviderFactory.cs" />
     <Compile Include="Factories\Providers\SqlServerProviderFactory.cs" />
