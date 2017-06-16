@@ -3,13 +3,14 @@ using System.Threading.Tasks;
 using Eventus.Samples.Contracts.BankAccount;
 using Eventus.Samples.Web.Features.Account;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Eventus.Samples.Web.Features.BankAccount
 {
-    //[Authorize] todo add identity server 4
+    [Authorize]
     public class BankAccountController : Controller
     {
         private readonly IMediator _mediator;
