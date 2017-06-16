@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using System;
+using Microsoft.AspNetCore.Mvc;
 
 namespace Eventus.Samples.Web.Features.Home
 {
@@ -6,6 +7,7 @@ namespace Eventus.Samples.Web.Features.Home
     {
         public IActionResult Index()
         {
+            throw new Exception("Bad");
             return View();
         }
 
@@ -23,7 +25,14 @@ namespace Eventus.Samples.Web.Features.Home
             return View();
         }
 
+        [Route("/Error")]
         public IActionResult Error()
+        {
+            return View();
+        }
+
+        [Route("/Error/404")]
+        public IActionResult Error404()
         {
             return View();
         }

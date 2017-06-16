@@ -122,7 +122,8 @@ namespace Eventus.Samples.Web
             }
             else
             {
-                app.UseExceptionHandler("/Home/Error");
+                app.UseExceptionHandler("/error");
+                app.UseStatusCodePagesWithReExecute("/error/{0}");
             }
 
             app.UseMiddleware<StackifyMiddleware.RequestTracerMiddleware>();
