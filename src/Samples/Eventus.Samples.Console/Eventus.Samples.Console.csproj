@@ -83,7 +83,7 @@
       <Project>{02C0C5DD-AD27-4068-8030-A1E5BD50731E}</Project>
       <Name>Eventus.Samples.Infrastructure</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Eventus\Eventus.csproj">
+    <ProjectReference Include="..\..\Eventus\Eventus.csproj">
       <Project>{15110214-3710-40e3-b3aa-8450c6466568}</Project>
       <Name>Eventus</Name>
     </ProjectReference>

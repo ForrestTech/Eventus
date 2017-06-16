@@ -61,11 +61,11 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Eventus.DocumentDb\Eventus.DocumentDb.csproj">
+    <ProjectReference Include="..\..\Eventus.DocumentDb\Eventus.DocumentDb.csproj">
       <Project>{9356C94A-60D6-4854-8E07-02A41B23B731}</Project>
       <Name>Eventus.DocumentDb</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Eventus.EventSource\Eventus.EventStore.csproj">
+    <ProjectReference Include="..\..\Eventus.EventSource\Eventus.EventStore.csproj">
       <Project>{E5FD1A4C-9E79-484A-A44C-B8B5C70145BC}</Project>
       <Name>Eventus.EventStore</Name>
     </ProjectReference>
@@ -73,11 +73,11 @@
       <Project>{B0D6E886-4FB4-4297-BD50-C712AF24CE7B}</Project>
       <Name>Eventus.Samples.Core</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Eventus.SqlServer\Eventus.SqlServer.csproj">
+    <ProjectReference Include="..\..\Eventus.SqlServer\Eventus.SqlServer.csproj">
       <Project>{4F55B4CF-8726-4FC3-BFAB-F5807A466847}</Project>
       <Name>Eventus.SqlServer</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Eventus\Eventus.csproj">
+    <ProjectReference Include="..\..\Eventus\Eventus.csproj">
       <Project>{15110214-3710-40E3-B3AA-8450C6466568}</Project>
       <Name>Eventus</Name>
     </ProjectReference>

@@ -207,7 +207,7 @@
       <Project>{e0331ffc-e30a-4e8c-919d-aa99be0ad52b}</Project>
       <Name>Eventus.Samples.ReadLayer</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Eventus\Eventus.csproj">
+    <ProjectReference Include="..\..\Eventus\Eventus.csproj">
       <Project>{15110214-3710-40e3-b3aa-8450c6466568}</Project>
       <Name>Eventus</Name>
     </ProjectReference>

@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 VisualStudioVersion = 15.0.26430.13
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Eventus.Samples.Core", "Eventus.Samples.Core\Eventus.Samples.Core.csproj", "{B0D6E886-4FB4-4297-BD50-C712AF24CE7B}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Eventus.Samples.Core", "Samples\Eventus.Samples.Core\Eventus.Samples.Core.csproj", "{B0D6E886-4FB4-4297-BD50-C712AF24CE7B}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Eventus", "Eventus\Eventus.csproj", "{15110214-3710-40E3-B3AA-8450C6466568}"
 EndProject
@@ -13,15 +13,15 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Eventus.DocumentDb", "Event
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{75C36474-611B-44B3-A48E-392C364EC27B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Eventus.Tests.Integration", "Eventus.Tests.Integration\Eventus.Tests.Integration.csproj", "{85AC6BB7-D1AD-4DB6-8B6A-76822073D226}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Eventus.Tests.Integration", "Tests\Eventus.Tests.Integration\Eventus.Tests.Integration.csproj", "{85AC6BB7-D1AD-4DB6-8B6A-76822073D226}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Eventus.Samples.Console", "Eventus.Samples.Console\Eventus.Samples.Console.csproj", "{71F6058B-41FF-4F08-A461-32F73F03BAAC}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Eventus.Samples.Console", "Samples\Eventus.Samples.Console\Eventus.Samples.Console.csproj", "{71F6058B-41FF-4F08-A461-32F73F03BAAC}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Eventus.Samples.Infrastructure", "Eventus.Samples.Infrastructure\Eventus.Samples.Infrastructure.csproj", "{02C0C5DD-AD27-4068-8030-A1E5BD50731E}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Eventus.Samples.Infrastructure", "Samples\Eventus.Samples.Infrastructure\Eventus.Samples.Infrastructure.csproj", "{02C0C5DD-AD27-4068-8030-A1E5BD50731E}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Samples", "Samples", "{C8D1A53A-2E83-4CB8-9621-205D2A376E4F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Eventus.Tests.Unit", "Eventus.Tests.Unit\Eventus.Tests.Unit.csproj", "{3B969917-CC06-47BD-A3F7-6E5D3B9FC9F7}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Eventus.Tests.Unit", "Tests\Eventus.Tests.Unit\Eventus.Tests.Unit.csproj", "{3B969917-CC06-47BD-A3F7-6E5D3B9FC9F7}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "_SolutionItems", "_SolutionItems", "{A6A730BA-118A-43B6-8DF5-709211731D83}"
 	ProjectSection(SolutionItems) = preProject
@@ -33,13 +33,13 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "_SolutionItems", "_Solution
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Eventus.SqlServer", "Eventus.SqlServer\Eventus.SqlServer.csproj", "{4F55B4CF-8726-4FC3-BFAB-F5807A466847}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Eventus.Samples.Web", "Eventus.Samples.Web\Eventus.Samples.Web.csproj", "{E0D508C6-06AC-4071-8A86-A90D7D8E68B9}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Eventus.Samples.Web", "Samples\Eventus.Samples.Web\Eventus.Samples.Web.csproj", "{E0D508C6-06AC-4071-8A86-A90D7D8E68B9}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Eventus.Samples.Contracts", "Eventus.Samples.Contracts\Eventus.Samples.Contracts.csproj", "{2A320B66-02AB-4969-90AA-4ECAD997BADD}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Eventus.Samples.Contracts", "Samples\Eventus.Samples.Contracts\Eventus.Samples.Contracts.csproj", "{2A320B66-02AB-4969-90AA-4ECAD997BADD}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Eventus.Samples.CommandProcessor", "Eventus.Samples.CommandProcessor\Eventus.Samples.CommandProcessor.csproj", "{D7E2B10B-51F6-4897-868A-2EE0510A188D}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Eventus.Samples.CommandProcessor", "Samples\Eventus.Samples.CommandProcessor\Eventus.Samples.CommandProcessor.csproj", "{D7E2B10B-51F6-4897-868A-2EE0510A188D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Eventus.Samples.ReadLayer", "Eventus.Samples.ReadLayer\Eventus.Samples.ReadLayer.csproj", "{E0331FFC-E30A-4E8C-919D-AA99BE0AD52B}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Eventus.Samples.ReadLayer", "Samples\Eventus.Samples.ReadLayer\Eventus.Samples.ReadLayer.csproj", "{E0331FFC-E30A-4E8C-919D-AA99BE0AD52B}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

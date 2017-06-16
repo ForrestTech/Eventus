@@ -78,7 +78,7 @@
       <Project>{2a320b66-02ab-4969-90aa-4ecad997badd}</Project>
       <Name>Eventus.Samples.Contracts</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Eventus\Eventus.csproj">
+    <ProjectReference Include="..\..\Eventus\Eventus.csproj">
       <Project>{15110214-3710-40e3-b3aa-8450c6466568}</Project>
       <Name>Eventus</Name>
     </ProjectReference>

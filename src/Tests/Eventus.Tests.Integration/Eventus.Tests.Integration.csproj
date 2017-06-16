@@ -72,19 +72,19 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Eventus.Samples.Contracts\Eventus.Samples.Contracts.csproj">
+    <ProjectReference Include="..\..\Samples\Eventus.Samples.Contracts\Eventus.Samples.Contracts.csproj">
       <Project>{2a320b66-02ab-4969-90aa-4ecad997badd}</Project>
       <Name>Eventus.Samples.Contracts</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Eventus.Samples.Core\Eventus.Samples.Core.csproj">
+    <ProjectReference Include="..\..\Samples\Eventus.Samples.Core\Eventus.Samples.Core.csproj">
       <Project>{B0D6E886-4FB4-4297-BD50-C712AF24CE7B}</Project>
       <Name>Eventus.Samples.Core</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Eventus.Samples.Infrastructure\Eventus.Samples.Infrastructure.csproj">
+    <ProjectReference Include="..\..\Samples\Eventus.Samples.Infrastructure\Eventus.Samples.Infrastructure.csproj">
       <Project>{02C0C5DD-AD27-4068-8030-A1E5BD50731E}</Project>
       <Name>Eventus.Samples.Infrastructure</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Eventus\Eventus.csproj">
+    <ProjectReference Include="..\..\Eventus\Eventus.csproj">
       <Project>{15110214-3710-40e3-b3aa-8450c6466568}</Project>
       <Name>Eventus</Name>
     </ProjectReference>
