@@ -11,7 +11,7 @@
 
 ## Synopsis
 
-Eventus is a framework that provides a common setup for working with [Event Soured](https://martinfowler.com/eaaDev/EventSourcing.html) data.  It provides an abstractions over different storage providers.  Some common storage providers are implemented.  This libarary is inspired [NEventStore](https://github.com/NEventStore/NEventStore) and other frameworks,  they are all great but did not work exactly as I wasnted them to. 
+Eventus is a framework that provides a common setup for working with [Event Soured](https://martinfowler.com/eaaDev/EventSourcing.html) data.  It provides an abstractions over different storage providers.  Some common storage providers like SQL, Azure DocumentDB and EventStore are implemented.  This libarary is inspired by [NEventStore](https://github.com/NEventStore/NEventStore) and other frameworks,  they are all great but they did not work exactly as I wanted them to.  
 
 ## Install
 
@@ -88,7 +88,7 @@ This allows events to be saved for storage in the provider being used and it als
 
 ## Samples
 
-There are a set of sample application located in the [samples](https://github.com/feanz/Eventus/tree/master/src/Samples) folder.  These samples provide a full (if simplistic) CQRS workflow.  There is a [readme](https://github.com/feanz/Eventus/tree/master/src/Samples/readme.md) that provides full details for the samples and how to run them locally. 
+There are a set of sample application located in the [samples](https://github.com/feanz/Eventus/tree/master/src/Samples) folder.  These samples provide a full (if simplistic) CQRS workflow.  [CQRS](https://martinfowler.com/bliki/CQRS.html) and [Event Sourcing](https://martinfowler.com/eaaDev/EventSourcing.html) work really well together but one does not require the other.  It should also be noted that it is not a top level architecture and should not be applied to all problems. 
 
 ## Project 
 
