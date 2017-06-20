@@ -1,11 +1,11 @@
 ﻿using Serilog;
 using Topshelf;
 
-namespace Eventus.Samples.CommandProcessor
+namespace Eventus.Samples.Subscribers
 {
     class Program
     {
-        static void Main(string[] args)
+        static void Main()
         {
             var configuration = new LoggerConfiguration()
                 .MinimumLevel.Debug()
@@ -15,19 +15,19 @@ namespace Eventus.Samples.CommandProcessor
 
             Log.Logger = configuration;
 
-            HostFactory.Run(x =>                                 
+            HostFactory.Run(x =>
             {
-                x.Service<CommandProcessor>(s =>
+                x.Service<Subscribers>(s =>
                 {
-                    s.ConstructUsing(name => new CommandProcessor());
+                    s.ConstructUsing(name => new Subscribers());
                     s.WhenStarted(tc => tc.Start());
                     s.WhenStopped(tc => tc.Stop());
                 });
                 x.RunAsLocalSystem();
                 x.UseSerilog(configuration);
-                x.SetDescription("Processes Eventus Sample domain commands");
-                x.SetDisplayName("Eventus Command Processor");
-                x.SetServiceName("Eventus Command Processor");
+                x.SetDescription("Subscribes to eventus samples domain events");
+                x.SetDisplayName("Eventus Subscriber");
+                x.SetServiceName("Eventus Subscriber");
             });
         }
     }

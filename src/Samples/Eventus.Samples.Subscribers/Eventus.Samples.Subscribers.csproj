@@ -4,10 +4,10 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{D7E2B10B-51F6-4897-868A-2EE0510A188D}</ProjectGuid>
+    <ProjectGuid>{8C5DDA3F-3E87-4FAB-BE75-6769CC9B166B}</ProjectGuid>
     <OutputType>Exe</OutputType>
-    <RootNamespace>Eventus.Samples.CommandProcessor</RootNamespace>
-    <AssemblyName>Eventus.Samples.CommandProcessor</AssemblyName>
+    <RootNamespace>Eventus.Samples.Subscribers</RootNamespace>
+    <AssemblyName>Eventus.Samples.Subscribers</AssemblyName>
     <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
@@ -41,9 +41,6 @@
     <Reference Include="Microsoft.Win32.Primitives, Version=4.0.2.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
       <HintPath>..\..\packages\Microsoft.Win32.Primitives.4.3.0\lib\net46\Microsoft.Win32.Primitives.dll</HintPath>
     </Reference>
-    <Reference Include="Newtonsoft.Json, Version=9.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\Newtonsoft.Json.9.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
-    </Reference>
     <Reference Include="RabbitMQ.Client, Version=3.6.0.0, Culture=neutral, PublicKeyToken=89e7d7c5feba84ce, processorArchitecture=MSIL">
       <HintPath>..\..\packages\RabbitMQ.Client.3.6.0\lib\net45\RabbitMQ.Client.dll</HintPath>
     </Reference>
@@ -68,6 +65,18 @@
     <Reference Include="Serilog.Sinks.Seq, Version=3.3.1.0, Culture=neutral, PublicKeyToken=24c2f752a8e58a10, processorArchitecture=MSIL">
       <HintPath>..\..\packages\Serilog.Sinks.Seq.3.3.1\lib\net46\Serilog.Sinks.Seq.dll</HintPath>
     </Reference>
+    <Reference Include="ServiceStack.Common, Version=1.0.43.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\ServiceStack.Common.Core.1.0.43\lib\netstandard1.3\ServiceStack.Common.dll</HintPath>
+    </Reference>
+    <Reference Include="ServiceStack.Interfaces, Version=4.0.0.0, Culture=neutral, PublicKeyToken=e06fbc6124f57c43, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\ServiceStack.Interfaces.Core.1.0.43\lib\netstandard1.1\ServiceStack.Interfaces.dll</HintPath>
+    </Reference>
+    <Reference Include="ServiceStack.Redis, Version=1.0.43.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\ServiceStack.Redis.Core.1.0.43\lib\netstandard1.3\ServiceStack.Redis.dll</HintPath>
+    </Reference>
+    <Reference Include="ServiceStack.Text, Version=1.0.43.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\ServiceStack.Text.Core.1.0.43\lib\netstandard1.3\ServiceStack.Text.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.AppContext, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
       <HintPath>..\..\packages\System.AppContext.4.3.0\lib\net46\System.AppContext.dll</HintPath>
@@ -89,9 +98,6 @@
     <Reference Include="System.Core" />
     <Reference Include="System.Data.Common, Version=4.1.1.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
       <HintPath>..\..\packages\System.Data.Common.4.3.0\lib\net451\System.Data.Common.dll</HintPath>
-    </Reference>
-    <Reference Include="System.Diagnostics.DiagnosticSource, Version=4.0.1.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\System.Diagnostics.DiagnosticSource.4.3.0\lib\net46\System.Diagnostics.DiagnosticSource.dll</HintPath>
     </Reference>
     <Reference Include="System.Globalization.Calendars, Version=4.0.2.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
       <HintPath>..\..\packages\System.Globalization.Calendars.4.3.0\lib\net46\System.Globalization.Calendars.dll</HintPath>
@@ -169,13 +175,8 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="CommandProcessor.cs" />
-    <Compile Include="CreateAccountCommandHandler.cs" />
-    <Compile Include="DepositCommandHandler.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="RabbitMqEventPublisher.cs" />
-    <Compile Include="WithdrawCommandHandler.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
@@ -183,21 +184,21 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\Eventus\Eventus.csproj">
+      <Project>{15110214-3710-40e3-b3aa-8450c6466568}</Project>
+      <Name>Eventus</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Eventus.Samples.Contracts\Eventus.Samples.Contracts.csproj">
       <Project>{2a320b66-02ab-4969-90aa-4ecad997badd}</Project>
       <Name>Eventus.Samples.Contracts</Name>
     </ProjectReference>
     <ProjectReference Include="..\Eventus.Samples.Core\Eventus.Samples.Core.csproj">
-      <Project>{b0d6e886-4fb4-4297-bd50-c712af24ce7b}</Project>
+      <Project>{B0D6E886-4FB4-4297-BD50-C712AF24CE7B}</Project>
       <Name>Eventus.Samples.Core</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Eventus.Samples.Infrastructure\Eventus.Samples.Infrastructure.csproj">
-      <Project>{02c0c5dd-ad27-4068-8030-a1e5bd50731e}</Project>
-      <Name>Eventus.Samples.Infrastructure</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\Eventus\Eventus.csproj">
-      <Project>{15110214-3710-40e3-b3aa-8450c6466568}</Project>
-      <Name>Eventus</Name>
+    <ProjectReference Include="..\Eventus.Samples.ReadLayer\Eventus.Samples.ReadLayer.csproj">
+      <Project>{e0331ffc-e30a-4e8c-919d-aa99be0ad52b}</Project>
+      <Name>Eventus.Samples.ReadLayer</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

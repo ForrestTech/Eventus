@@ -3,7 +3,6 @@ using EasyNetQ;
 using Eventus.Samples.Contracts;
 using Eventus.Samples.Contracts.BankAccount.Commands;
 using Eventus.Samples.Infrastructure.Factories;
-using Eventus.Samples.ReadLayer;
 using Serilog;
 
 namespace Eventus.Samples.CommandProcessor
@@ -19,12 +18,12 @@ namespace Eventus.Samples.CommandProcessor
         {
             _bus = RabbitHutch.CreateBus(ConfigurationManager.AppSettings["RabbitMQUri"]);
 
-            var eventRepo = ProviderFactory.Current.CreateRepositoryAsync().Result;
-            var readRepo = new BankAccountReadRepository(ConfigurationManager.AppSettings["RedisConnectionString"]);
+            var publisher = new RabbitMqEventPublisher(_bus);
+            var eventRepo = ProviderFactory.Current.CreateRepositoryAsync(publisher).Result;
 
-            _createAccountHandler = new CreateAccountCommandHandler(eventRepo, readRepo);
-            _depositHandler = new DepositCommandHandler(eventRepo, readRepo);
-            _withDrawHandler = new WithdrawCommandHandler(eventRepo, readRepo);
+            _createAccountHandler = new CreateAccountCommandHandler(eventRepo);
+            _depositHandler = new DepositCommandHandler(eventRepo);
+            _withDrawHandler = new WithdrawCommandHandler(eventRepo);
         }
 
         public void Start()

@@ -4,6 +4,7 @@ using System.Configuration;
 using System.Linq;
 using System.Threading.Tasks;
 using Eventus.Cleanup;
+using Eventus.EventBus;
 using Eventus.Logging;
 using Eventus.Samples.Infrastructure.Factories.Providers;
 using Eventus.Storage;
@@ -37,11 +38,17 @@ namespace Eventus.Samples.Infrastructure.Factories
             return List().Single(r => string.Equals(r.Name, roleString, StringComparison.OrdinalIgnoreCase));
         }
 
-        public virtual async Task<IRepository> CreateRepositoryAsync()
+        public Task<IRepository> CreateRepositoryAsync()
+        {
+            return CreateRepositoryAsync(null);
+        }
+
+        public virtual async Task<IRepository> CreateRepositoryAsync(IEventPublisher eventPublisher)
         {
             var repo = new RepositoryLoggingDecorator(new Repository(
                     await CreateEventStorageProviderAsync().ConfigureAwait(false),
-                    await CreateSnapshotStorageProviderAsync().ConfigureAwait(false)));
+                    await CreateSnapshotStorageProviderAsync().ConfigureAwait(false),
+                eventPublisher));
 
             return repo;
         }
