@@ -88,7 +88,7 @@ This allows events to be saved for storage in the provider being used and it als
 
 ## Samples
 
-There is a [sample application](https://github.com/feanz/Eventus/tree/master/src/Eventus.Samples.Console) that has example aggregates, commands and events.  
+There are a set of sample application located in the [samples](https://github.com/feanz/Eventus/tree/master/src/Samples) folder.  These samples provide a full (if simplistic) CQRS workflow.  There is a [readme](https://github.com/feanz/Eventus/tree/master/src/Samples/readme.md) that provides full details for the samples and how to run them locally. 
 
 ## Project 
 

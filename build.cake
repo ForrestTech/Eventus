@@ -86,47 +86,47 @@ Task("Integration-Tests")
 {
 	//Run DocumentDb
 	TransformConfig(
-		"./src/Eventus.Tests.Integration/bin/" + configuration + "/Eventus.Tests.Integration.dll.config",
-		"./src/Eventus.Tests.Integration/bin/" + configuration + "/Eventus.Tests.Integration.dll.config",
+		"./src/Tests/Eventus.Tests.Integration/bin/" + configuration + "/Eventus.Tests.Integration.dll.config",
+		"./src/Tests/Eventus.Tests.Integration/bin/" + configuration + "/Eventus.Tests.Integration.dll.config",
 		new TransformationCollection {
 			{ "configuration/appSettings/add[@key='Provider']/@value","DocumentDb" }
 		});
 
 	Information("Running DocumentDb integration tests");
-	XUnit2("./src/Eventus.Tests.Integration/bin/" + configuration + "/Eventus.Tests.Integration.dll");
+	XUnit2("./src/Tests/Eventus.Tests.Integration/bin/" + configuration + "/Eventus.Tests.Integration.dll");
 
 	//Run Sql server tests
 	TransformConfig(
-		"./src/Eventus.Tests.Integration/bin/" + configuration + "/Eventus.Tests.Integration.dll.config",
-		"./src/Eventus.Tests.Integration/bin/" + configuration + "/Eventus.Tests.Integration.dll.config",
+		"./src/Tests/Eventus.Tests.Integration/bin/" + configuration + "/Eventus.Tests.Integration.dll.config",
+		"./src/Tests/Eventus.Tests.Integration/bin/" + configuration + "/Eventus.Tests.Integration.dll.config",
 		new TransformationCollection {
 			{ "configuration/appSettings/add[@key='Provider']/@value","SqlServer" }
 		});
 
 	Information("Running Sql Server integration tests");
-	XUnit2("./src/Eventus.Tests.Integration/bin/" + configuration + "/Eventus.Tests.Integration.dll");
+	XUnit2("./src/Tests/Eventus.Tests.Integration/bin/" + configuration + "/Eventus.Tests.Integration.dll");
 
 	//Run EventStore
 	TransformConfig(
-		"./src/Eventus.Tests.Integration/bin/" + configuration + "/Eventus.Tests.Integration.dll.config",
-		"./src/Eventus.Tests.Integration/bin/" + configuration + "/Eventus.Tests.Integration.dll.config",
+		"./src/Tests/Eventus.Tests.Integration/bin/" + configuration + "/Eventus.Tests.Integration.dll.config",
+		"./src/Tests/Eventus.Tests.Integration/bin/" + configuration + "/Eventus.Tests.Integration.dll.config",
 		new TransformationCollection {
 			{ "configuration/appSettings/add[@key='Provider']/@value","EventStore" }
 		});
 
 	Information("Running EventStore integration tests");
-	XUnit2("./src/Eventus.Tests.Integration/bin/" + configuration + "/Eventus.Tests.Integration.dll");
+	XUnit2("./src/Tests/Eventus.Tests.Integration/bin/" + configuration + "/Eventus.Tests.Integration.dll");
 });
 
 
 Task("CI-Sql-Test")
-    .IsDependentOn("Upload-coverage")
+    .IsDependentOn("Pack")
     .Does(() =>
 {
 	//Run DocumentDb
 	TransformConfig(
-		"./src/Eventus.Tests.Integration/bin/" + configuration + "/Eventus.Tests.Integration.dll.config",
-		"./src/Eventus.Tests.Integration/bin/" + configuration + "/Eventus.Tests.Integration.dll.config",
+		"./src/Tests/Eventus.Tests.Integration/bin/" + configuration + "/Eventus.Tests.Integration.dll.config",
+		"./src/Tests/Eventus.Tests.Integration/bin/" + configuration + "/Eventus.Tests.Integration.dll.config",
 		new TransformationCollection {
 			{ "configuration/appSettings/add[@key='Provider']/@value","SqlServer" },
 			{ "configuration/connectionStrings/add[@name='Eventus']/@connectionString","Server=(local)\\SQL2016;Database=master;User ID=sa;Password=Password12!" }
@@ -134,11 +134,11 @@ Task("CI-Sql-Test")
 
 	Information("Running SqlServer integration tests");
 
-	XUnit2("./src/Eventus.Tests.Integration/bin/" + configuration + "/Eventus.Tests.Integration.dll");
+	XUnit2("./src/Tests/Eventus.Tests.Integration/bin/" + configuration + "/Eventus.Tests.Integration.dll");
 });
 
 Task("Pack")
-    .IsDependentOn("CI-Sql-Test")
+    .IsDependentOn("Upload-coverage")
     .Does(() =>
 {
     NuGetPack("./src/Eventus/Eventus.csproj", new NuGetPackSettings{
