@@ -1,7 +1,6 @@
 using System.Threading.Tasks;
 using Eventus.Samples.Contracts.BankAccount.Commands;
 using Eventus.Samples.Core.Domain;
-using Eventus.Samples.ReadLayer;
 using Eventus.Storage;
 using Serilog;
 
@@ -10,12 +9,10 @@ namespace Eventus.Samples.CommandProcessor
     public class WithdrawCommandHandler
     {
         private readonly IRepository _repo;
-        private readonly BankAccountReadRepository _readRepository;
 
-        public WithdrawCommandHandler(IRepository repo, BankAccountReadRepository readRepository)
+        public WithdrawCommandHandler(IRepository repo)
         {
             _repo = repo;
-            _readRepository = readRepository;
         }
 
         public async Task Handle(WithdrawFundsCommand command)
@@ -29,12 +26,6 @@ namespace Eventus.Samples.CommandProcessor
 
             await _repo.SaveAsync(account)
                 .ConfigureAwait(false);
-
-            var summary = _readRepository.Get(account.Id);
-
-            summary.Balance -= command.Amount;
-
-            _readRepository.Save(summary);
         }
     }
 }

@@ -22,15 +22,15 @@ An asp.net core web application that allows user to manage their bank accounts. 
 
 ## Eventus.Samples.CommandProcessor
 
-The command processor listend for events on [RabbitMQ](https://www.rabbitmq.com/) and handles the commands.  It uses the Eventus framework to create/update the BankAccount domain aggregate.  Event data can then be stored in any of the supported event store providers.  
+The command processor listend for events on [RabbitMQ](https://www.rabbitmq.com/) and handles the commands.  It uses the Eventus framework to create/update the BankAccount domain aggregate.  Event data can then be stored in any of the supported event store providers.  Domain events are then emitted to a topic in RabbitMQ where subscribers can listen for these events. 
 
-### Notes
+## Eventus.Samples.Subscribers
 
-* Currently the command processor also update the read layer for Bank Accounts. The web application queries this layer.  This should really be done by subscribers to Domain events.  e.g. Domain events are published to RabbitMQ and subscribers update the read layer. 
+The subscriber project listens to domain events on [RabbitMQ](https://www.rabbitmq.com/) topics and updates the read model of the bank account data.
 
 ### Eventus.Samples.ReadLayer
 
-This project contains a simple redis repository that stores a read view of the players account summary details.  This project is used by both the command processor to update the read view and the web application to read the current state of the customer account
+This project contains a simple redis repository that stores a read view of the players account summary details.  This project is used by both the subscriber project to update the read view and the web application to read the current state of the customer account
 
 ### Notes
 
@@ -55,7 +55,7 @@ This is a simple console application that demonstrates the eventus framework.  I
 
 ## Running the Full Sample Application
 
-Some actions are required to run the full sample application locally.  The sample application uses a few different third party applications.  Some of these applications are optional, some are required. Config values needs to be setup locally to use these integrations. Secrets need to be added to the user `secret.json` file in the Eventus.Samples.Web application. For more detail on managing user secrets in .net core [read this]. (https://docs.microsoft.com/en-us/aspnet/core/security/app-secrets). In the Eventus.Samples.CommandProcessor project you will need to create a `appSettingsSecrets.config` file.  This file is pulled in by the main app.config file app settings but is ignored in the .gitignore file so it can't be checked in. 
+Some actions are required to run the full sample application locally.  The sample application uses a few different third party applications.  Some of these applications are optional, some are required. Config values needs to be added locally to use these integrations. Secrets need to be added to the user `secret.json` file in the Eventus.Samples.Web application. For more detail on managing user secrets in .net core [read this]. (https://docs.microsoft.com/en-us/aspnet/core/security/app-secrets). In the Eventus.Samples.CommandProcessor and Eventus.Samples.Subscriber project you will need to create a `appSettingsSecrets.config` file.  This file is pulled in by the main app.config file app settings but is ignored in the .gitignore file so it can't be checked in. 
 
 Full details of each provider are below:
 
@@ -63,7 +63,7 @@ Full details of each provider are below:
 
 #### RabbitMQ
 
-[RabbitMQ](https://www.rabbitmq.com/) is used to queue command for processing.  You will need to add a config setting of `RabbitMQUri` for the URI of a RabbitMQ Server to the `secrets.json` file and the `appSettingsSecrets.config`.  You can run a RabbitMQ server locally or use someone like [CloudAMQP](https://www.cloudamqp.com/) to host a server for you, they have free tiers.
+[RabbitMQ](https://www.rabbitmq.com/) is used to queue command for processing and to emit domain events to topics.  You will need to add a config setting of `RabbitMQUri` for the URI of a RabbitMQ Server to the `secrets.json` file and the `appSettingsSecrets.config` files.  You can run a RabbitMQ server locally or use someone like [CloudAMQP](https://www.cloudamqp.com/) to host a server for you, they have free tiers.
 
 ### Redis 
 
