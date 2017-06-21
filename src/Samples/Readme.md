@@ -55,7 +55,7 @@ This is a simple console application that demonstrates the eventus framework.  I
 
 ## Running the Full Sample Application
 
-Some actions are required to run the full sample application locally.  The sample application uses a few different third party applications.  Some of these applications are optional, some are required. Config values needs to be setup locally to use these integrations. Secrets need to be added to the user `secret.json` file in the Eventus.Samples.Web application. For more detail on managing user secrets in .net core [read this]. (https://docs.microsoft.com/en-us/aspnet/core/security/app-secrets). In the Eventus.Samples.CommandProcessor project you will need to create a `appSettingsSecrets.config` file.  This file is pulled in by the main app.config file app settings but is ignored in the .gitignore file so it can't be checked in. 
+Some actions are required to run the full sample application locally.  The sample application uses a few different third party applications.  Some of these applications are optional, some are required. Config values needs to be added locally to use these integrations. Secrets need to be added to the user `secret.json` file in the Eventus.Samples.Web application. For more detail on managing user secrets in .net core [read this]. (https://docs.microsoft.com/en-us/aspnet/core/security/app-secrets). In the Eventus.Samples.CommandProcessor and Eventus.Samples.Subscriber project you will need to create a `appSettingsSecrets.config` file.  This file is pulled in by the main app.config file app settings but is ignored in the .gitignore file so it can't be checked in. 
 
 Full details of each provider are below:
 
@@ -63,7 +63,7 @@ Full details of each provider are below:
 
 #### RabbitMQ
 
-[RabbitMQ](https://www.rabbitmq.com/) is used to queue command for processing.  You will need to add a config setting of `RabbitMQUri` for the URI of a RabbitMQ Server to the `secrets.json` file and the `appSettingsSecrets.config`.  You can run a RabbitMQ server locally or use someone like [CloudAMQP](https://www.cloudamqp.com/) to host a server for you, they have free tiers.
+[RabbitMQ](https://www.rabbitmq.com/) is used to queue command for processing and to emit domain events to topics.  You will need to add a config setting of `RabbitMQUri` for the URI of a RabbitMQ Server to the `secrets.json` file and the `appSettingsSecrets.config` files.  You can run a RabbitMQ server locally or use someone like [CloudAMQP](https://www.cloudamqp.com/) to host a server for you, they have free tiers.
 
 ### Redis 
 
