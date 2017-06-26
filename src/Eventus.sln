@@ -7,7 +7,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Eventus.Samples.Core", "Sam
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Eventus", "Eventus\Eventus.csproj", "{15110214-3710-40E3-B3AA-8450C6466568}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Eventus.EventStore", "Eventus.EventSource\Eventus.EventStore.csproj", "{E5FD1A4C-9E79-484A-A44C-B8B5C70145BC}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Eventus.EventStore", "Eventus.EventStore\Eventus.EventStore.csproj", "{E5FD1A4C-9E79-484A-A44C-B8B5C70145BC}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Eventus.DocumentDb", "Eventus.DocumentDb\Eventus.DocumentDb.csproj", "{9356C94A-60D6-4854-8E07-02A41B23B731}"
 EndProject
@@ -27,20 +27,23 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "_SolutionItems", "_Solution
 	ProjectSection(SolutionItems) = preProject
 		..\appveyor.yml = ..\appveyor.yml
 		..\build.cake = ..\build.cake
+		Eventus.DocumentDb\Eventus.DocumentDb.nuspec = Eventus.DocumentDb\Eventus.DocumentDb.nuspec
+		Eventus.EventStore\Eventus.EventStore.nuspec = Eventus.EventStore\Eventus.EventStore.nuspec
 		Eventus\Eventus.nuspec = Eventus\Eventus.nuspec
+		Eventus.SqlServer\Eventus.SqlServer.nuspec = Eventus.SqlServer\Eventus.SqlServer.nuspec
 		..\README.md = ..\README.md
 		Samples\Readme.md = Samples\Readme.md
 	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Eventus.SqlServer", "Eventus.SqlServer\Eventus.SqlServer.csproj", "{4F55B4CF-8726-4FC3-BFAB-F5807A466847}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Eventus.Samples.Web", "Samples\Eventus.Samples.Web\Eventus.Samples.Web.csproj", "{E0D508C6-06AC-4071-8A86-A90D7D8E68B9}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Eventus.Samples.Web", "Samples\Eventus.Samples.Web\Eventus.Samples.Web.csproj", "{E0D508C6-06AC-4071-8A86-A90D7D8E68B9}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Eventus.Samples.Contracts", "Samples\Eventus.Samples.Contracts\Eventus.Samples.Contracts.csproj", "{2A320B66-02AB-4969-90AA-4ECAD997BADD}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Eventus.Samples.Contracts", "Samples\Eventus.Samples.Contracts\Eventus.Samples.Contracts.csproj", "{2A320B66-02AB-4969-90AA-4ECAD997BADD}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Eventus.Samples.CommandProcessor", "Samples\Eventus.Samples.CommandProcessor\Eventus.Samples.CommandProcessor.csproj", "{D7E2B10B-51F6-4897-868A-2EE0510A188D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Eventus.Samples.ReadLayer", "Samples\Eventus.Samples.ReadLayer\Eventus.Samples.ReadLayer.csproj", "{E0331FFC-E30A-4E8C-919D-AA99BE0AD52B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Eventus.Samples.ReadLayer", "Samples\Eventus.Samples.ReadLayer\Eventus.Samples.ReadLayer.csproj", "{E0331FFC-E30A-4E8C-919D-AA99BE0AD52B}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Eventus.Samples.Subscribers", "Samples\Eventus.Samples.Subscribers\Eventus.Samples.Subscribers.csproj", "{8C5DDA3F-3E87-4FAB-BE75-6769CC9B166B}"
 EndProject

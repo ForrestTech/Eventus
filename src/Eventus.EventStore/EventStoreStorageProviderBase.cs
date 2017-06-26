@@ -7,14 +7,14 @@ using Newtonsoft.Json;
 
 namespace Eventus.EventStore
 {
-    public abstract class EventstoreStorageProviderBase
+    public abstract class EventStoreStorageProviderBase
     {
         private readonly Func<string> _getStreamNamePrefix;
         private static JsonSerializerSettings _serializerSetting;
 
         protected readonly IEventStoreConnection Connection;
 
-        protected EventstoreStorageProviderBase(IEventStoreConnection connection, Func<string> getStreamNamePrefix)
+        protected EventStoreStorageProviderBase(IEventStoreConnection connection, Func<string> getStreamNamePrefix)
         {
             Connection = connection ?? throw new ArgumentNullException(nameof(connection));
             _getStreamNamePrefix = getStreamNamePrefix;
@@ -40,7 +40,7 @@ namespace Eventus.EventStore
         protected static IEvent DeserializeEvent(ResolvedEvent returnedEvent)
         {
 
-            var header = JsonConvert.DeserializeObject<EventstoreMetaDataHeader>(
+            var header = JsonConvert.DeserializeObject<EventStoreMetaDataHeader>(
                 Encoding.UTF8.GetString(returnedEvent.Event.Metadata), GetSerializerSettings());
 
             var returnType = Type.GetType(header.ClrType);
@@ -52,7 +52,7 @@ namespace Eventus.EventStore
 
         protected static EventData SerializeEvent(IEvent @event, int commitNumber)
         {
-            var header = new EventstoreMetaDataHeader
+            var header = new EventStoreMetaDataHeader
             {
                 ClrType = GetClrTypeName(@event),
                 CommitNumber = commitNumber
@@ -66,7 +66,7 @@ namespace Eventus.EventStore
         protected static Snapshot DeserializeSnapshotEvent(ResolvedEvent returnedEvent)
         {
 
-            var header = JsonConvert.DeserializeObject<EventstoreMetaDataHeader>(
+            var header = JsonConvert.DeserializeObject<EventStoreMetaDataHeader>(
                 Encoding.UTF8.GetString(returnedEvent.Event.Metadata), GetSerializerSettings());
 
             var returnType = Type.GetType(header.ClrType);
@@ -78,7 +78,7 @@ namespace Eventus.EventStore
 
         protected static EventData SerializeSnapshotEvent(Snapshot @event, int commitNumber)
         {
-            var header = new EventstoreMetaDataHeader
+            var header = new EventStoreMetaDataHeader
             {
                 ClrType = GetClrTypeName(@event),
                 CommitNumber = commitNumber

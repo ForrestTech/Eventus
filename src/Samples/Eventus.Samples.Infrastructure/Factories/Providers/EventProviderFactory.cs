@@ -25,13 +25,13 @@ namespace Eventus.Samples.Infrastructure.Factories.Providers
 
         public override async Task<IEventStorageProvider> CreateEventStorageProviderAsync()
         {
-            var eventStore = new EventstoreStorageProvider(await GetConnectionAsync().ConfigureAwait(false), GetStreamNamePrefix());
+            var eventStore = new EventStoreStorageProvider(await GetConnectionAsync().ConfigureAwait(false), GetStreamNamePrefix());
             return new EventStorageProviderLoggingDecorator(eventStore);
         }
 
         public override async Task<ISnapshotStorageProvider> CreateSnapshotStorageProviderAsync()
         {
-            var snapshot = new EventstoreSnapshotStorageProvider(await GetConnectionAsync().ConfigureAwait(false), 3, GetStreamNamePrefix());
+            var snapshot = new EventStoreSnapshotStorageProvider(await GetConnectionAsync().ConfigureAwait(false), 3, GetStreamNamePrefix());
             return new SnapshotProviderLoggingDecorator(snapshot);
         }
 
