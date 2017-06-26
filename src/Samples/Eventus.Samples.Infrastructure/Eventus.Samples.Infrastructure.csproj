@@ -65,7 +65,7 @@
       <Project>{9356C94A-60D6-4854-8E07-02A41B23B731}</Project>
       <Name>Eventus.DocumentDb</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\Eventus.EventSource\Eventus.EventStore.csproj">
+    <ProjectReference Include="..\..\Eventus.EventStore\Eventus.EventStore.csproj">
       <Project>{E5FD1A4C-9E79-484A-A44C-B8B5C70145BC}</Project>
       <Name>Eventus.EventStore</Name>
     </ProjectReference>

@@ -147,6 +147,27 @@ Task("Pack")
 			{ "Configuration", configuration }
 		}
 	});
+
+	NuGetPack("./src/Eventus.SqlServer/Eventus.SqlServer.csproj", new NuGetPackSettings{
+		Version = packageVersion,
+		Properties = new Dictionary<string,string>{
+			{ "Configuration", configuration }
+		}
+	});
+
+	NuGetPack("./src/Eventus.EventStore/Eventus.EventStore.csproj", new NuGetPackSettings{
+		Version = packageVersion,
+		Properties = new Dictionary<string,string>{
+			{ "Configuration", configuration }
+		}
+	});
+
+	NuGetPack("./src/Eventus.DocumentDb/Eventus.DocumentDb.csproj", new NuGetPackSettings{
+		Version = packageVersion,
+		Properties = new Dictionary<string,string>{
+			{ "Configuration", configuration }
+		}
+	});
 });
 
 Task("Default")
