@@ -6,12 +6,12 @@ using Eventus.Storage;
 
 namespace Eventus.EventStore
 {
-    public class EventstoreSnapshotStorageProvider : EventstoreStorageProviderBase, ISnapshotStorageProvider
+    public class EventStoreSnapshotStorageProvider : EventStoreStorageProviderBase, ISnapshotStorageProvider
     {
-        public EventstoreSnapshotStorageProvider(IEventStoreConnection connection, int snapshotFrequency) : this(connection, snapshotFrequency, null)
+        public EventStoreSnapshotStorageProvider(IEventStoreConnection connection, int snapshotFrequency) : this(connection, snapshotFrequency, null)
         { }
 
-        public EventstoreSnapshotStorageProvider(IEventStoreConnection connection, int snapshotFrequency, Func<string> getStreamNamePrefix)
+        public EventStoreSnapshotStorageProvider(IEventStoreConnection connection, int snapshotFrequency, Func<string> getStreamNamePrefix)
             : base(connection, getStreamNamePrefix)
         {
             if (snapshotFrequency <= 2) throw new ArgumentOutOfRangeException(nameof(snapshotFrequency));

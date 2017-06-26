@@ -9,15 +9,15 @@ using Eventus.Storage;
 
 namespace Eventus.EventStore
 {
-    public class EventstoreStorageProvider : EventstoreStorageProviderBase, IEventStorageProvider
+    public class EventStoreStorageProvider : EventStoreStorageProviderBase, IEventStorageProvider
     {
         //There is a max limit of 4096 messages per read in eventstore so use paging
         private const int EventStorePageSize = 200;
 
-        public EventstoreStorageProvider(IEventStoreConnection connection) : this(connection, null)
+        public EventStoreStorageProvider(IEventStoreConnection connection) : this(connection, null)
         {}
 
-        public EventstoreStorageProvider(IEventStoreConnection connection, Func<string> getStreamNamePrefix)
+        public EventStoreStorageProvider(IEventStoreConnection connection, Func<string> getStreamNamePrefix)
             : base(connection, getStreamNamePrefix)
         {}
 

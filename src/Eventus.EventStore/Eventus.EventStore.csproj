@@ -52,10 +52,10 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="EventstoreMetaDataHeader.cs" />
-    <Compile Include="EventstoreSnapshotStorageProvider.cs" />
-    <Compile Include="EventstoreStorageProvider.cs" />
-    <Compile Include="EventstoreStorageProviderBase.cs" />
+    <Compile Include="EventStoreMetaDataHeader.cs" />
+    <Compile Include="EventStoreSnapshotStorageProvider.cs" />
+    <Compile Include="EventStoreStorageProvider.cs" />
+    <Compile Include="EventStoreStorageProviderBase.cs" />
     <Compile Include="EventStoreTeardown.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
