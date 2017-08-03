@@ -22,4 +22,4 @@ deploy:
     branch: master
 environment:
     COVERALLS_REPO_TOKEN:  
-       secure: Xr+EYSpLkGI6fLy4uPdGuI5nVZRcqUZakaswMMn2kkZ5iyFI/p6pHQ5dOJ3hlY4N
+       secure: pykVumXkABKjngDwvHAnOij9fMOYP0fsr5xZvO/qJx37EBMlwhiwHAVDZm+Ilj8K
