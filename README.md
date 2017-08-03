@@ -4,10 +4,10 @@
 
 |Type |Badge |
 |---|---|
-| **Build** | [![Build status](https://ci.appveyor.com/api/projects/status/wi02wpdnqlyifcxg/branch/master?svg=true)](https://ci.appveyor.com/api/projects/status/wi02wpdnqlyifcxg/branch/master?svg=true) |
-| **Chat** | [![Gitter](https://badges.gitter.im/JoinChat.svg)](https://gitter.im/github-Eventus/Lobby?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+| **Build** | [![Build status](https://ci.appveyor.com/api/projects/status/aprs7n7xb8643aid?svg=true)](https://ci.appveyor.com/project/feanz/eventus)
+| **Chat** | [![Gitter](https://badges.gitter.im/JoinChat.svg)](https://gitter.im/Forrest-Eventus/Lobby#)
 | **Quality** | [![Codacy Badge](https://api.codacy.com/project/badge/Grade/9a21e15a059f45eda0e0b8a81f32f983)](https://www.codacy.com/app/richard.a.forrest/Eventus?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=feanz/Eventus&amp;utm_campaign=Badge_Grade) |
-| **Coverage** | [![Coverage Status](https://coveralls.io/repos/github/feanz/Eventus/badge.svg)](https://coveralls.io/github/feanz/Eventus) |
+| **Coverage** | [![Coverage Status](https://coveralls.io/repos/github/feanz/Eventus/badge.svg)](https://coveralls.io/github/ForrestTechnologies/Eventus) |
 
 ## Synopsis
 
