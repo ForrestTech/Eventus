@@ -1,10 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using Eventus.Domain;
-
-namespace Eventus
+﻿namespace Eventus
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Linq;
+    using Domain;
+    
     public static class AggregateHelper
     {
         public static IEnumerable<Type> GetAggregateTypes()

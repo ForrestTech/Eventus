@@ -1,31 +1,36 @@
 ﻿using System;
 using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Logging;
 
 namespace Eventus.Logging
 {
     public abstract class LoggingDecorator
     {
-        private static readonly ILog Logger = LogProvider.GetCurrentClassLogger();
+        private readonly ILogger _logger;
+
+        protected LoggingDecorator(ILogger logger)
+        {
+            _logger = logger;
+        }
 
         protected abstract string TypeName { get; }
 
-        protected async Task<TResult> LogMethodCallAsync<TResult>(Func<Task<TResult>> method, object parameter, [CallerMemberName] string methodName = "")
+        protected async Task<TResult?> LogMethodCallAsync<TResult>(Func<Task<TResult>> method, object parameter, [CallerMemberName] string methodName = "")
         {
             try
             {
-                Logger.Enter(TypeName, parameter, methodName);
+                _logger.Enter(TypeName, parameter, methodName);
 
-                var result = await method()
-                    .ConfigureAwait(false);
+                var result = await method();
 
-                Logger.Exit(TypeName, result, methodName);
+                _logger.Exit(TypeName, result, methodName);
 
                 return result;
             }
             catch (Exception e)
             {
-                Logger.Exception(TypeName, e, methodName);
+                _logger.Exception(TypeName, e, methodName);
                 throw;
             }
         }
@@ -34,18 +39,17 @@ namespace Eventus.Logging
         {
             try
             {
-                Logger.Enter(TypeName, parameter, methodName);
+                _logger.Enter(TypeName, parameter, methodName);
 
-                var result = await method()
-                    .ConfigureAwait(false);
+                var result = await method();
 
-                Logger.Exit(TypeName, result, methodName);
+                _logger.Exit(TypeName, result, methodName);
 
                 return result;
             }
             catch (Exception e)
             {
-                Logger.Exception(TypeName, e);
+                _logger.Exception(TypeName, e);
                 throw;
             }
         }
@@ -54,17 +58,17 @@ namespace Eventus.Logging
         {
             try
             {
-                Logger.Enter(TypeName, parameter, methodName);
+                _logger.Enter(TypeName, parameter, methodName);
 
                 var result = method();
 
-                Logger.Exit(TypeName, methodName);
+                _logger.Exit(TypeName, methodName);
 
                 return result;
             }
             catch (Exception e)
             {
-                Logger.Exception(TypeName, e, methodName);
+                _logger.Exception(TypeName, e, methodName);
                 throw;
             }
         }
@@ -73,17 +77,17 @@ namespace Eventus.Logging
         {
             try
             {
-                Logger.Enter(TypeName, parameter, methodName);
+                _logger.Enter(TypeName, parameter, methodName);
 
                 var result = method();
 
-                Logger.Exit(TypeName, methodName);
+                _logger.Exit(TypeName, methodName);
 
                 return result;
             }
             catch (Exception e)
             {
-                Logger.Exception(TypeName, e, methodName);
+                _logger.Exception(TypeName, e, methodName);
                 throw;
             }
         }

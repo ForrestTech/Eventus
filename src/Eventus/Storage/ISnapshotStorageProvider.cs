@@ -7,9 +7,9 @@ namespace Eventus.Storage
     {
         int SnapshotFrequency { get; }
 
-        Task<Snapshot> GetSnapshotAsync(Type aggregateType, Guid aggregateId, int version);
+        Task<Snapshot?> GetSnapshotAsync(Type aggregateType, Guid aggregateId, int version);
 
-        Task<Snapshot> GetSnapshotAsync(Type aggregateType, Guid aggregateId);
+        Task<Snapshot?> GetSnapshotAsync(Type aggregateType, Guid aggregateId);
 
         Task SaveSnapshotAsync(Type aggregateType, Snapshot snapshot);
     }

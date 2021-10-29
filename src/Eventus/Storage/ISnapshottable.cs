@@ -4,6 +4,6 @@ namespace Eventus.Storage
     {
         Snapshot TakeSnapshot();
 
-        void ApplySnapshot(Snapshot snapshot);
+        void ApplySnapshot(Snapshot? snapshot);
     }
 }

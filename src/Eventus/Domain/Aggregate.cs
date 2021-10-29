@@ -1,11 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using Eventus.Events;
-using Eventus.Exceptions;
-
-namespace Eventus.Domain
+﻿namespace Eventus.Domain
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Linq;
+    using Events;
+    using Exceptions;
 
     public abstract class Aggregate
     {
@@ -15,12 +14,20 @@ namespace Eventus.Domain
             HasStream = 1
         }
 
-        private readonly List<IEvent> _uncommittedChanges;
-        private Dictionary<Type, string> _eventHandlerCache;
+        private readonly List<IEvent> _uncommittedChanges = new();
+        private Dictionary<Type, string> _eventHandlerCache = new();
+
+        protected Aggregate()
+        {
+            CurrentVersion = (int)StreamState.NoStream;
+            LastCommittedVersion = (int)StreamState.NoStream;
+            SetupInternalEventHandlers();
+        }
 
         protected Aggregate(List<IEvent> uncommittedChanges)
         {
             _uncommittedChanges = uncommittedChanges;
+            SetupInternalEventHandlers();
         }
 
         /// <summary>
@@ -38,14 +45,6 @@ namespace Eventus.Domain
         /// This is the CurrentVersion of the Aggregate when it was saved last. This is used to ensure optimistic concurrency. 
         /// </summary>
         public int LastCommittedVersion { get; protected set; }
-
-        protected Aggregate()
-        {
-            CurrentVersion = (int)StreamState.NoStream;
-            LastCommittedVersion = (int)StreamState.NoStream;
-            _uncommittedChanges = new List<IEvent>();
-            SetupInternalEventHandlers();
-        }
 
         public IEnumerable<IEvent> GetUncommittedChanges()
         {
@@ -114,13 +113,12 @@ namespace Eventus.Domain
         #region Comparison
         private sealed class IdEqualityComparer : IEqualityComparer<Aggregate>
         {
-            public bool Equals(Aggregate x, Aggregate y)
+            public bool Equals(Aggregate? x, Aggregate? y)
             {
-                if (ReferenceEquals(x, y)) return true;
+                if (ReferenceEquals(null, y)) return false;
                 if (ReferenceEquals(x, null)) return false;
-                if (ReferenceEquals(y, null)) return false;
-                if (x.GetType() != y.GetType()) return false;
-                return x.Id.Equals(y.Id);
+                if (ReferenceEquals(x, y)) return true;
+                return x.GetType() == y.GetType() && x.Id.Equals(y.Id);
             }
 
             public int GetHashCode(Aggregate obj)
@@ -136,12 +134,11 @@ namespace Eventus.Domain
             return Id.Equals(other.Id);
         }
 
-        public override bool Equals(object obj)
+        public override bool Equals(object? obj)
         {
             if (ReferenceEquals(null, obj)) return false;
             if (ReferenceEquals(this, obj)) return true;
-            if (obj.GetType() != this.GetType()) return false;
-            return Equals((Aggregate) obj);
+            return obj.GetType() == GetType() && Equals((Aggregate) obj);
         }
 
         public override int GetHashCode()

@@ -1,17 +1,16 @@
-﻿using System;
-using System.Collections.Concurrent;
-using System.Collections.Generic;
-using System.Linq;
-using System.Reflection;
-using System.Threading.Tasks;
-using Eventus.Events;
-
-namespace Eventus
+﻿namespace Eventus
 {
+    using System;
+    using System.Collections.Concurrent;
+    using System.Collections.Generic;
+    using System.Linq;
+    using System.Reflection;
+    using Events;
+
     internal static class ReflectionHelper
     {
         private static readonly ConcurrentDictionary<Type, ConcurrentDictionary<Type, string>> AggregateEventHandlerCache =
-                new ConcurrentDictionary<Type, ConcurrentDictionary<Type, string>>();
+                new();
 
         public static Dictionary<Type, string> FindEventHandlerMethodsInAggregate(Type aggregateType)
         {
@@ -43,7 +42,7 @@ namespace Eventus
             return AggregateEventHandlerCache[aggregateType].ToDictionary(kvp => kvp.Key, kvp => kvp.Value);
         }
 
-        public static MethodInfo GetMethod(Type t, string methodName, Type[] paramTypes)
+        public static MethodInfo? GetMethod(Type t, string methodName, Type[] paramTypes)
         {
             return t.GetMethod(methodName, BindingFlags.NonPublic | BindingFlags.Instance, null, paramTypes, null);
         }
@@ -65,7 +64,7 @@ namespace Eventus
 
                 var parameters = m.GetParameters();
 
-                if ((parameterTypes == null || parameterTypes.Length == 0))
+                if (parameterTypes.Length == 0)
                     return parameters.Length == 0;
 
                 if (parameters.Length != parameterTypes.Length)

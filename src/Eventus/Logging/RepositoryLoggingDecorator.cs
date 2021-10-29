@@ -1,18 +1,21 @@
-﻿using System;
-using System.Threading.Tasks;
-using Eventus.Domain;
-using Eventus.Storage;
-
-namespace Eventus.Logging
+﻿namespace Eventus.Logging
 {
+    using System;
+    using System.Threading.Tasks;
+    using Domain;
+    using Storage;
+    using Microsoft.Extensions.Logging;
+    
     public class RepositoryLoggingDecorator : LoggingDecorator, IRepository
     {
+        private readonly ILogger _logger;
         private readonly IRepository _decorated;
 
         protected override string TypeName => "Event Sourcing Repository";
 
-        public RepositoryLoggingDecorator(IRepository decorated)
+        public RepositoryLoggingDecorator(ILogger logger, IRepository decorated): base(logger)
         {
+            _logger = logger;
             _decorated = decorated;
         }
 
@@ -21,7 +24,7 @@ namespace Eventus.Logging
             return LogMethodCallAsync(() => _decorated.SaveAsync(aggregate), aggregate);
         }
 
-        public Task<TAggregate> GetByIdAsync<TAggregate>(Guid id) where TAggregate : Aggregate
+        public Task<TAggregate?> GetByIdAsync<TAggregate>(Guid id) where TAggregate : Aggregate
         {
             return LogMethodCallAsync(() => _decorated.GetByIdAsync<TAggregate>(id), id);
         }
