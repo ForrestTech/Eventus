@@ -1,35 +1,27 @@
-﻿namespace Eventus.Samples.Console
+﻿namespace Eventus.Samples.Core
 {
-    using Extensions.DependencyInjection;
+    using Domain;
     using Microsoft.Extensions.DependencyInjection;
     using Microsoft.Extensions.Logging;
-    using Samples.Core.Domain;
     using Storage;
     using System;
     using System.Diagnostics;
     using System.Threading.Tasks;
-    using static System.Console;
 
-    //TODO xml comment all the things
-    static class Program
+    public static class SampleLogic
     {
-        static async Task Main(string[] args)
+        public static async Task Run(ServiceProvider serviceProvider)
         {
-            var services = new ServiceCollection();
-            services.AddLogging(configure => configure.AddConsole().SetMinimumLevel(LogLevel.Information));
-            services.AddEventus(options =>
-            {
-                options.SnapshotOptions.SnapshotFrequency = 5;
-            });
-
-            var serviceProvider = services.BuildServiceProvider();
             var factory = serviceProvider.GetService<ILoggerFactory>();
             var logger = factory?.CreateLogger("Sample");
 
             logger.LogInformation("Configured Eventus Sample");
-
+            
+            var repository = serviceProvider.GetService<IRepository>();
+            Debug.Assert(repository != null, nameof(repository) + " != null");
+            
             logger.LogInformation("Creating Account and processing transactions");
-
+            
             var accountId = Guid.NewGuid();
             var account = new BankAccount(accountId, "Joe Blogs", Guid.NewGuid());
             account.Deposit(100, Guid.NewGuid());
@@ -38,9 +30,6 @@
             account.Deposit(10, Guid.NewGuid());
 
             logger.LogInformation("Saving account");
-
-            var repository = serviceProvider.GetService<IRepository>();
-            Debug.Assert(repository != null, nameof(repository) + " != null");
 
             await repository.SaveAsync(account);
 
@@ -59,8 +48,8 @@
                     logger.LogInformation($"{x.Type}: {x.Amount}");
                 });
             }
-
-            ReadLine();
+            
+            logger.LogInformation("Eventus sample run complete");
         }
     }
 }

@@ -7,7 +7,7 @@
     {
         public decimal Amount { get; protected set; }
 
-        public FundsWithdrawalEvent(Guid aggregateId, int version, Guid correlationId, decimal amount) : base(aggregateId, version, correlationId)
+        public FundsWithdrawalEvent(Guid aggregateId, int targetVersion, Guid correlationId, decimal amount) : base(aggregateId, targetVersion, correlationId)
         {
             Amount = amount;
         }

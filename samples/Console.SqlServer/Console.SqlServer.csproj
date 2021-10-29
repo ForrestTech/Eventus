@@ -3,20 +3,20 @@
   <PropertyGroup>
     <OutputType>Exe</OutputType>
     <TargetFramework>net5.0</TargetFramework>
-    <RootNamespace>Eventus.Samples.Console</RootNamespace>
-    <AssemblyName>Eventus.Samples.Console</AssemblyName>
   </PropertyGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\..\src\DependencyInjection\DependencyInjection.csproj" />
-    <ProjectReference Include="..\..\src\Eventus\Eventus.csproj" />    
+    <ProjectReference Include="..\..\src\SqlServer\SqlServer.csproj" />
     <ProjectReference Include="..\Core\Core.csproj" />
   </ItemGroup>
-
+  
   <ItemGroup>
     <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="5.0.2" />
     <PackageReference Include="Microsoft.Extensions.Logging" Version="5.0.0" />
     <PackageReference Include="Microsoft.Extensions.Logging.Console" Version="5.0.0" />
+    <PackageReference Include="Respawn" Version="4.0.0" />
+    <PackageReference Include="Microsoft.Data.SqlClient" Version="3.0.1" />
   </ItemGroup>
 
 </Project>

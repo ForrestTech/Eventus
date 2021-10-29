@@ -12,7 +12,7 @@ namespace Eventus.Logging
     {
         private readonly IEventStorageProvider _decorated;
 
-        protected override string TypeName => "Event Storage Provider";
+        private const string TypeName = "Event Storage Provider";
 
         public EventStorageProviderLoggingDecorator(IEventStorageProvider decorated, ILogger<EventStorageProviderLoggingDecorator> logger) : base(logger)
         {
@@ -21,19 +21,19 @@ namespace Eventus.Logging
 
         public Task<IEnumerable<IEvent>> GetEventsAsync(Type aggregateType, Guid aggregateId, int start, int count)
         {
-            return LogMethodCallAsync(() => _decorated.GetEventsAsync(aggregateType, aggregateId, start, count),
+            return LogMethodCallAsync(TypeName, () => _decorated.GetEventsAsync(aggregateType, aggregateId, start, count),
                 new object[] {aggregateType, aggregateId, start, count});
         }
 
         public Task<IEvent?> GetLastEventAsync(Type aggregateType, Guid aggregateId)
         {
-            return LogMethodCallAsync(() => _decorated.GetLastEventAsync(aggregateType, aggregateId),
+            return LogMethodCallAsync(TypeName, () => _decorated.GetLastEventAsync(aggregateType, aggregateId),
                 new object[] {aggregateType, aggregateId});
         }
 
         public Task CommitChangesAsync(Aggregate aggregate)
         {
-            return LogMethodCallAsync(() => _decorated.CommitChangesAsync(aggregate), aggregate);
+            return LogMethodCallAsync(TypeName, () => _decorated.CommitChangesAsync(aggregate), aggregate);
         }
     }
 }

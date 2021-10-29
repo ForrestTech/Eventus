@@ -4,6 +4,8 @@ namespace Eventus.Storage
 {
     public interface IStorageProviderInitialiser
     {
-        Task InitAsync();
+        Task Init();
+
+        void InitSync();
     }
 }

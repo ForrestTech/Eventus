@@ -1,7 +1,7 @@
-﻿using System;
-
-namespace Eventus.Events
+﻿namespace Eventus.Events
 {
+    using System;
+    
     public class Event : IEvent
     {
         public int TargetVersion { get; set; }
