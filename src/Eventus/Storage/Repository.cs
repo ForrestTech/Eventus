@@ -15,16 +15,19 @@ namespace Eventus.Storage
     {
         private readonly IEventStorageProvider _eventStorageProvider;
         private readonly ISnapshotStorageProvider _snapshotStorageProvider;
+        private readonly EventusOptions _options;
         private readonly IEventPublisher? _eventPublisher;
         private readonly ILogger<Repository> _logger;
 
         public Repository(IEventStorageProvider eventStorageProvider, 
             ISnapshotStorageProvider snapshotStorageProvider,
+            EventusOptions options,
             ILogger<Repository> logger,
             IEventPublisher? eventPublisher = null)
         {
             _eventStorageProvider = eventStorageProvider ?? throw new ArgumentNullException(nameof(eventStorageProvider));
             _snapshotStorageProvider = snapshotStorageProvider ?? throw new ArgumentNullException(nameof(snapshotStorageProvider));
+            _options = options;
             _eventPublisher = eventPublisher;
             _logger = logger;
         }
@@ -145,11 +148,11 @@ namespace Eventus.Storage
 
         private bool ShouldCreateSnapShot(Aggregate aggregate, IReadOnlyCollection<IEvent> changesToCommit)
         {
-            return aggregate.CurrentVersion >= _snapshotStorageProvider.SnapshotFrequency &&
+            return aggregate.CurrentVersion >= _options.SnapshotOptions.SnapshotFrequency &&
                    (
-                       changesToCommit.Count >= _snapshotStorageProvider.SnapshotFrequency ||
-                       aggregate.CurrentVersion % _snapshotStorageProvider.SnapshotFrequency < changesToCommit.Count ||
-                       aggregate.CurrentVersion % _snapshotStorageProvider.SnapshotFrequency == 0
+                       changesToCommit.Count >= _options.SnapshotOptions.SnapshotFrequency ||
+                       aggregate.CurrentVersion % _options.SnapshotOptions.SnapshotFrequency < changesToCommit.Count ||
+                       aggregate.CurrentVersion % _options.SnapshotOptions.SnapshotFrequency == 0
                    );
         }
 

@@ -9,8 +9,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\src\DependencyInjection\DependencyInjection.csproj" />
-    <ProjectReference Include="..\..\src\Eventus\Eventus.csproj" />
-    <ProjectReference Include="..\..\src\InMemory\InMemory.csproj" />
+    <ProjectReference Include="..\..\src\Eventus\Eventus.csproj" />    
     <ProjectReference Include="..\Core\Core.csproj" />
   </ItemGroup>
 

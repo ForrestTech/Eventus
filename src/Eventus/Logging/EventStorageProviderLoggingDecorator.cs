@@ -14,7 +14,7 @@ namespace Eventus.Logging
 
         protected override string TypeName => "Event Storage Provider";
 
-        public EventStorageProviderLoggingDecorator(IEventStorageProvider decorated, ILogger logger) : base(logger)
+        public EventStorageProviderLoggingDecorator(IEventStorageProvider decorated, ILogger<EventStorageProviderLoggingDecorator> logger) : base(logger)
         {
             _decorated = decorated;
         }

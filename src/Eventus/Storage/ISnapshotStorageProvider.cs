@@ -5,8 +5,6 @@ namespace Eventus.Storage
 {
     public interface ISnapshotStorageProvider
     {
-        int SnapshotFrequency { get; }
-
         Task<Snapshot?> GetSnapshotAsync(Type aggregateType, Guid aggregateId, int version);
 
         Task<Snapshot?> GetSnapshotAsync(Type aggregateType, Guid aggregateId);

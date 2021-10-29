@@ -11,12 +11,12 @@ namespace Eventus.Logging
 
         protected override string TypeName => "Snapshot Storage Provider";
 
-        public SnapshotProviderLoggingDecorator(ISnapshotStorageProvider decorated, ILogger logger) : base(logger)
+        public SnapshotProviderLoggingDecorator(ISnapshotStorageProvider decorated, ILogger<SnapshotProviderLoggingDecorator> logger) : base(logger)
         {
             _decorated = decorated;
         }
 
-        public int SnapshotFrequency => _decorated.SnapshotFrequency;
+        //public int SnapshotFrequency => _decorated.SnapshotFrequency;
 
         public Task<Snapshot?> GetSnapshotAsync(Type aggregateType, Guid aggregateId, int version)
         {

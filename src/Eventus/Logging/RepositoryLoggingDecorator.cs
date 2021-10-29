@@ -8,14 +8,12 @@
     
     public class RepositoryLoggingDecorator : LoggingDecorator, IRepository
     {
-        private readonly ILogger _logger;
         private readonly IRepository _decorated;
 
         protected override string TypeName => "Event Sourcing Repository";
 
-        public RepositoryLoggingDecorator(ILogger logger, IRepository decorated): base(logger)
+        public RepositoryLoggingDecorator(ILogger<RepositoryLoggingDecorator> logger, IRepository decorated): base(logger)
         {
-            _logger = logger;
             _decorated = decorated;
         }
 
