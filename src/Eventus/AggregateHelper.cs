@@ -9,6 +9,7 @@
     {
         public static IEnumerable<Type> GetAggregateTypes()
         {
+            //TODO this should be passed in when configuring eventus
             var assemblies = AppDomain.CurrentDomain.GetAssemblies();
 
             var aggregateType = typeof(Aggregate);

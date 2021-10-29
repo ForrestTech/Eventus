@@ -6,12 +6,12 @@
     using Microsoft.Extensions.Logging;
     using System.Threading.Tasks;
 
-    //TODO pass in assembly to detect aggregates
+    //TODO pass in assembly to detect aggregates (validate aggregate can apply events)
     //TODO Centralise teardown logic in sample logic
-    //TODO do we need a common intialise interface its never called from a common location
-    //TODO xml comment all the things
+    //TODO provide way to disable snapshots globally and control snapshot frequencey for a given aggregate type
     //TODO add sql logging
     //TODO add details to readme that event constructor parameter names are important (can we auto validate this)
+    //TODO add support for paging of events for loading non snapshotable events
     static class Program
     {
         static async Task Main(string[] args)

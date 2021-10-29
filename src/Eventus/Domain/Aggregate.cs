@@ -6,6 +6,9 @@
     using Events;
     using Exceptions;
 
+    /// <summary>
+    /// Common base class for all Eventus, event sourced aggregates
+    /// </summary>
     public abstract class Aggregate
     {
         public enum StreamState
@@ -46,22 +49,37 @@
         /// </summary>
         public int LastCommittedVersion { get; protected set; }
 
+        /// <summary>
+        /// Gets a list of uncommitted events for this aggregate.
+        /// </summary>
+        /// <returns>List of uncommitted changes</returns>
         public IEnumerable<IEvent> GetUncommittedChanges()
         {
             return _uncommittedChanges.ToList();
         }
 
+        /// <summary>
+        /// Mark all changes as committed, clears uncommitted changes and updates the current version of the aggregate
+        /// </summary>
         public void MarkChangesAsCommitted()
         {
             _uncommittedChanges.Clear();
             LastCommittedVersion = CurrentVersion;
         }
 
+        /// <summary>
+        /// Does the aggregate have change that have not been committed to storage
+        /// </summary>
+        /// <returns>If the aggregate has uncommitted change</returns>
         public bool HasUncommittedChanges()
         {
             return _uncommittedChanges.Any();
         }
 
+        /// <summary>
+        /// Loads the current state of the aggregate from a list of events
+        /// </summary>
+        /// <param name="history">History of events to apply to the aggregate</param>
         public void LoadFromHistory(IEnumerable<IEvent> history)
         {
             foreach (var e in history)

@@ -45,7 +45,7 @@
             });
 
             var initialiser = new SqlProviderInitialiser(options);
-            initialiser.InitSync();
+            initialiser.Init();
 
             return builder;
         } 

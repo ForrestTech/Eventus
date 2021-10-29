@@ -4,6 +4,9 @@
     using System.Collections.Generic;
     using System.Threading.Tasks;
 
+    /// <summary>
+    /// A simple in memory snap shot storage provider that can be used for development and testing
+    /// </summary>
     public class InMemorySnapshotStorageProvider : ISnapshotStorageProvider
     {
         private static readonly Dictionary<Guid, Snapshot> Storage = new();

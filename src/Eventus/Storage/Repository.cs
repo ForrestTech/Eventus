@@ -11,6 +11,9 @@ namespace Eventus.Storage
     using Exceptions;
     using Microsoft.Extensions.Logging;
     
+    /// <summary>
+    /// The default Eventus Aggregate repository
+    /// </summary>
     public class Repository : IRepository
     {
         private readonly IEventStorageProvider _eventStorageProvider;

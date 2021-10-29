@@ -19,10 +19,10 @@ namespace Eventus.Logging
             _decorated = decorated;
         }
 
-        public Task<IEnumerable<IEvent>> GetEventsAsync(Type aggregateType, Guid aggregateId, int start, int count)
+        public Task<IEnumerable<IEvent>> GetEventsAsync(Type aggregateType, Guid aggregateId, int offSet, int count)
         {
-            return LogMethodCallAsync(TypeName, () => _decorated.GetEventsAsync(aggregateType, aggregateId, start, count),
-                new object[] {aggregateType, aggregateId, start, count});
+            return LogMethodCallAsync(TypeName, () => _decorated.GetEventsAsync(aggregateType, aggregateId, offSet, count),
+                new object[] {aggregateType, aggregateId, offSet, count});
         }
 
         public Task<IEvent?> GetLastEventAsync(Type aggregateType, Guid aggregateId)

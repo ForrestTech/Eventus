@@ -2,6 +2,9 @@ using System;
 
 namespace Eventus.Events
 {
+    /// <summary>
+    /// All events that are applied to Eventus aggregates 
+    /// </summary>
     public interface IEvent 
     {
         /// <summary>

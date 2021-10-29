@@ -7,11 +7,14 @@
     using System.Linq;
     using System.Threading.Tasks;
 
+    /// <summary>
+    /// A simple in memory storage provider for events that can be used for development and testing
+    /// </summary>
     public class InMemoryEventStorageProvider : IEventStorageProvider
     {
         private static readonly Dictionary<Guid, IEnumerable<IEvent>> Storage = new();
 
-        public Task<IEnumerable<IEvent>> GetEventsAsync(Type aggregateType, Guid aggregateId, int start, int count)
+        public Task<IEnumerable<IEvent>> GetEventsAsync(Type aggregateType, Guid aggregateId, int offSet, int count)
         {
             IEnumerable<IEvent> result = new List<IEvent>();
             

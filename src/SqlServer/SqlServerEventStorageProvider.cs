@@ -18,7 +18,7 @@
         {
         }
 
-        public async Task<IEnumerable<IEvent>> GetEventsAsync(Type aggregateType, Guid aggregateId, int start,
+        public async Task<IEnumerable<IEvent>> GetEventsAsync(Type aggregateType, Guid aggregateId, int offSet,
             int count)
         {
             var connection = await GetOpenConnectionAsync();
@@ -27,7 +27,7 @@
             {
                 var sql =
                     $"Select top {count} * from {TableName(aggregateType)} where AggregateId = @aggregateId and AggregateVersion >= @start order by AggregateVersion";
-                var events = await connection.QueryAsync<SqlAggregateEvent>(sql, new {aggregateId, start, count});
+                var events = await connection.QueryAsync<SqlAggregateEvent>(sql, new {aggregateId, start = offSet, count});
 
                 var result = events.Select(DeserializeEvent);
                 return result;

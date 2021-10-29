@@ -2,6 +2,9 @@
 {
     using System;
     
+    /// <summary>
+    /// A common base event for all events that applied to Eventus aggregates 
+    /// </summary>
     public class Event : IEvent
     {
         public int TargetVersion { get; set; }
