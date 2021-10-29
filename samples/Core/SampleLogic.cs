@@ -1,5 +1,6 @@
 ﻿namespace Eventus.Samples.Core
 {
+    using Cleanup;
     using Domain;
     using Microsoft.Extensions.DependencyInjection;
     using Microsoft.Extensions.Logging;
@@ -12,6 +13,12 @@
     {
         public static async Task Run(ServiceProvider serviceProvider)
         {
+            var cleanup = serviceProvider.GetService<ITeardown>();
+            if (cleanup != null)
+            {
+                await cleanup.TearDownAsync();
+            }
+
             var factory = serviceProvider.GetService<ILoggerFactory>();
             var logger = factory?.CreateLogger("Sample");
 

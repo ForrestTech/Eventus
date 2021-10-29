@@ -12,6 +12,8 @@
     //TODO add sql logging
     //TODO add details to readme that event constructor parameter names are important (can we auto validate this)
     //TODO add support for paging of events for loading non snapshotable events
+    //TODO Pass in serialization options\
+    //TODO update event store get stream prefix to be part of options
     static class Program
     {
         static async Task Main(string[] args)
