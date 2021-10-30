@@ -8,7 +8,7 @@ namespace Eventus.Events
     public interface IEvent 
     {
         /// <summary>
-        /// Target version of the Aggregate this event will be applied against
+        /// Target version of the Aggregate this event will be applied against.  This should almost always be one behind the current event version number.  This starts at -1 for fresh aggregates
         /// </summary>
         int TargetVersion { get; set; }
 

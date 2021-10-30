@@ -1,6 +1,5 @@
 ﻿namespace Console.SqlServer
 {
-    using Eventus;
     using Eventus.Configuration;
     using Eventus.Extensions.DependencyInjection;
     using Eventus.Samples.Core;
@@ -20,10 +19,10 @@
                 "Server=127.0.0.1,1433;Database=Eventus;User Id=sa;Password=yourStrong(!)Password;";
 
             var services = new ServiceCollection();
-            services.AddLogging(configure => configure.AddConsole().SetMinimumLevel(LogLevel.Information));
+            services.AddLogging(configure => configure.AddConsole().SetMinimumLevel(LogLevel.Debug));
             services.AddEventus(typeof(BankAccount), options =>
             {
-                options.SnapshotFrequency = 3;
+                options.SnapshotFrequency = 10;
                 options.AggregateConfigs.Add(new AggregateConfig(typeof(BankAccount))
                 {
                     SnapshotFrequency = 3

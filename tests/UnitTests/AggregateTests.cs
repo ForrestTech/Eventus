@@ -86,17 +86,17 @@
 
             aggregate.Deposit(100);
 
-            version.Should().Be(0);
-            aggregate.CurrentVersion.Should().Be(1);
+            version.Should().Be(1);
+            aggregate.CurrentVersion.Should().Be(2);
         }
 
         [Fact]
-        public void Aggregate_last_committed_version_starts_at_minus_one()
+        public void Aggregate_last_committed_version_starts_at_zero()
         {
             var aggregate = new BankAccount(Guid.NewGuid(), "Joe Bloggs");
             var lastCommittedVersion = aggregate.LastCommittedVersion;
 
-            lastCommittedVersion.Should().Be(-1);
+            lastCommittedVersion.Should().Be(0);
         }
 
         [Fact]
@@ -106,7 +106,7 @@
 
             aggregate.MarkChangesAsCommitted();
 
-            aggregate.LastCommittedVersion.Should().Be(0);
+            aggregate.LastCommittedVersion.Should().Be(1);
         }
 
         [Fact]

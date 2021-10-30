@@ -54,8 +54,15 @@
                 {
                     logger.LogInformation($"{x.Type}: {x.Amount}");
                 });
-            }
+                
+                logger.LogInformation("Making extra changes to account");
             
+                fetched.Withdraw(10);
+                
+                await repository.SaveAsync(fetched);
+            }
+
+
             logger.LogInformation("Eventus sample run complete");
         }
     }

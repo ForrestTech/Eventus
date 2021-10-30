@@ -48,9 +48,11 @@
                 return decorated;
             });
 
+            builder.Services.AddTransient<IDatabaseConnectionLogger, DatabaseConnectionLogger>();
+
             var initialiser =
                 new SqlProviderInitialiser(
-                    AggregateAssemblyCache.AggregateAssemblies ?? throw new InvalidOperationException(), options);
+                    AggregateCache.AggregateAssemblies ?? throw new InvalidOperationException(), options);
             initialiser.Init();
 
             return builder;

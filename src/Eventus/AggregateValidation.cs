@@ -8,17 +8,8 @@
     using Exceptions;
     using System.Reflection;
 
-    public static class AggregateHelper
+    public static class AggregateValidation
     {
-        public static IEnumerable<Type> GetAggregateTypes(IEnumerable<Assembly> aggregateAssemblies)
-        {
-            var aggregateType = typeof(Aggregate);
-            var types = aggregateAssemblies.SelectMany(t => t.GetTypes())
-                .Where(t => t != aggregateType && aggregateType.IsAssignableFrom(t));
-
-            return types;
-        }
-        
         public static void AssertThatAggregatesSupportAllEvents(params Assembly[] aggregateAssemblies)
         {
             AssertThatAggregatesSupportAllEvents(aggregateAssemblies.ToList());

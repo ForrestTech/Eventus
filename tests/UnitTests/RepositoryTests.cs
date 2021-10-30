@@ -223,8 +223,8 @@
                 new List<IEvent> {new AccountCreatedEvent(aggregateId, 0, Guid.NewGuid(), "Jeff")});
             aggregate.Deposit(100);
 
-            existingAccount.TargetVersion =
-                0; //force the last event stored to be newer than expected (the first event should target -1)
+            //force the last event stored to be newer than expected (the first event should target 0)
+            existingAccount.TargetVersion = 1; 
             eventStore.Setup(x =>
                     x.GetLastEventAsync(It.Is<Type>(t => t == aggregate.GetType()), It.Is<Guid>(i => i == aggregateId)))
                 .Returns(Task.FromResult<IEvent>(existingAccount))
@@ -302,14 +302,15 @@
         public async Task Save_should_store_snapshot_if_aggregate_is_snapshotable(
             [Frozen] Mock<IEventStorageProvider> eventStore,
             [Frozen] Mock<ISnapshotStorageProvider> snapshotProvider,
-            [Frozen] EventusOptions options,
+            [Frozen] Mock<ISnapshotCalculator> snapshotCalculator,
             Repository repo)
         {
             SetupNoExistingEvents(eventStore);
 
             var aggregate = CreateAggregateWithUncommittedChanges(Guid.NewGuid());
 
-            options.SnapshotFrequency = 1;
+            snapshotCalculator.Setup(x => x.ShouldCreateSnapShot(It.IsAny<BankAccount>()))
+                .Returns(true);
 
             await repo.SaveAsync(aggregate);
 
@@ -317,31 +318,6 @@
                     It.Is<Type>(t => t == aggregate.GetType()),
                     It.Is<Snapshot>(s => s.GetType() == typeof(BankAccountSnapshot))),
                 Times.Once);
-        }
-
-        [Theory, AutoMoqData]
-        public async Task Save_should_not_store_snapshot_if_changes_to_commit_greater_than_frequency(
-            [Frozen] Mock<IEventStorageProvider> eventStore,
-            [Frozen] Mock<ISnapshotStorageProvider> snapshotProvider,
-            [Frozen] EventusOptions options,
-            Repository repo)
-        {
-            SetupNoExistingEvents(eventStore);
-
-            //3  uncommitted changes
-            var aggregate = new BankAccount(Guid.NewGuid(), "Joe Bloggs");
-            aggregate.Deposit(100);
-            aggregate.Withdraw(10);
-
-            //frequency is greater than uncommitted changes
-            options.SnapshotFrequency = 4;
-
-            await repo.SaveAsync(aggregate);
-
-            snapshotProvider.Verify(x => x.SaveSnapshotAsync(
-                    It.Is<Type>(t => t == aggregate.GetType()),
-                    It.Is<Snapshot>(s => s.GetType() == typeof(BankAccountSnapshot))),
-                Times.Never);
         }
 
         [Theory, AutoMoqData]

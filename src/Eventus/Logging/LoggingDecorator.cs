@@ -16,7 +16,8 @@
         }
 
         [DebuggerStepThrough]
-        protected async Task<TResult?> LogMethodCallAsync<TResult>(string typename,Func<Task<TResult>> method, object parameter, [CallerMemberName] string methodName = "")
+        protected async Task<TResult?> LogMethodCallAsync<TResult>(string typename, Func<Task<TResult>> method,
+            object parameter, [CallerMemberName] string methodName = "")
         {
             try
             {
@@ -24,7 +25,7 @@
 
                 var result = await method();
 
-                _logger.Exit(typename, result, methodName);
+                _logger.Exit(typename, parameter, result, methodName);
 
                 return result;
             }
@@ -36,7 +37,8 @@
         }
 
         [DebuggerStepThrough]
-        protected async Task<TResult> LogMethodCallAsync<TResult>(string typename,Func<Task<TResult>> method, object[] parameter, [CallerMemberName] string methodName = "")
+        protected async Task<TResult> LogMethodCallAsync<TResult>(string typename, Func<Task<TResult>> method,
+            object[] parameter, [CallerMemberName] string methodName = "")
         {
             try
             {
@@ -44,7 +46,7 @@
 
                 var result = await method();
 
-                _logger.Exit(typename, result, methodName);
+                _logger.Exit(typename, parameter, result, methodName);
 
                 return result;
             }
@@ -56,7 +58,8 @@
         }
 
         [DebuggerStepThrough]
-        protected Task LogMethodCallAsync(string typename, Func<Task> method, object parameter, [CallerMemberName] string methodName = "")
+        protected Task LogMethodCallAsync(string typename, Func<Task> method, object parameter,
+            [CallerMemberName] string methodName = "")
         {
             try
             {
@@ -64,27 +67,7 @@
 
                 var result = method();
 
-                _logger.Exit(typename, methodName);
-
-                return result;
-            }
-            catch (Exception e)
-            {
-                _logger.Exception(typename, e, methodName);
-                throw;
-            }
-        }
-
-        [DebuggerStepThrough]
-        protected Task LogMethodCallAsync(string typename, Func<Task> method, [CallerMemberName] string methodName = "", params object[] parameter)
-        {
-            try
-            {
-                _logger.Enter(typename, parameter, methodName);
-
-                var result = method();
-
-                _logger.Exit(typename, methodName);
+                _logger.Exit(typename, parameter, methodName: methodName);
 
                 return result;
             }

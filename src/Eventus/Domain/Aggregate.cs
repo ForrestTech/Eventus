@@ -5,25 +5,22 @@
     using System.Linq;
     using Events;
     using Exceptions;
+    using System.Reflection;
 
     /// <summary>
     /// Common base class for all Eventus, event sourced aggregates
     /// </summary>
     public abstract class Aggregate
     {
-        public enum StreamState
-        {
-            NoStream = -1,
-            HasStream = 1
-        }
-
+        public const int NoEventsStoredYet = 0;
+        
         private readonly List<IEvent> _uncommittedChanges = new();
-        private Dictionary<Type, string> _eventHandlerCache = new();
+        private Dictionary<Type, MethodInfo> _eventHandlerCache = new();
 
         protected Aggregate()
         {
-            CurrentVersion = (int)StreamState.NoStream;
-            LastCommittedVersion = (int)StreamState.NoStream;
+            CurrentVersion = NoEventsStoredYet;
+            LastCommittedVersion = NoEventsStoredYet;
             SetupInternalEventHandlers();
         }
 
@@ -53,7 +50,7 @@
         /// Gets a list of uncommitted events for this aggregate.
         /// </summary>
         /// <returns>List of uncommitted changes</returns>
-        public IEnumerable<IEvent> GetUncommittedChanges()
+        public List<IEvent> GetUncommittedChanges()
         {
             return _uncommittedChanges.ToList();
         }
@@ -88,27 +85,13 @@
             LastCommittedVersion = CurrentVersion;
         }
 
-        protected void ApplyEvent(IEvent @event)
-        {
-            ApplyEvent(@event, true);
-        }
-
-        protected virtual void ApplyEvent(IEvent @event, bool isNew)
+        protected virtual void ApplyEvent(IEvent @event, bool isNew = true)
         {
             if (_eventHandlerCache.ContainsKey(@event.GetType()))
             {
-                var methodName = _eventHandlerCache[@event.GetType()];
+                var method = _eventHandlerCache[@event.GetType()];
 
-                var method = ReflectionHelper.GetMethod(GetType(), methodName, new[] { @event.GetType() });
-
-                if (method != null)
-                {
-                    method.Invoke(this, new object[] { @event });
-                }
-                else
-                {
-                    throw new AggregateEventOnApplyMethodMissingException($"No event Apply method found on {GetType()} for {@event.GetType()}");
-                }
+                method.Invoke(this, new object[] { @event });
             }
             else
             {
@@ -125,7 +108,7 @@
 
         private void SetupInternalEventHandlers()
         {
-            _eventHandlerCache = ReflectionHelper.FindEventHandlerMethodsInAggregate(GetType());
+            _eventHandlerCache = AggregateCache.GetEventHandlersForAggregate(GetType());
         }
 
         #region Comparison

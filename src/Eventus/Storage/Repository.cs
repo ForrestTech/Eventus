@@ -1,5 +1,4 @@
-﻿
-namespace Eventus.Storage
+﻿namespace Eventus.Storage
 {
     using Configuration;
     using System;
@@ -11,7 +10,7 @@ namespace Eventus.Storage
     using Events;
     using Exceptions;
     using Microsoft.Extensions.Logging;
-    
+
     /// <summary>
     /// The default Eventus Aggregate repository
     /// </summary>
@@ -19,18 +18,21 @@ namespace Eventus.Storage
     {
         private readonly IEventStorageProvider _eventStorageProvider;
         private readonly ISnapshotStorageProvider _snapshotStorageProvider;
+        private readonly ISnapshotCalculator _snapshotCalculator;
         private readonly EventusOptions _options;
         private readonly IEventPublisher? _eventPublisher;
         private readonly ILogger<Repository> _logger;
 
-        public Repository(IEventStorageProvider eventStorageProvider, 
+        public Repository(IEventStorageProvider eventStorageProvider,
             ISnapshotStorageProvider snapshotStorageProvider,
+            ISnapshotCalculator snapshotCalculator,
             EventusOptions options,
             ILogger<Repository> logger,
             IEventPublisher? eventPublisher = null)
         {
-            _eventStorageProvider = eventStorageProvider ?? throw new ArgumentNullException(nameof(eventStorageProvider));
-            _snapshotStorageProvider = snapshotStorageProvider ?? throw new ArgumentNullException(nameof(snapshotStorageProvider));
+            _eventStorageProvider = eventStorageProvider;
+            _snapshotStorageProvider = snapshotStorageProvider;
+            _snapshotCalculator = snapshotCalculator;
             _options = options;
             _eventPublisher = eventPublisher;
             _logger = logger;
@@ -55,15 +57,19 @@ namespace Eventus.Storage
 
             if (_options.SnapshottingEnabled && isSnapshottable)
             {
+                _logger.LogDebug(
+                    "Aggregate: '{Aggregate}' is marked as snapshottable and Snapshotting is enabled so trying to find the most recent snapshot for aggregate",
+                    id);
                 snapshot = await _snapshotStorageProvider.GetSnapshotAsync(typeof(TAggregate), id);
             }
 
             return snapshot;
         }
 
-        private async Task<TAggregate?> LoadFromSnapshot<TAggregate>(Guid id, Snapshot snapshot) where TAggregate : Aggregate
+        private async Task<TAggregate?> LoadFromSnapshot<TAggregate>(Guid id, Snapshot snapshot)
+            where TAggregate : Aggregate
         {
-            _logger.LogDebug("Building aggregate from snapshot");
+            _logger.LogDebug("Building aggregate: '{Aggregate}' from snapshot", id);
 
             var item = ConstructAggregate<TAggregate>();
 
@@ -73,6 +79,10 @@ namespace Eventus.Storage
             }
 
             (item as ISnapshottable)?.ApplySnapshot(snapshot);
+
+            _logger.LogDebug(
+                "Loading events for aggregate: '{Aggregate}' since last snapshot at version: {SnapshotVersion}", id,
+                snapshot.Version);
 
             var events = await _eventStorageProvider.GetEventsAsync(typeof(TAggregate), id, snapshot.Version + 1);
             var eventList = events.ToList();
@@ -87,6 +97,8 @@ namespace Eventus.Storage
 
         private async Task<TAggregate?> LoadFromEvents<TAggregate>(Guid id) where TAggregate : Aggregate
         {
+            _logger.LogDebug("Building aggregate: '{Aggregate}' from events stream", id);
+
             var events = (await _eventStorageProvider.GetEventsAsync(typeof(TAggregate), id)).ToList();
 
             if (events.Any())
@@ -108,74 +120,76 @@ namespace Eventus.Storage
 
         public Task SaveAsync<TAggregate>(TAggregate aggregate) where TAggregate : Aggregate
         {
-            if (!aggregate.HasUncommittedChanges()) 
+            _logger.LogDebug("Saving aggregate: '{Aggregate}'", aggregate.Id);
+
+            if (!aggregate.HasUncommittedChanges())
                 return Task.CompletedTask;
-            
-            _logger.LogDebug("Aggregate has uncommitted changes");
+
+            _logger.LogDebug("Aggregate: '{Aggregate}' has '{ChangesToCommit}' uncommitted changes", aggregate.Id, aggregate.GetUncommittedChanges().Count);
 
             return CommitChangesAsync(aggregate);
         }
 
         private async Task CommitChangesAsync(Aggregate aggregate)
         {
-            var expectedVersion = aggregate.LastCommittedVersion;
+            await ValidateCanCommitChanges(aggregate);
 
-            var item = await _eventStorageProvider.GetLastEventAsync(aggregate.GetType(), aggregate.Id);
+            var changesToCommit = aggregate.GetUncommittedChanges();
 
-            if (item != null && expectedVersion == (int)Aggregate.StreamState.NoStream)
-            {
-                throw new AggregateCreationException(aggregate.Id, item.TargetVersion + 1);
-            }
-            if (item != null && item.TargetVersion + 1 != expectedVersion)
-            {
-                throw new ConcurrencyException(aggregate.Id);
-            }
+            _logger.LogDebug("Performing pre commit checks for '{Aggregate}'", aggregate.Id);
 
-            var changesToCommit = aggregate.GetUncommittedChanges().ToList();
-
-            _logger.LogDebug("Performing pre commit checks");
-
-            //perform pre commit actions
             foreach (var e in changesToCommit)
             {
                 DoPreCommitTasks(e);
             }
 
-            //CommitAsync events to storage provider
+            _logger.LogDebug("Committing changes for aggregate: '{Aggregate}'", aggregate.Id);
+
             await _eventStorageProvider.CommitChangesAsync(aggregate);
 
-            //Publish to event publisher asynchronously
             if (_eventPublisher != null)
             {
+                _logger.LogDebug("Publishing aggregate: '{Aggregate}' events", aggregate.Id);
+
                 foreach (var e in changesToCommit)
                 {
                     await _eventPublisher.PublishAsync(e);
                 }
             }
 
-            //If the Aggregate implements snapshottable
-            if (_options.SnapshottingEnabled && aggregate is ISnapshottable snapshottable)
+            if (_options.SnapshottingEnabled && aggregate is ISnapshottable snapshottable &&
+                _snapshotCalculator.ShouldCreateSnapShot(aggregate))
             {
-                //Every N events we save a snapshot
-                if (ShouldCreateSnapShot(aggregate, changesToCommit))
-                {
-                    await _snapshotStorageProvider.SaveSnapshotAsync(aggregate.GetType(), snapshottable.TakeSnapshot());
-                }
+                _logger.LogDebug(
+                    "Taking a snapshot for aggregate: '{Aggregate}' current version: '{CurrentVersion}' changes to commit: {ChangesToCommit}",
+                    aggregate.Id, aggregate.CurrentVersion, changesToCommit.Count);
+                await _snapshotStorageProvider.SaveSnapshotAsync(aggregate.GetType(), snapshottable.TakeSnapshot());
             }
+
+            _logger.LogDebug("Marking all aggregate: '{Aggregate}' changes as committed", aggregate.Id);
 
             aggregate.MarkChangesAsCommitted();
         }
 
-        private bool ShouldCreateSnapShot(Aggregate aggregate, IReadOnlyCollection<IEvent> changesToCommit)
+        private async Task ValidateCanCommitChanges(Aggregate aggregate)
         {
-            int snapshotFrequency = _options.GetSnapshotFrequency(aggregate.GetType());
-            
-            return aggregate.CurrentVersion >= snapshotFrequency &&
-                   (
-                       changesToCommit.Count >= snapshotFrequency ||
-                       aggregate.CurrentVersion % snapshotFrequency < changesToCommit.Count ||
-                       aggregate.CurrentVersion % snapshotFrequency == 0
-                   );
+            var expectedVersion = aggregate.LastCommittedVersion;
+
+            _logger.LogDebug(
+                "Getting latest event for aggregate: '{Aggregate}' to validate that aggregate is in a state to be saved",
+                aggregate.Id);
+
+            var item = await _eventStorageProvider.GetLastEventAsync(aggregate.GetType(), aggregate.Id);
+
+            if (item != null && expectedVersion == Aggregate.NoEventsStoredYet)
+            {
+                throw new AggregateCreationException(aggregate.Id, item.TargetVersion + 1);
+            }
+
+            if (item != null && item.TargetVersion + 1 != expectedVersion)
+            {
+                throw new ConcurrencyException(aggregate.Id);
+            }
         }
 
         private static void DoPreCommitTasks(IEvent e)
@@ -191,7 +205,7 @@ namespace Eventus.Storage
             {
                 return null;
             }
-                
+
             var aggregate = (TAggregate)instance;
 
             return aggregate;

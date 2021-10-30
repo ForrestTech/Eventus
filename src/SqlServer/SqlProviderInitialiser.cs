@@ -40,7 +40,7 @@
 
         protected virtual IEnumerable<Type> DetectAggregates()
         {
-            var aggregateTypes = AggregateHelper.GetAggregateTypes(_aggregateAssemblies);
+            var aggregateTypes = AggregateCache.GetAggregateTypes();
 
             return aggregateTypes;
         }

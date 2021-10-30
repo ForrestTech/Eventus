@@ -9,8 +9,12 @@
 
     public class SqlServerSnapshotStorageProvider : SqlServerProviderBase, ISnapshotStorageProvider
     {
-        public SqlServerSnapshotStorageProvider(EventusSqlServerOptions options) : base(options)
+        private readonly IDatabaseConnectionLogger _loggedConnection;
+
+        public SqlServerSnapshotStorageProvider(IDatabaseConnectionLogger loggedConnection,
+            EventusSqlServerOptions options) : base(options)
         {
+            _loggedConnection = loggedConnection;
         }
 
         public async Task<Snapshot?> GetSnapshotAsync(Type aggregateType, Guid aggregateId, int version)
@@ -21,7 +25,7 @@
             {
                 var sql =
                     $"Select * from {SnapshotTableName(aggregateType)} where AggregateId = @aggregateId and AggregateVersion  @version";
-                var events = await connection.QueryAsync<SqlSnapshot>(sql, new {aggregateId, version});
+                var events = await _loggedConnection.QueryAsync<SqlSnapshot>(connection, sql, new {aggregateId, version});
 
                 var snapshot = events.SingleOrDefault();
                 if (snapshot == null)
@@ -40,7 +44,7 @@
             {
                 var sql =
                     $"Select top 1 * from {SnapshotTableName(aggregateType)} where AggregateId = @aggregateId order by AggregateVersion desc";
-                var result = await connection.QueryAsync<SqlSnapshot>(sql, new {aggregateId});
+                var result = await _loggedConnection.QueryAsync<SqlSnapshot>(connection, sql, new {aggregateId});
 
                 var @event = result.SingleOrDefault();
 
@@ -57,7 +61,7 @@
                 var sql =
                     $"insert into {SnapshotTableName(aggregateType)} (Id, AggregateId, AggregateVersion, ClrType, TimeStamp, Data) values (@Id, @AggregateId, @AggregateVersion, @ClrType, @TimeStamp, @Data)";
 
-                await connection.ExecuteAsync(sql,
+                await _loggedConnection.ExecuteAsync(connection, sql,
                     new
                     {
                         snapshot.Id,

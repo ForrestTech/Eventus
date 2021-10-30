@@ -13,8 +13,12 @@
 
     public class SqlServerEventStorageProvider : SqlServerProviderBase, IEventStorageProvider
     {
-        public SqlServerEventStorageProvider(EventusSqlServerOptions options) : base(options)
+        private readonly IDatabaseConnectionLogger _loggedConnection;
+
+        public SqlServerEventStorageProvider(IDatabaseConnectionLogger loggedConnection, 
+            EventusSqlServerOptions options) : base(options)
         {
+            _loggedConnection = loggedConnection;
         }
 
         public async Task<IEnumerable<IEvent>> GetEventsAsync(Type aggregateType, Guid aggregateId, int offSet,
@@ -26,7 +30,7 @@
             {
                 var sql =
                     $"Select top {count} * from {TableName(aggregateType)} where AggregateId = @aggregateId and AggregateVersion >= @start order by AggregateVersion";
-                var events = await connection.QueryAsync<SqlAggregateEvent>(sql, new {aggregateId, start = offSet, count});
+                var events = await _loggedConnection.QueryAsync<SqlAggregateEvent>(connection, sql, new {aggregateId, start = offSet, count});
 
                 var result = events.Select(DeserializeEvent);
                 return result;
@@ -41,7 +45,7 @@
             {
                 var sql =
                     $"Select top 1 * from {TableName(aggregateType)} where AggregateId = @aggregateId order by AggregateVersion desc";
-                var result = await connection.QueryAsync<SqlAggregateEvent>(sql, new {aggregateId});
+                var result = await _loggedConnection.QueryAsync<SqlAggregateEvent>(connection, sql, new {aggregateId});
 
                 var @event = result.SingleOrDefault();
 
@@ -68,7 +72,7 @@
                             committed++;
                             var sql =
                                 $"insert into {TableName(aggregate.GetType())} (Id, AggregateId, TargetVersion, ClrType, AggregateVersion, TimeStamp, Data) values (@Id, @AggregateId, @TargetVersion, @ClrType, @AggregateVersion, @TimeStamp, @Data)";
-                            await connection.ExecuteAsync(sql,
+                            await _loggedConnection.ExecuteAsync(connection, sql,
                                 new
                                 {
                                     Id = @event.CorrelationId,

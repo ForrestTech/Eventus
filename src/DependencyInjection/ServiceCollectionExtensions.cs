@@ -69,6 +69,8 @@
             configureOptions?.Invoke(options);
 
             services.AddSingleton(options);
+            
+            services.AddTransient<ISnapshotCalculator, SnapshotCalculator>();
 
             services.AddTransient<InMemoryEventStorageProvider>();
             services.AddTransient<IEventStorageProvider>(x =>
@@ -104,9 +106,9 @@
             });
 
             var aggregateAssemblyList = aggregateAssemblies.ToList();
-            services.AddSingleton(new AggregateAssemblyCache(aggregateAssemblyList));
+            services.AddSingleton(new AggregateCache(aggregateAssemblyList));
             
-            AggregateHelper.AssertThatAggregatesSupportAllEvents(aggregateAssemblyList);
+            AggregateValidation.AssertThatAggregatesSupportAllEvents(aggregateAssemblyList);
 
             return new EventusBuilder(services);
         }
