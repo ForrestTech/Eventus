@@ -9,7 +9,8 @@
 
     public static class EventusBuilderExtensions
     {
-        public static EventusBuilder UseSqlServer(this EventusBuilder builder, string connectionString, Action<EventusSqlServerOptions>? optionsConfig = null)
+        public static EventusBuilder UseSqlServer(this EventusBuilder builder, string connectionString,
+            Action<EventusSqlServerOptions>? optionsConfig = null)
         {
             if (string.IsNullOrWhiteSpace(connectionString))
             {
@@ -25,29 +26,34 @@
             builder.Services.AddTransient<SqlServerEventStorageProvider>();
             builder.Services.AddTransient<IEventStorageProvider>(x =>
             {
-                var logger = x.GetService<ILogger<EventStorageProviderLoggingDecorator>>() ?? throw new InvalidOperationException();
+                var logger = x.GetService<ILogger<EventStorageProviderLoggingDecorator>>() ??
+                             throw new InvalidOperationException();
                 var toDecorate = x.GetService<SqlServerEventStorageProvider>() ?? throw new InvalidOperationException();
                 var decorated = new EventStorageProviderLoggingDecorator(
                     toDecorate,
                     logger);
                 return decorated;
             });
-            
+
             builder.Services.AddTransient<SqlServerSnapshotStorageProvider>();
             builder.Services.AddTransient<ISnapshotStorageProvider>(x =>
             {
-                var logger = x.GetService<ILogger<SnapshotProviderLoggingDecorator>>() ?? throw new InvalidOperationException();
-                var toDecorate = x.GetService<SqlServerSnapshotStorageProvider>() ?? throw new InvalidOperationException();
+                var logger = x.GetService<ILogger<SnapshotProviderLoggingDecorator>>() ??
+                             throw new InvalidOperationException();
+                var toDecorate = x.GetService<SqlServerSnapshotStorageProvider>() ??
+                                 throw new InvalidOperationException();
                 var decorated = new SnapshotProviderLoggingDecorator(
                     toDecorate,
                     logger);
                 return decorated;
             });
 
-            var initialiser = new SqlProviderInitialiser(options);
+            var initialiser =
+                new SqlProviderInitialiser(
+                    AggregateAssemblyCache.AggregateAssemblies ?? throw new InvalidOperationException(), options);
             initialiser.Init();
 
             return builder;
-        } 
+        }
     }
 }

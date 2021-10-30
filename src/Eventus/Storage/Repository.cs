@@ -1,6 +1,7 @@
 ﻿
 namespace Eventus.Storage
 {
+    using Configuration;
     using System;
     using System.Collections.Generic;
     using System.Linq;
@@ -37,53 +38,69 @@ namespace Eventus.Storage
 
         public async Task<TAggregate?> GetByIdAsync<TAggregate>(Guid id) where TAggregate : Aggregate
         {
+            var snapshot = await GetPossibleSnapshot<TAggregate>(id);
+
+            if (snapshot != null)
+            {
+                return await LoadFromSnapshot<TAggregate>(id, snapshot);
+            }
+
+            return await LoadFromEvents<TAggregate>(id);
+        }
+
+        private async Task<Snapshot?> GetPossibleSnapshot<TAggregate>(Guid id) where TAggregate : Aggregate
+        {
             var isSnapshottable = typeof(ISnapshottable).IsAssignableFrom(typeof(TAggregate));
             Snapshot? snapshot = null;
 
-            if (isSnapshottable)
+            if (_options.SnapshottingEnabled && isSnapshottable)
             {
                 snapshot = await _snapshotStorageProvider.GetSnapshotAsync(typeof(TAggregate), id);
             }
 
-            if (snapshot != null)
-            {
-                _logger.LogDebug("Building aggregate from snapshot");
+            return snapshot;
+        }
 
+        private async Task<TAggregate?> LoadFromSnapshot<TAggregate>(Guid id, Snapshot snapshot) where TAggregate : Aggregate
+        {
+            _logger.LogDebug("Building aggregate from snapshot");
+
+            var item = ConstructAggregate<TAggregate>();
+
+            if (item == null)
+            {
+                return null;
+            }
+
+            (item as ISnapshottable)?.ApplySnapshot(snapshot);
+
+            var events = await _eventStorageProvider.GetEventsAsync(typeof(TAggregate), id, snapshot.Version + 1);
+            var eventList = events.ToList();
+
+            if (eventList.Any())
+            {
+                item.LoadFromHistory(eventList);
+            }
+
+            return item;
+        }
+
+        private async Task<TAggregate?> LoadFromEvents<TAggregate>(Guid id) where TAggregate : Aggregate
+        {
+            var events = (await _eventStorageProvider.GetEventsAsync(typeof(TAggregate), id)).ToList();
+
+            if (events.Any())
+            {
                 var item = ConstructAggregate<TAggregate>();
 
                 if (item == null)
                 {
                     return null;
                 }
-                
-                (item as ISnapshottable)?.ApplySnapshot(snapshot);
 
-                var events = await _eventStorageProvider.GetEventsAsync(typeof(TAggregate), id, snapshot.Version + 1);
-
-                if (events.Any())
-                {
-                    item.LoadFromHistory(events);   
-                }
+                item.LoadFromHistory(events);
 
                 return item;
-            }
-            else
-            {
-                var events = (await _eventStorageProvider.GetEventsAsync(typeof(TAggregate), id)).ToList();
-
-                if (events.Any())
-                {
-                    var item = ConstructAggregate<TAggregate>();
-                    
-                    if (item == null)
-                    {
-                        return null;
-                    }
-                    
-                    item.LoadFromHistory(events);
-
-                    return item;
-                }
             }
 
             return null;
@@ -137,7 +154,7 @@ namespace Eventus.Storage
             }
 
             //If the Aggregate implements snapshottable
-            if (aggregate is ISnapshottable snapshottable)
+            if (_options.SnapshottingEnabled && aggregate is ISnapshottable snapshottable)
             {
                 //Every N events we save a snapshot
                 if (ShouldCreateSnapShot(aggregate, changesToCommit))
@@ -151,11 +168,13 @@ namespace Eventus.Storage
 
         private bool ShouldCreateSnapShot(Aggregate aggregate, IReadOnlyCollection<IEvent> changesToCommit)
         {
-            return aggregate.CurrentVersion >= _options.SnapshotOptions.SnapshotFrequency &&
+            int snapshotFrequency = _options.GetSnapshotFrequency(aggregate.GetType());
+            
+            return aggregate.CurrentVersion >= snapshotFrequency &&
                    (
-                       changesToCommit.Count >= _options.SnapshotOptions.SnapshotFrequency ||
-                       aggregate.CurrentVersion % _options.SnapshotOptions.SnapshotFrequency < changesToCommit.Count ||
-                       aggregate.CurrentVersion % _options.SnapshotOptions.SnapshotFrequency == 0
+                       changesToCommit.Count >= snapshotFrequency ||
+                       aggregate.CurrentVersion % snapshotFrequency < changesToCommit.Count ||
+                       aggregate.CurrentVersion % snapshotFrequency == 0
                    );
         }
 

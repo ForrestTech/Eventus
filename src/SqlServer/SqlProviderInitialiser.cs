@@ -5,11 +5,15 @@
     using System.Data;
     using System.Transactions;
     using Dapper;
+    using System.Reflection;
 
     public class SqlProviderInitialiser : SqlServerProviderBase
     {
-        public SqlProviderInitialiser(EventusSqlServerOptions options) : base(options)
+        private readonly List<Assembly> _aggregateAssemblies;
+
+        public SqlProviderInitialiser(List<Assembly> aggregateAssemblies , EventusSqlServerOptions options) : base(options)
         {
+            _aggregateAssemblies = aggregateAssemblies;
         }
 
         public void Init()
@@ -36,7 +40,7 @@
 
         protected virtual IEnumerable<Type> DetectAggregates()
         {
-            var aggregateTypes = AggregateHelper.GetAggregateTypes();
+            var aggregateTypes = AggregateHelper.GetAggregateTypes(_aggregateAssemblies);
 
             return aggregateTypes;
         }
@@ -55,7 +59,8 @@
                                                 [AggregateVersion] INT              NOT NULL,
                                                 [TimeStamp]        DATETIME2 (7)    NOT NULL,
                                                 [Data]             NVARCHAR (MAX)   NOT NULL
-	                                            PRIMARY KEY (AggregateId,[Id]))", TableName(aggregate), Options.Schema);
+	                                            PRIMARY KEY (AggregateId,[Id]))", TableName(aggregate),
+                Options.Schema);
 
             connection.Execute(aggregateTable);
         }
@@ -73,7 +78,8 @@
                                                 [AggregateVersion] INT              NOT NULL,
                                                 [TimeStamp]        DATETIME2 (7)    NOT NULL,
                                                 [Data]             NVARCHAR (MAX)   NOT NULL
-	                                            PRIMARY KEY (AggregateId,[Id]))", SnapshotTableName(aggregate), Options.Schema);
+	                                            PRIMARY KEY (AggregateId,[Id]))", SnapshotTableName(aggregate),
+                Options.Schema);
 
             connection.Execute(aggregateTable);
         }

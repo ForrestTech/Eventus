@@ -19,7 +19,7 @@
             services.AddLogging(configure => configure.AddConsole().SetMinimumLevel(LogLevel.Information));
             services.AddEventus(options =>
             {
-                options.SnapshotOptions.SnapshotFrequency = 3;
+                options.SnapshotFrequency = 3;
             }).UseEventStore(connectionString);
 
             var serviceProvider = services.BuildServiceProvider();

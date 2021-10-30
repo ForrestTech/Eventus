@@ -1,6 +1,7 @@
 ﻿namespace Eventus.UnitTests
 {
     using AutoFixture.Xunit2;
+    using Configuration;
     using Domain;
     using EventBus;
     using Events;
@@ -308,7 +309,7 @@
 
             var aggregate = CreateAggregateWithUncommittedChanges(Guid.NewGuid());
 
-            options.SnapshotOptions.SnapshotFrequency = 1;
+            options.SnapshotFrequency = 1;
 
             await repo.SaveAsync(aggregate);
 
@@ -333,7 +334,7 @@
             aggregate.Withdraw(10);
 
             //frequency is greater than uncommitted changes
-            options.SnapshotOptions.SnapshotFrequency = 4;
+            options.SnapshotFrequency = 4;
 
             await repo.SaveAsync(aggregate);
 

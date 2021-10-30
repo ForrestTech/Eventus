@@ -38,7 +38,6 @@
                 }
             }
 
-
             return AggregateEventHandlerCache[aggregateType].ToDictionary(kvp => kvp.Key, kvp => kvp.Value);
         }
 

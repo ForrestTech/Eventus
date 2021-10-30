@@ -88,7 +88,7 @@
             LastCommittedVersion = CurrentVersion;
         }
 
-        protected internal void ApplyEvent(IEvent @event)
+        protected void ApplyEvent(IEvent @event)
         {
             ApplyEvent(@event, true);
         }

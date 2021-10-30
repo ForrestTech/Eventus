@@ -6,7 +6,6 @@
     using Samples.Core.Domain;
     using System;
     using System.Reflection;
-    using Test;
     using Xunit;
 
     public class ValidateAggregatesTests
@@ -14,13 +13,13 @@
         [Fact]
         public void Validate_that_aggregates_support_all_events()
         {
-            ValidateAggregates.AssertThatAggregatesSupportAllEvents(Assembly.GetAssembly(typeof(BankAccount))!);
+            AggregateHelper.AssertThatAggregatesSupportAllEvents(Assembly.GetAssembly(typeof(BankAccount))!);
         }
 
         [Fact]
         public void Validate_that_events_without_methods_throw_exception()
         {
-            Action act = () => ValidateAggregates.AssertThatAggregatesSupportAllEvents(Assembly.GetAssembly(typeof(EventWithoutMethod))!, Assembly.GetAssembly(typeof(BankAccount))!);
+            Action act = () => AggregateHelper.AssertThatAggregatesSupportAllEvents(Assembly.GetAssembly(typeof(EventWithoutMethod))!, Assembly.GetAssembly(typeof(BankAccount))!);
 
             act.Should().Throw<AggregateEventNotSupportException>()
                 .Where(e => e.Message.Contains("EventWithoutMethod"));

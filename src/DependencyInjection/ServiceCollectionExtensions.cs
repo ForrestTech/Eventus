@@ -1,14 +1,68 @@
 ﻿namespace Eventus.Extensions.DependencyInjection
 {
+    using Configuration;
     using Logging;
     using Microsoft.Extensions.DependencyInjection;
     using Microsoft.Extensions.Logging;
     using Storage;
     using System;
+    using System.Collections.Generic;
+    using System.Linq;
+    using System.Reflection;
 
     public static class ServiceCollectionExtensions
     {
         public static EventusBuilder AddEventus(this IServiceCollection services,
+            Type aggregateType,
+            Action<EventusOptions>? configureOptions = null)
+        {
+            return services.AddEventus(aggregateType.GetTypeInfo().Assembly, configureOptions);
+        }
+        
+        public static EventusBuilder AddEventus(this IServiceCollection services,
+            Assembly aggregateAssembly,
+            Action<EventusOptions>? configureOptions = null)
+        {
+            return services.AddEventus(configureOptions, aggregateAssembly);
+        }
+        
+        public static EventusBuilder AddEventus(this IServiceCollection services,
+            params Assembly[] assemblies)
+        {
+            return services.AddEventus(assemblies, null);
+        }
+        
+        public static EventusBuilder AddEventus(this IServiceCollection services,
+            Action<EventusOptions>? configureOptions = null,
+            params Assembly[] assemblies)
+        {
+            return services.AddEventus(assemblies, configureOptions);
+        }
+        
+        public static EventusBuilder AddEventus(this IServiceCollection services,
+            params Type[] aggregateAssemblyTypes)
+        {
+            return services.AddEventus(null, aggregateAssemblyTypes);
+        }
+        
+        public static EventusBuilder AddEventus(this IServiceCollection services,
+            Action<EventusOptions>? configureOptions = null,
+            params Type[] aggregateAssemblyTypes)
+        {
+            return services.AddEventus(aggregateAssemblyTypes.Select(t => t.GetTypeInfo().Assembly), configureOptions);
+        }
+        
+        public static EventusBuilder AddEventus(this IServiceCollection services,
+            Action<EventusOptions>? configureOptions = null)
+        {
+            var assemblies = AppDomain.CurrentDomain.GetAssemblies().ToList();
+            
+            return services.AddEventus(assemblies, configureOptions);
+        }
+        
+            
+        public static EventusBuilder AddEventus(this IServiceCollection services,
+            IEnumerable<Assembly> aggregateAssemblies,
             Action<EventusOptions>? configureOptions = null)
         {
             var options = new EventusOptions();
@@ -48,6 +102,11 @@
                     toDecorate);
                 return decorated;
             });
+
+            var aggregateAssemblyList = aggregateAssemblies.ToList();
+            services.AddSingleton(new AggregateAssemblyCache(aggregateAssemblyList));
+            
+            AggregateHelper.AssertThatAggregatesSupportAllEvents(aggregateAssemblyList);
 
             return new EventusBuilder(services);
         }
