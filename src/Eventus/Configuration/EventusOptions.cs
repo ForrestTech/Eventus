@@ -3,6 +3,8 @@
     using System;
     using System.Collections.Generic;
     using System.Linq;
+    using System.Text.Json;
+    using System.Text.Json.Serialization;
 
     public class EventusOptions
     {
@@ -16,14 +18,35 @@
         /// </summary>
         public int SnapshotFrequency { get; set; } = 10;
 
-        public List<AggregateConfig> AggregateConfigs { get; set; } = new();
+        /// <summary>
+        /// Aggregate specific config settings
+        /// </summary>
+        public List<AggregateConfig> AggregateConfigs { get; } = new();
 
+        /// <summary>
+        /// Global default JsonSerializerOptions used by storage providers when storing event and snapshot data for aggregates. 
+        /// </summary>
+        public JsonSerializerOptions JsonSerializerOptions { get; set; } = new JsonSerializerOptions
+        {
+            WriteIndented = true,
+            PropertyNameCaseInsensitive = true,
+            Converters = {new JsonStringEnumConverter(JsonNamingPolicy.CamelCase)}
+        };
+
+        /// <summary>
+        /// Are snapshots enabled for the supplied aggregate type.  Gets the aggregate specific setting if one exists and the global setting if not.  
+        /// </summary>
         public bool GetSnapshotEnabled(Type aggregateType)
         {
             var agg = GetAggregateConfig(aggregateType);
             return agg?.SnapshotDisabled ?? SnapshottingEnabled;
         }
 
+        /// <summary>
+        /// Gets the snapshot frequency for the supplied aggregate type.  Gets the aggregate specific setting if one exists and the global setting if not.
+        /// </summary>
+        /// <param name="aggregateType"></param>
+        /// <returns></returns>
         public int GetSnapshotFrequency(Type aggregateType)
         {
             var agg = GetAggregateConfig(aggregateType);

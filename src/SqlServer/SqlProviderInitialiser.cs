@@ -5,15 +5,15 @@
     using System.Data;
     using System.Transactions;
     using Dapper;
-    using System.Reflection;
+    using Microsoft.Data.SqlClient;
 
-    public class SqlProviderInitialiser : SqlServerProviderBase
+    public class SqlProviderInitialiser
     {
-        private readonly List<Assembly> _aggregateAssemblies;
+        private readonly EventusSqlServerOptions _sqlOptions;
 
-        public SqlProviderInitialiser(List<Assembly> aggregateAssemblies , EventusSqlServerOptions options) : base(options)
+        public SqlProviderInitialiser(EventusSqlServerOptions sqlOptions)
         {
-            _aggregateAssemblies = aggregateAssemblies;
+            _sqlOptions = sqlOptions;
         }
 
         public void Init()
@@ -59,8 +59,8 @@
                                                 [AggregateVersion] INT              NOT NULL,
                                                 [TimeStamp]        DATETIME2 (7)    NOT NULL,
                                                 [Data]             NVARCHAR (MAX)   NOT NULL
-	                                            PRIMARY KEY (AggregateId,[Id]))", TableName(aggregate),
-                Options.Schema);
+	                                            PRIMARY KEY (AggregateId,[Id]))", SqlSchemaHelper.TableName(aggregate),
+                _sqlOptions.Schema);
 
             connection.Execute(aggregateTable);
         }
@@ -78,10 +78,18 @@
                                                 [AggregateVersion] INT              NOT NULL,
                                                 [TimeStamp]        DATETIME2 (7)    NOT NULL,
                                                 [Data]             NVARCHAR (MAX)   NOT NULL
-	                                            PRIMARY KEY (AggregateId,[Id]))", SnapshotTableName(aggregate),
-                Options.Schema);
+	                                            PRIMARY KEY (AggregateId,[Id]))",
+                SqlSchemaHelper.SnapshotTableName(aggregate),
+                _sqlOptions.Schema);
 
             connection.Execute(aggregateTable);
+        }
+
+        private SqlConnection GetOpenConnection()
+        {
+            var connection = new SqlConnection(_sqlOptions.ConnectionString);
+            connection.Open();
+            return connection;
         }
     }
 }

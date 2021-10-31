@@ -30,7 +30,11 @@
                 {
                     SnapshotFrequency = 3
                 });
-            }).UseCosmosDB(connectionString, databaseId);
+            }).UseCosmosDB(connectionString, databaseId, cosmosOptions =>
+            {
+                cosmosOptions.AggregateContainersThroughput = 400;
+                cosmosOptions.SnapshotContainersThroughput = 400;
+            });
 
             var cosmosClient = new CosmosClient(connectionString, new CosmosClientOptions {ApplicationName = "Eventus"});
             services.AddSingleton<ITeardown>(new CosmosDBTeardown(cosmosClient, databaseId));

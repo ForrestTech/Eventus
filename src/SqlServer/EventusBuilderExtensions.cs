@@ -50,9 +50,7 @@
 
             builder.Services.AddTransient<IDatabaseConnectionLogger, DatabaseConnectionLogger>();
 
-            var initialiser =
-                new SqlProviderInitialiser(
-                    AggregateCache.AggregateAssemblies ?? throw new InvalidOperationException(), options);
+            var initialiser = new SqlProviderInitialiser(options);
             initialiser.Init();
 
             return builder;

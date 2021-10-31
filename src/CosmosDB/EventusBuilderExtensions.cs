@@ -20,7 +20,7 @@
                 throw new ArgumentException("Value cannot be null or whitespace.", nameof(connectionString));
             }
 
-            var options = new EventusCosmosDBOptions(databaseId, 400, 400);
+            var options = new EventusCosmosDBOptions(databaseId);
 
             optionsConfig?.Invoke(options);
 
@@ -51,7 +51,11 @@
                 return decorated;
             });
 
-            var cosmosClient = new CosmosClient(connectionString, new CosmosClientOptions {ApplicationName = "Eventus"});
+            var cosmosClient =
+                new CosmosClient(connectionString, new CosmosClientOptions
+                {
+                    ApplicationName = options.ApplicationName
+                });
 
             builder.Services.AddSingleton(cosmosClient);
 

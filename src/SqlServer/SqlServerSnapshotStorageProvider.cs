@@ -1,5 +1,6 @@
 ﻿namespace Eventus.SqlServer
 {
+    using Configuration;
     using Storage;
     using System.Linq;
     using System;
@@ -11,7 +12,8 @@
         private readonly IDatabaseConnectionLogger _loggedConnection;
 
         public SqlServerSnapshotStorageProvider(IDatabaseConnectionLogger loggedConnection,
-            EventusSqlServerOptions options) : base(options)
+            EventusSqlServerOptions sqlOptions,
+            EventusOptions options) : base(sqlOptions, options)
         {
             _loggedConnection = loggedConnection;
         }
@@ -24,7 +26,8 @@
             {
                 var sql =
                     $"Select * from {SnapshotTableName(aggregateType)} where AggregateId = @aggregateId and AggregateVersion  @version";
-                var events = await _loggedConnection.QueryAsync<SqlSnapshot>(connection, sql, new {aggregateId, version});
+                var events =
+                    await _loggedConnection.QueryAsync<SqlSnapshot>(connection, sql, new {aggregateId, version});
 
                 var snapshot = events.SingleOrDefault();
                 if (snapshot == null)
@@ -73,18 +76,18 @@
             }
         }
 
-        private static string SerializeSnapshot(Snapshot snapshot)
+        private string SerializeSnapshot(Snapshot snapshot)
         {
-            var serialized = JsonSerializer.Serialize(snapshot, snapshot.GetType(), JsonSerializerOptions);
+            var serialized = JsonSerializer.Serialize(snapshot, snapshot.GetType(), Options.JsonSerializerOptions);
             return serialized;
         }
 
-        private static Snapshot DeserializeSnapshot(SqlEventBase item)
+        private Snapshot DeserializeSnapshot(SqlEventBase item)
         {
             var returnType = Type.GetType(item.ClrType);
 
             var deserialized = JsonSerializer.Deserialize(item.Data,
-                returnType ?? throw new InvalidOperationException(), JsonSerializerOptions);
+                returnType ?? throw new InvalidOperationException(), Options.JsonSerializerOptions);
 
             return (Snapshot)deserialized!;
         }

@@ -1,36 +1,30 @@
 namespace Eventus.SqlServer
 {
     using Configuration;
+    using Eventus.Configuration;
     using Microsoft.Azure.Cosmos;
     using System;
     using System.Reflection;
-    using System.Text.Json;
-    using System.Text.Json.Serialization;
     using System.Threading.Tasks;
 
     public abstract class CosmosDBProviderBase
     {
         private readonly CosmosClient _client;
-        private readonly EventusCosmosDBOptions _options;
         private static Database? _database;
         private Container? _container;
         private Container? _snapshotContainer;
+        private readonly EventusCosmosDBOptions _cosmosOptions;
 
-        protected CosmosDBProviderBase(CosmosClient client, EventusCosmosDBOptions options)
+        protected readonly EventusOptions Options;
+
+        protected CosmosDBProviderBase(CosmosClient client,
+            EventusCosmosDBOptions cosmosOptions,
+            EventusOptions options)
         {
             _client = client;
-            _options = options;
+            Options = options;
+            _cosmosOptions = cosmosOptions;
         }
-
-        protected static readonly JsonSerializerOptions JsonSerializerOptions = new JsonSerializerOptions
-        {
-            WriteIndented = true,
-            PropertyNameCaseInsensitive = true,
-            Converters =
-            {
-                new JsonStringEnumConverter(JsonNamingPolicy.CamelCase)
-            }
-        };
 
         private async Task<Database> GetDatabase()
         {
@@ -38,8 +32,17 @@ namespace Eventus.SqlServer
             {
                 return _database;
             }
-            //TODO pass in throughput settings
-            _database = await _client.CreateDatabaseIfNotExistsAsync(_options.DatabaseId);
+
+            if (_cosmosOptions.DatabaseSharedThroughPut != null)
+            {
+                _database = await _client.CreateDatabaseIfNotExistsAsync(_cosmosOptions.DatabaseId,
+                    _cosmosOptions.DatabaseSharedThroughPut);
+            }
+            else
+            {
+                _database = await _client.CreateDatabaseIfNotExistsAsync(_cosmosOptions.DatabaseId);
+            }
+
             return _database;
         }
 
@@ -50,12 +53,40 @@ namespace Eventus.SqlServer
                 return _container;
             }
 
-            //TODO pass in throughput settings
-            var database = await GetDatabase(); 
-            _container = await database.CreateContainerIfNotExistsAsync(GetContainerId(aggregateType, aggregateId), "/AggregateId",400);
+            var database = await GetDatabase();
+
+            var containerProperties =
+                new ContainerProperties(GetContainerId(aggregateType, aggregateId), _cosmosOptions.PartitionKey);
+            
+            _cosmosOptions.ExcludePaths.ForEach(x =>
+            {
+                containerProperties.IndexingPolicy.ExcludedPaths.Add(new ExcludedPath {Path = x});
+            });
+
+            ThroughputProperties? throughputProperties = null;
+
+            var aggregateThroughput = _cosmosOptions.GetAggregateThroughput(aggregateType);
+            if (aggregateThroughput != null)
+            {
+                throughputProperties = ThroughputProperties.CreateManualThroughput(aggregateThroughput.Value);
+            }
+
+            var autoScaleThroughput = _cosmosOptions.GetAggregateAutoScaleThroughput(aggregateType);
+            if (autoScaleThroughput != null)
+            {
+                throughputProperties = ThroughputProperties.CreateAutoscaleThroughput(autoScaleThroughput.Value);
+            }
+
+            if (throughputProperties != null)
+            {
+                _container = await database.CreateContainerIfNotExistsAsync(containerProperties, throughputProperties);
+            }
+
+            _container = await database.CreateContainerIfNotExistsAsync(containerProperties);
+
             return _container;
         }
-        
+
         protected async Task<Container> GetSnapshotContainer(Type aggregateType, Guid aggregateId)
         {
             if (_snapshotContainer != null)
@@ -63,19 +94,47 @@ namespace Eventus.SqlServer
                 return _snapshotContainer;
             }
 
-            //TODO pass in throughput settings\
             var database = await GetDatabase();
-            _snapshotContainer = await database.CreateContainerIfNotExistsAsync(SnapshotContainerId(aggregateType, aggregateId), "/AggregateId",400);
+
+            var containerProperties =
+                new ContainerProperties(GetSnapshotContainerId(aggregateType, aggregateId), _cosmosOptions.PartitionKey);
+
+            _cosmosOptions.ExcludePaths.ForEach(x =>
+            {
+                containerProperties.IndexingPolicy.ExcludedPaths.Add(new ExcludedPath {Path = x});
+            });
+
+
+            ThroughputProperties? throughputProperties = null;
+
+            var aggregateThroughput = _cosmosOptions.GetSnapshotThroughput(aggregateType);
+            if (aggregateThroughput != null)
+            {
+                throughputProperties = ThroughputProperties.CreateManualThroughput(aggregateThroughput.Value);
+            }
+
+            var autoScaleThroughput = _cosmosOptions.GetSnapshotAutoScaleThroughput(aggregateType);
+            if (autoScaleThroughput != null)
+            {
+                throughputProperties = ThroughputProperties.CreateAutoscaleThroughput(autoScaleThroughput.Value);
+            }
+
+            if (throughputProperties != null)
+            {
+                _snapshotContainer = await database.CreateContainerIfNotExistsAsync(containerProperties, throughputProperties);
+            }
+
+            _snapshotContainer = await database.CreateContainerIfNotExistsAsync(containerProperties);
+
             return _snapshotContainer;
-
         }
 
-        protected static string GetContainerId(MemberInfo aggregateType, Guid aggregateId)
+        private static string GetContainerId(MemberInfo aggregateType, Guid aggregateId)
         {
-            return $"{aggregateType.Name.ToLower()}-{aggregateId}";
+            return $"{aggregateType.Name.ToLower()}";
         }
 
-        protected static string SnapshotContainerId(Type aggregateType, Guid aggregateId)
+        private static string GetSnapshotContainerId(MemberInfo aggregateType, Guid aggregateId)
         {
             return $"{GetContainerId(aggregateType, aggregateId)}-snapshot";
         }

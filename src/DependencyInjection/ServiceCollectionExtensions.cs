@@ -106,6 +106,7 @@
             });
 
             var aggregateAssemblyList = aggregateAssemblies.ToList();
+            
             AggregateCache.AggregateAssemblies = aggregateAssemblyList;
             
             AggregateValidation.AssertThatAggregatesSupportAllEvents(aggregateAssemblyList);

@@ -1,6 +1,7 @@
 namespace Eventus.SqlServer
 {
     using Configuration;
+    using Eventus.Configuration;
     using Microsoft.Azure.Cosmos;
     using Storage;
     using System;
@@ -11,7 +12,9 @@ namespace Eventus.SqlServer
 
     public class CosmosDBSnapShotProvider : CosmosDBProviderBase, ISnapshotStorageProvider
     {
-        public CosmosDBSnapShotProvider(CosmosClient client, EventusCosmosDBOptions options) : base(client, options)
+        public CosmosDBSnapShotProvider(CosmosClient client,
+            EventusCosmosDBOptions cosmosOptions,
+            EventusOptions options) : base(client, cosmosOptions, options)
         {
         }
 
@@ -92,7 +95,7 @@ namespace Eventus.SqlServer
             await container.CreateItemAsync(cosmosDBSnapshot, new PartitionKey(snapshot.AggregateId.ToString()));
         }
 
-        private static CosmosDBSnapshot CreateSnapshotEvent(Snapshot snapshot)
+        private CosmosDBSnapshot CreateSnapshotEvent(Snapshot snapshot)
         {
             return new CosmosDBSnapshot
             {
@@ -105,18 +108,18 @@ namespace Eventus.SqlServer
             };
         }
 
-        private static string SerializeSnapshot(Snapshot snapshot)
+        private string SerializeSnapshot(Snapshot snapshot)
         {
-            var serialized = JsonSerializer.Serialize(snapshot, snapshot.GetType(), JsonSerializerOptions);
+            var serialized = JsonSerializer.Serialize(snapshot, snapshot.GetType(), Options.JsonSerializerOptions);
             return serialized;
         }
 
-        private static Snapshot DeserializeSnapshot(CosmosDBEventBase item)
+        private Snapshot DeserializeSnapshot(CosmosDBEventBase item)
         {
             var returnType = Type.GetType(item.ClrType);
 
             var deserialized = JsonSerializer.Deserialize(item.Data,
-                returnType ?? throw new InvalidOperationException(), JsonSerializerOptions);
+                returnType ?? throw new InvalidOperationException(), Options.JsonSerializerOptions);
 
             return (Snapshot)deserialized!;
         }

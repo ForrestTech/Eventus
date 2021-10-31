@@ -1,5 +1,6 @@
 ﻿namespace Eventus.SqlServer
 {
+    using Configuration;
     using Domain;
     using Events;
     using Storage;
@@ -14,8 +15,9 @@
     {
         private readonly IDatabaseConnectionLogger _loggedConnection;
 
-        public SqlServerEventStorageProvider(IDatabaseConnectionLogger loggedConnection, 
-            EventusSqlServerOptions options) : base(options)
+        public SqlServerEventStorageProvider(IDatabaseConnectionLogger loggedConnection,
+            EventusSqlServerOptions sqlOptions,
+            EventusOptions options) : base(sqlOptions, options)
         {
             _loggedConnection = loggedConnection;
         }
@@ -29,7 +31,8 @@
             {
                 var sql =
                     $"Select top {count} * from {TableName(aggregateType)} where AggregateId = @aggregateId and AggregateVersion >= @start order by AggregateVersion";
-                var events = await _loggedConnection.QueryAsync<SqlAggregateEvent>(connection, sql, new {aggregateId, start = offSet, count});
+                var events = await _loggedConnection.QueryAsync<SqlAggregateEvent>(connection, sql,
+                    new {aggregateId, start = offSet, count});
 
                 var result = events.Select(DeserializeEvent);
                 return result;
@@ -90,18 +93,19 @@
             }
         }
 
-        private static IEvent DeserializeEvent(SqlAggregateEvent returnedAggregateAggregateEvent)
+        private IEvent DeserializeEvent(SqlAggregateEvent returnedAggregateAggregateEvent)
         {
             var returnType = Type.GetType(returnedAggregateAggregateEvent.ClrType);
 
-            var deserialize = JsonSerializer.Deserialize(returnedAggregateAggregateEvent.Data, returnType ?? throw new InvalidOperationException(), JsonSerializerOptions);
+            var deserialize = JsonSerializer.Deserialize(returnedAggregateAggregateEvent.Data,
+                returnType ?? throw new InvalidOperationException(), Options.JsonSerializerOptions);
 
             return (Event)deserialize!;
         }
 
-        private static string SerializeEvent(IEvent @event)
+        private string SerializeEvent(IEvent @event)
         {
-            var serialized = JsonSerializer.Serialize(@event, @event.GetType(),  JsonSerializerOptions);
+            var serialized = JsonSerializer.Serialize(@event, @event.GetType(), Options.JsonSerializerOptions);
             return serialized;
         }
     }

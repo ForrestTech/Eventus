@@ -3,6 +3,7 @@
     using Configuration;
     using Domain;
     using Events;
+    using Eventus.Configuration;
     using Microsoft.Azure.Cosmos;
     using Storage;
     using System;
@@ -14,20 +15,25 @@
 
     public class CosmosDBStorageProvider : CosmosDBProviderBase, IEventStorageProvider
     {
-        public CosmosDBStorageProvider(CosmosClient client, EventusCosmosDBOptions options) : base(client, options)
-        { }
+        public CosmosDBStorageProvider(CosmosClient client,
+            EventusCosmosDBOptions cosmosOptions,
+            EventusOptions options) : base(client, cosmosOptions, options)
+        {
+        }
 
-        public async Task<IEnumerable<IEvent>> GetEventsAsync(Type aggregateType, Guid aggregateId, int start, int count)
+        public async Task<IEnumerable<IEvent>> GetEventsAsync(Type aggregateType, Guid aggregateId, int start,
+            int count)
         {
             try
             {
                 var container = await GetContainer(aggregateType, aggregateId);
 
-                var sqlQueryText = $"SELECT Top {count} * FROM c WHERE c.AggregateId = '{aggregateId}' ORDER BY c.Version DESC";
+                var sqlQueryText =
+                    $"SELECT Top {count} * FROM c WHERE c.AggregateId = '{aggregateId}' ORDER BY c.Version DESC";
                 var queryDefinition = new QueryDefinition(sqlQueryText);
 
                 var queryResultSetIterator = container.GetItemQueryIterator<CosmosDBAggregateEvent>(queryDefinition);
-                
+
                 var events = new List<CosmosDBAggregateEvent>();
 
                 while (queryResultSetIterator.HasMoreResults)
@@ -35,7 +41,7 @@
                     var currentResultSet = await queryResultSetIterator.ReadNextAsync();
                     events.AddRange(currentResultSet);
                 }
-                
+
                 return events.Select(DeserializeEvent);
             }
             catch (CosmosException e)
@@ -44,6 +50,7 @@
                 {
                     return new List<IEvent>();
                 }
+
                 throw;
             }
         }
@@ -53,12 +60,13 @@
             try
             {
                 var container = await GetContainer(aggregateType, aggregateId);
-                
-                var sqlQueryText = $"SELECT Top 1 * FROM c WHERE c.AggregateId = '{aggregateId}' ORDER BY c.Version DESC";
+
+                var sqlQueryText =
+                    $"SELECT Top 1 * FROM c WHERE c.AggregateId = '{aggregateId}' ORDER BY c.Version DESC";
                 var queryDefinition = new QueryDefinition(sqlQueryText);
 
                 var queryResultSetIterator = container.GetItemQueryIterator<CosmosDBAggregateEvent>(queryDefinition);
-                
+
                 var events = new List<CosmosDBAggregateEvent>();
 
                 while (queryResultSetIterator.HasMoreResults)
@@ -77,6 +85,7 @@
                 {
                     return null;
                 }
+
                 throw;
             }
         }
@@ -101,7 +110,7 @@
             }
         }
 
-        private static CosmosDBAggregateEvent CreateCosmosDBEvent(Aggregate aggregate, IEvent @event, int commitNumber)
+        private CosmosDBAggregateEvent CreateCosmosDBEvent(Aggregate aggregate, IEvent @event, int commitNumber)
         {
             var docStoreEvent = new CosmosDBAggregateEvent
             {
@@ -117,16 +126,17 @@
             return docStoreEvent;
         }
 
-        private static string SerializeEvent(IEvent @event)
+        private string SerializeEvent(IEvent @event)
         {
-            return JsonSerializer.Serialize(@event,@event.GetType(), JsonSerializerOptions);
+            return JsonSerializer.Serialize(@event, @event.GetType(), Options.JsonSerializerOptions);
         }
 
-        private static IEvent DeserializeEvent(CosmosDBAggregateEvent returnedAggregateEvent)
+        private IEvent DeserializeEvent(CosmosDBAggregateEvent returnedAggregateEvent)
         {
             var returnType = Type.GetType(returnedAggregateEvent.ClrType);
 
-            var deserialize = JsonSerializer.Deserialize(returnedAggregateEvent.Data, returnType ?? throw new InvalidOperationException(), JsonSerializerOptions);
+            var deserialize = JsonSerializer.Deserialize(returnedAggregateEvent.Data,
+                returnType ?? throw new InvalidOperationException(), Options.JsonSerializerOptions);
 
             return (IEvent)deserialize!;
         }

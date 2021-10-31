@@ -1,5 +1,6 @@
 ﻿namespace Eventus.EventStore
 {
+    using Configuration;
     using System;
     using System.Linq;
     using System.Threading.Tasks;
@@ -8,8 +9,10 @@
 
     public class EventStoreSnapshotStorageProvider : EventStoreStorageProviderBase, ISnapshotStorageProvider
     {
-        public EventStoreSnapshotStorageProvider(IEventStoreConnection connection, EventusEventStoreOptions options)
-            : base(connection, options)
+        public EventStoreSnapshotStorageProvider(IEventStoreConnection connection,
+            EventusEventStoreOptions eventStoreOptions,
+            EventusOptions options)
+            : base(connection, eventStoreOptions, options)
         {
         }
 

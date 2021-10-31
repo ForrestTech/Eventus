@@ -4,20 +4,21 @@ namespace Eventus.SqlServer.Configuration
 
     public class CosmosDBAggregateConfig
     {
-        public CosmosDBAggregateConfig(Type aggregateType, int offerThroughput, int snapshotThroughput)
+        public CosmosDBAggregateConfig(Type aggregateType)
         {
-            if (offerThroughput <= 0) throw new ArgumentOutOfRangeException(nameof(offerThroughput));
-            if (snapshotThroughput <= 0) throw new ArgumentOutOfRangeException(nameof(snapshotThroughput));
-
-            AggregateType = aggregateType ?? throw new ArgumentNullException(nameof(aggregateType));
-            OfferThroughput = offerThroughput;
-            SnapshotOfferThroughput = snapshotThroughput;
+            Type = aggregateType ?? throw new ArgumentNullException(nameof(aggregateType));
         }
 
-        public Type AggregateType { get; }
+        public Type Type { get; }
 
-        public int SnapshotOfferThroughput { get; }
+        public int? SnapshotContainerThroughput  { get; set; } = null;
 
-        public int OfferThroughput { get; }
+        public int? AggregateContainerThroughput { get; set; } = null;
+        
+        
+        public int? SnapshotContainerAutoScaleThroughput { get; set; }
+
+
+        public int? AggregateContainerAutoScaleThroughput { get; set; } = null;
     }
 }

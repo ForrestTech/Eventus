@@ -8,8 +8,8 @@
     using Microsoft.Extensions.Logging;
     using System.Threading.Tasks;
     
-    //TODO handle cosmos throughput (make cosmos DB setting simpler)
-    //TODO pass in serialization settings (all providers)
+    //TODO add integration tests
+    //TODO cosmos commposite index on aggregateid, version (exlude paths)
     //TODO parameterization sql cosmos
     //TODO sort out storage for event version (not storage provider is storing it at the moment)
     //TODO events should be immutable and should have equality comparison

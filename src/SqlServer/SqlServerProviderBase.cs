@@ -1,40 +1,31 @@
 ﻿namespace Eventus.SqlServer
 {
+    using Configuration;
     using Microsoft.Data.SqlClient;
     using System;
-    using System.Text.Json;
-    using System.Text.Json.Serialization;
     using System.Threading.Tasks;
 
     public abstract class SqlServerProviderBase
     {
-        protected readonly EventusSqlServerOptions Options;
+        private readonly EventusSqlServerOptions _sqlOptions;
+        protected readonly EventusOptions Options;
 
-        protected static readonly JsonSerializerOptions JsonSerializerOptions = new JsonSerializerOptions
+        protected SqlServerProviderBase(EventusSqlServerOptions sqlOptions, EventusOptions options)
         {
-            WriteIndented = true,
-            PropertyNameCaseInsensitive = true,
-            Converters =
-            {
-                new JsonStringEnumConverter(JsonNamingPolicy.CamelCase)
-            }
-        };
-
-        protected SqlServerProviderBase(EventusSqlServerOptions options)
-        {
+            _sqlOptions = sqlOptions;
             Options = options;
         }
 
         protected async Task<SqlConnection> GetOpenConnectionAsync()
         {
-            var connection = new SqlConnection(Options.ConnectionString);
+            var connection = new SqlConnection(_sqlOptions.ConnectionString);
             await connection.OpenAsync();
             return connection;
         }
         
         protected SqlConnection GetOpenConnection()
         {
-            var connection = new SqlConnection(Options.ConnectionString);
+            var connection = new SqlConnection(_sqlOptions.ConnectionString);
             connection.Open();
             return connection;
         }
@@ -46,12 +37,12 @@
 
         protected static string TableName(Type aggregateType)
         {
-            return aggregateType.Name;
+            return SqlSchemaHelper.TableName(aggregateType);
         }
 
         protected static string SnapshotTableName(Type aggregateType)
         {
-            return $"{aggregateType.Name}_Snapshot";
+            return SqlSchemaHelper.SnapshotTableName(aggregateType);
         }
     }
 }
