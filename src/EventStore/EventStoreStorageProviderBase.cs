@@ -52,7 +52,7 @@
         {
             var header = new EventStoreMetaDataHeader {ClrType = GetClrTypeName(@event), CommitNumber = commitNumber};
 
-            return new EventData(@event.CorrelationId, @event.GetType().Name, true,
+            return new EventData(@event.EventId, @event.GetType().Name, true,
                 Encoding.UTF8.GetBytes(JsonSerializer.Serialize(@event, @event.GetType(), JsonSerializerOptions)),
                 Encoding.UTF8.GetBytes(JsonSerializer.Serialize(header, JsonSerializerOptions)));
         }

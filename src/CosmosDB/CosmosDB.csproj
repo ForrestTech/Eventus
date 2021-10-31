@@ -3,13 +3,12 @@
   <PropertyGroup>
     <TargetFramework>net5.0</TargetFramework>
     <Nullable>enable</Nullable>
-    <RootNamespace>Eventus.EventStore</RootNamespace>
-    <AssemblyName>Eventus.EventStore</AssemblyName>
+    <RootNamespace>Eventus.SqlServer</RootNamespace>
+    <AssemblyName>Eventus.SqlServer</AssemblyName>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="EventStore.Client" Version="21.2.1" />
-    <PackageReference Include="NewId" Version="3.0.3" />
+    <PackageReference Include="Microsoft.Azure.Cosmos" Version="3.22.1" />
   </ItemGroup>
 
   <ItemGroup>

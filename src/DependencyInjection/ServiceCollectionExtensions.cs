@@ -106,7 +106,7 @@
             });
 
             var aggregateAssemblyList = aggregateAssemblies.ToList();
-            services.AddSingleton(new AggregateCache(aggregateAssemblyList));
+            AggregateCache.AggregateAssemblies = aggregateAssemblyList;
             
             AggregateValidation.AssertThatAggregatesSupportAllEvents(aggregateAssemblyList);
 

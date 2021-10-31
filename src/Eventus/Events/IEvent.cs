@@ -8,9 +8,9 @@ namespace Eventus.Events
     public interface IEvent 
     {
         /// <summary>
-        /// Target version of the Aggregate this event will be applied against.  This should almost always be one behind the current event version number.  This starts at -1 for fresh aggregates
+        /// Unique Id to correlate actions
         /// </summary>
-        int TargetVersion { get; set; }
+        Guid EventId { get; }
 
         /// <summary>
         /// The aggregateID of the aggregate
@@ -18,18 +18,18 @@ namespace Eventus.Events
         Guid AggregateId { get; set; }
 
         /// <summary>
+        /// Target version of the Aggregate this event will be applied against.  This should almost always be one behind the current event version number.  This starts at -1 for fresh aggregates
+        /// </summary>
+        int TargetVersion { get; set; }
+
+        /// <summary>
         /// This is used to timestamp the event when it get's committed
         /// </summary>
         DateTime EventCommittedTimestamp { get; set; }
-        
+
         /// <summary>
         /// This is used to handle versioning of events over time when refactoring or feature additions are done
         /// </summary>
-        int ClassVersion { get; set; }
-
-        /// <summary>
-        /// Unique Id to correlate actions
-        /// </summary>
-        Guid CorrelationId { get; }
+        int EventVersion { get; set; }
     }
 }

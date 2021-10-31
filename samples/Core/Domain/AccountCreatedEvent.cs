@@ -7,7 +7,7 @@
     {
         public string Name { get; protected set; }
         
-        public AccountCreatedEvent(Guid aggregateId, int targetVersion, Guid correlationId, string name) : base(aggregateId, targetVersion, correlationId)
+        public AccountCreatedEvent(Guid aggregateId, int targetVersion, string name) : base(aggregateId, targetVersion)
         {
             Name = name;
         }

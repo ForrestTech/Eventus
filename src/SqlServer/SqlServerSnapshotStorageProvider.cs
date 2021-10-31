@@ -1,6 +1,5 @@
 ﻿namespace Eventus.SqlServer
 {
-    using Dapper;
     using Storage;
     using System.Linq;
     using System;

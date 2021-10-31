@@ -5,6 +5,7 @@
     using System.Linq;
     using Events;
     using Exceptions;
+    using MassTransit;
     using System.Reflection;
 
     /// <summary>
@@ -13,20 +14,19 @@
     public abstract class Aggregate
     {
         public const int NoEventsStoredYet = 0;
-        
+
         private readonly List<IEvent> _uncommittedChanges = new();
         private Dictionary<Type, MethodInfo> _eventHandlerCache = new();
 
-        protected Aggregate()
+        protected Aggregate() : this(NewId.NextGuid())
         {
-            CurrentVersion = NoEventsStoredYet;
-            LastCommittedVersion = NoEventsStoredYet;
-            SetupInternalEventHandlers();
         }
 
-        protected Aggregate(List<IEvent> uncommittedChanges)
+        protected Aggregate(Guid id)
         {
-            _uncommittedChanges = uncommittedChanges;
+            Id = id;
+            CurrentVersion = NoEventsStoredYet;
+            LastCommittedVersion = NoEventsStoredYet;
             SetupInternalEventHandlers();
         }
 
@@ -87,15 +87,21 @@
 
         protected virtual void ApplyEvent(IEvent @event, bool isNew = true)
         {
+            if (isNew)
+            {
+                @event.AggregateId = Id;
+            }
+
             if (_eventHandlerCache.ContainsKey(@event.GetType()))
             {
                 var method = _eventHandlerCache[@event.GetType()];
 
-                method.Invoke(this, new object[] { @event });
+                method.Invoke(this, new object[] {@event});
             }
             else
             {
-                throw new AggregateEventOnApplyMethodMissingException($"No event handler specified for {@event.GetType()} on {GetType()}");
+                throw new AggregateEventOnApplyMethodMissingException(
+                    $"No event handler specified for {@event.GetType()} on {GetType()}");
             }
 
             if (isNew)
@@ -112,6 +118,7 @@
         }
 
         #region Comparison
+
         private sealed class IdEqualityComparer : IEqualityComparer<Aggregate>
         {
             public bool Equals(Aggregate? x, Aggregate? y)
@@ -139,13 +146,14 @@
         {
             if (ReferenceEquals(null, obj)) return false;
             if (ReferenceEquals(this, obj)) return true;
-            return obj.GetType() == GetType() && Equals((Aggregate) obj);
+            return obj.GetType() == GetType() && Equals((Aggregate)obj);
         }
 
         public override int GetHashCode()
         {
             return Id.GetHashCode();
         }
+
         #endregion
     }
 }

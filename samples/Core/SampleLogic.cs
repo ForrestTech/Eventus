@@ -5,7 +5,6 @@
     using Microsoft.Extensions.DependencyInjection;
     using Microsoft.Extensions.Logging;
     using Storage;
-    using System;
     using System.Diagnostics;
     using System.Threading.Tasks;
 
@@ -29,12 +28,11 @@
             
             logger.LogInformation("Creating Account and processing transactions");
             
-            var accountId = Guid.NewGuid();
-            var account = new BankAccount(accountId, "Joe Blogs", Guid.NewGuid());
-            account.Deposit(100, Guid.NewGuid());
-            account.Withdraw(25, Guid.NewGuid());
-            account.Withdraw(15, Guid.NewGuid());
-            account.Deposit(10, Guid.NewGuid());
+            var account = new BankAccount("Joe Blogs");
+            account.Deposit(100);
+            account.Withdraw(25);
+            account.Withdraw(15);
+            account.Deposit(10);
 
             logger.LogInformation("Saving account");
 
@@ -42,11 +40,11 @@
 
             logger.LogInformation("Getting account from storage");
 
-            var fetched = await repository.GetByIdAsync<BankAccount>(accountId);
+            var fetched = await repository.GetByIdAsync<BankAccount>(account.Id);
 
             if (fetched != null)
             {
-                logger.LogInformation("Account:{AccountId}", accountId);
+                logger.LogInformation("Account:{AccountId}", fetched.Id);
                 logger.LogInformation("Current balance is: {CurrentBalance}", fetched.CurrentBalance);
                 logger.LogInformation("Transactions:");
 

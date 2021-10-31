@@ -1,13 +1,13 @@
 ﻿namespace Eventus.UnitTests
 {
     using AutoFixture.Xunit2;
-    using Configuration;
     using Domain;
     using EventBus;
     using Events;
     using Exceptions;
     using Fixture;
     using FluentAssertions;
+    using MassTransit;
     using Moq;
     using Samples.Core.Domain;
     using Storage;
@@ -116,9 +116,9 @@
                     It.Is<int>(c => c == int.MaxValue)))
                 .Returns(Task.FromResult<IEnumerable<IEvent>>(new List<IEvent>
                 {
-                    new AccountCreatedEvent(aggregateId, 0, Guid.NewGuid(), "Joe Bloggs"),
-                    new FundsDepositedEvent(aggregateId, 1, Guid.NewGuid(), 10),
-                    new FundsWithdrawalEvent(aggregateId, 2, Guid.NewGuid(), 5)
+                    new AccountCreatedEvent(aggregateId, 0, "Joe Bloggs"),
+                    new FundsDepositedEvent(aggregateId, 1, 10),
+                    new FundsWithdrawalEvent(aggregateId, 2, 5)
                 }));
 
             var actual = await repo.GetByIdAsync<BankAccount>(aggregateId);
@@ -136,7 +136,7 @@
             Repository repo,
             Guid aggregateId)
         {
-            var snapshot = new BankAccountSnapshot(Guid.NewGuid(), aggregateId, 3, "Joe Bloggs", 10, transactions);
+            var snapshot = new BankAccountSnapshot(NewId.NextGuid(), aggregateId, 3, "Joe Bloggs", 10, transactions);
 
             snapshotProvider.Setup(x => x.GetSnapshotAsync(
                     It.Is<Type>(t => t == typeof(BankAccount)),
@@ -150,8 +150,7 @@
                     It.Is<int>(c => c == int.MaxValue)))
                 .Returns(Task.FromResult<IEnumerable<IEvent>>(new List<IEvent>
                 {
-                    new FundsDepositedEvent(aggregateId, 1, Guid.NewGuid(), 10),
-                    new FundsWithdrawalEvent(aggregateId, 2, Guid.NewGuid(), 5)
+                    new FundsDepositedEvent(aggregateId, 1, 10), new FundsWithdrawalEvent(aggregateId, 2, 5)
                 }));
 
             var actual = await repo.GetByIdAsync<BankAccount>(aggregateId);
@@ -214,19 +213,18 @@
         public void Save_should_throws_when_aggregate_target_version_does_not_match_last_event(
             [Frozen] Mock<IEventStorageProvider> eventStore,
             Repository repo,
-            AccountCreatedEvent existingAccount,
-            Guid aggregateId)
+            AccountCreatedEvent existingAccount)
         {
             //create an aggregate with history then update it
             var aggregate = new BankAccount();
             aggregate.LoadFromHistory(
-                new List<IEvent> {new AccountCreatedEvent(aggregateId, 0, Guid.NewGuid(), "Jeff")});
+                new List<IEvent> {new AccountCreatedEvent(aggregate.Id, 0, "Jeff")});
             aggregate.Deposit(100);
 
             //force the last event stored to be newer than expected (the first event should target 0)
-            existingAccount.TargetVersion = 1; 
+            existingAccount.TargetVersion = 1;
             eventStore.Setup(x =>
-                    x.GetLastEventAsync(It.Is<Type>(t => t == aggregate.GetType()), It.Is<Guid>(i => i == aggregateId)))
+                    x.GetLastEventAsync(It.Is<Type>(t => t == aggregate.GetType()), It.Is<Guid>(i => i == aggregate.Id)))
                 .Returns(Task.FromResult<IEvent>(existingAccount))
                 .Verifiable();
 
@@ -242,7 +240,7 @@
         {
             SetupNoExistingEvents(eventStore);
 
-            var aggregate = CreateAggregateWithUncommittedChanges(Guid.NewGuid());
+            var aggregate = CreateAggregateWithUncommittedChanges();
 
             await repo.SaveAsync(aggregate);
 
@@ -256,7 +254,7 @@
         {
             SetupNoExistingEvents(eventStore);
 
-            var aggregate = CreateAggregateWithUncommittedChanges(Guid.NewGuid());
+            var aggregate = CreateAggregateWithUncommittedChanges();
 
             Clock.Now = () => now;
 
@@ -276,7 +274,7 @@
         {
             SetupNoExistingEvents(eventStore);
 
-            var aggregate = CreateAggregateWithUncommittedChanges(Guid.NewGuid());
+            var aggregate = CreateAggregateWithUncommittedChanges();
 
             await repo.SaveAsync(aggregate);
 
@@ -307,7 +305,7 @@
         {
             SetupNoExistingEvents(eventStore);
 
-            var aggregate = CreateAggregateWithUncommittedChanges(Guid.NewGuid());
+            var aggregate = CreateAggregateWithUncommittedChanges();
 
             snapshotCalculator.Setup(x => x.ShouldCreateSnapShot(It.IsAny<BankAccount>()))
                 .Returns(true);
@@ -326,7 +324,7 @@
         {
             SetupNoExistingEvents(eventStore);
 
-            var aggregate = CreateAggregateWithUncommittedChanges(Guid.NewGuid());
+            var aggregate = CreateAggregateWithUncommittedChanges();
 
             await repo.SaveAsync(aggregate);
 
@@ -341,9 +339,9 @@
                 .Returns(Task.FromResult<IEvent>(null));
         }
 
-        private static BankAccount CreateAggregateWithUncommittedChanges(Guid aggregateId)
+        private static BankAccount CreateAggregateWithUncommittedChanges()
         {
-            var aggregate = new BankAccount(aggregateId, "Joe Bloggs");
+            var aggregate = new BankAccount("Joe Bloggs");
             aggregate.Deposit(100);
             aggregate.Withdraw(10);
             return aggregate;

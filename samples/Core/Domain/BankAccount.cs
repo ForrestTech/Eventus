@@ -1,6 +1,7 @@
 ﻿namespace Eventus.Samples.Core.Domain
 {
     using Eventus.Domain;
+    using MassTransit;
     using Storage;
     using System;
     using System.Collections.Generic;
@@ -11,49 +12,35 @@
 
         public decimal CurrentBalance { get; private set; }
 
-        public List<Transaction> Transactions { get; private set; }
+        public List<Transaction> Transactions { get; private set; } = new();
 
         public BankAccount()
         {
-            //Important: AggregateType roots must have a parameterless constructor
-            //to make it easier to construct from scratch.
-
             Transactions = new List<Transaction>();
         }
 
-        public BankAccount(Guid id, string name) : this(id, name, Guid.NewGuid())
+        public BankAccount(string name) : this(NewId.NextGuid(), name)
         {
         }
 
-        public BankAccount(Guid id, string name, Guid correlationId) : this()
+        public BankAccount(Guid id, string name) : base(id)
         {
-            //Pattern: Create the event and call ApplyEvent(Event)
-            var accountCreated = new AccountCreatedEvent(id, CurrentVersion, correlationId, name);
+            var accountCreated = new AccountCreatedEvent(Id, CurrentVersion, name);
             ApplyEvent(accountCreated);
         }
 
         public void Withdraw(decimal amount)
         {
-            Withdraw(amount, Guid.NewGuid());
-        }
-
-        public void Withdraw(decimal amount, Guid correlationId)
-        {
             if (CurrentBalance >= amount)
             {
-                var withdraw = new FundsWithdrawalEvent(Id, CurrentVersion, correlationId, amount);
+                var withdraw = new FundsWithdrawalEvent(Id, CurrentVersion, amount);
                 ApplyEvent(withdraw);
             }
         }
 
         public void Deposit(decimal amount)
         {
-            Deposit(amount, Guid.NewGuid());
-        }
-
-        public void Deposit(decimal amount, Guid correlationId)
-        {
-            var deposit = new FundsDepositedEvent(Id, CurrentVersion, correlationId, amount);
+            var deposit = new FundsDepositedEvent(Id, CurrentVersion, amount);
             ApplyEvent(deposit);
         }
 
@@ -86,7 +73,7 @@
 
         public Snapshot TakeSnapshot()
         {
-            return new BankAccountSnapshot(Guid.NewGuid(),
+            return new BankAccountSnapshot(NewId.NextGuid(),
                 Id,
                 CurrentVersion,
                 Name,

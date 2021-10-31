@@ -7,17 +7,37 @@
     using System.Linq;
     using System.Reflection;
 
-    public class AggregateCache
+    public static class AggregateCache
     {
-        private static readonly Dictionary<Type, Dictionary<Type, MethodInfo>> AggregateEventHandlerCache = new();
-        
-        public AggregateCache(List<Assembly> aggregateAssemblies)
+        private static List<Assembly>? _internalAggregateAssemblies;
+        private static Dictionary<Type, Dictionary<Type, MethodInfo>>? _internalAggregateEventHandlerCache;
+
+        private static Dictionary<Type, Dictionary<Type, MethodInfo>> AggregateEventHandlerCache
         {
-            AggregateAssemblies = aggregateAssemblies;
-            BuildAggregateEventHandlerCache();
+            get
+            {
+                _internalAggregateEventHandlerCache ??= BuildAggregateEventHandlerCache();
+                return _internalAggregateEventHandlerCache;
+            }
         }
 
-        public static List<Assembly> AggregateAssemblies { get; private set; } = AppDomain.CurrentDomain.GetAssemblies().ToList();
+        public static List<Assembly> AggregateAssemblies
+        {
+            get
+            {
+                if (_internalAggregateAssemblies != null)
+                {
+                    return _internalAggregateAssemblies;
+                }
+
+                _internalAggregateAssemblies = AppDomain.CurrentDomain.GetAssemblies().ToList();
+                return _internalAggregateAssemblies;
+            }
+            set
+            {
+                _internalAggregateAssemblies = value;
+            }
+        }
 
         public static Dictionary<Type, MethodInfo> GetEventHandlersForAggregate(Type aggregateType)
         {
@@ -27,15 +47,17 @@
         public static List<Type> GetAggregateTypes()
         {
             var aggregateType = typeof(Aggregate);
-            var types = AggregateAssemblies.SelectMany(t => t.GetTypes())
+            var assemblies = AggregateAssemblies;
+            var types = assemblies.SelectMany(t => t.GetTypes())
                 .Where(t => t != aggregateType && aggregateType.IsAssignableFrom(t))
                 .ToList();
 
             return types;
         }
 
-        private static void BuildAggregateEventHandlerCache()
+        private static Dictionary<Type, Dictionary<Type, MethodInfo>> BuildAggregateEventHandlerCache()
         {
+            var cache = new Dictionary<Type, Dictionary<Type, MethodInfo>>();
             var aggregateTypes = GetAggregateTypes();
 
             foreach (Type aggregateType in aggregateTypes)
@@ -53,8 +75,10 @@
                     }
                 }
                 
-                AggregateEventHandlerCache.Add(aggregateType, eventHandlers);
+                cache.Add(aggregateType, eventHandlers);
             }
+
+            return cache;
         }
     }
 }

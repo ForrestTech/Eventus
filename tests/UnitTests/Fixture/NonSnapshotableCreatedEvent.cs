@@ -7,7 +7,7 @@ namespace Eventus.UnitTests.Fixture
     {
         public string TestValue { get; }
 
-        public NonSnapshotableCreatedEvent(Guid id, int currentVersion, string testValue) : base(id, currentVersion)
+        public NonSnapshotableCreatedEvent(Guid aggregateId, int currentVersion, string testValue) : base(aggregateId, currentVersion)
         {
             TestValue = testValue;
         }

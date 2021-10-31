@@ -11,7 +11,7 @@
 
 ## Synopsis
 
-Eventus is a framework that provides a common setup for working with [Event Soured](https://martinfowler.com/eaaDev/EventSourcing.html) data.  It provides an abstractions over different storage providers.  Some common storage providers like SQL, Azure DocumentDB and EventStore are implemented.  This libarary is inspired by [NEventStore](https://github.com/NEventStore/NEventStore) and other frameworks,  they are all great but they did not work exactly as I wanted them to.  
+Eventus is a framework that provides a common setup for working with [Event Soured](https://martinfowler.com/eaaDev/EventSourcing.html) data.  It provides an abstractions over different storage providers.  Some common storage providers like SQL, Azure CosmosDB and EventStore are implemented.  This libarary is inspired by [NEventStore](https://github.com/NEventStore/NEventStore) and other frameworks,  they are all great but they did not work exactly as I wanted them to.  
 
 ## Install
 
@@ -44,7 +44,7 @@ var snapshotFrequency = 5;
 var repository = new Repository(new EventstoreStorageProvider(connection),
                                 new EventstoreSnapshotStorageProvider(connection, snapshotFrequency));
 
-var accountId = Guid.NewGuid();
+var accountId = NewId.NextGuid();
 var bankAccount = new BankAccount(accountId, "John Doe");
 bankAccount.Deposit(100);
 bankAccount.Withdrawal(50);

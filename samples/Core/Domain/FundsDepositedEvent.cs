@@ -5,9 +5,9 @@
 
     public class FundsDepositedEvent : Event
     {
-        public decimal Amount { get; protected set; }
+        public decimal Amount { get; }
 
-        public FundsDepositedEvent(Guid aggregateId, int targetVersion, Guid correlationId, decimal amount) : base(aggregateId, targetVersion, correlationId)
+        public FundsDepositedEvent(Guid aggregateId, int targetVersion, decimal amount) : base(aggregateId, targetVersion)
         {
             Amount = amount;
         }

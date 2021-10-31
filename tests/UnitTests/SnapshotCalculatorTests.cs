@@ -35,12 +35,12 @@
 
         private static BankAccount CreateAggregateWithUncommittedChanges(int committedChanges, int numberOfUncommittedChanges)
         {
-            var aggregate = new BankAccount(Guid.NewGuid(), "Joe Bloggs");
+            var aggregate = new BankAccount("Joe Bloggs");
 
             for (int i = 1; i <= committedChanges - 1; i++)
             {
                 //Deposit are safe uncommitted changes
-                aggregate.Deposit(10, Guid.NewGuid());
+                aggregate.Deposit(10);
             }
             
             aggregate.MarkChangesAsCommitted();
@@ -54,7 +54,7 @@
             for (int i = 1; i <= numberOfUncommittedChanges; i++)
             {
                 //Deposit are safe uncommitted changes
-                aggregate.Deposit(10, Guid.NewGuid());
+                aggregate.Deposit(10);
             }
 
             return aggregate;

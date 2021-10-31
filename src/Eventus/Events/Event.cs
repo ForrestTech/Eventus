@@ -1,41 +1,45 @@
 ﻿namespace Eventus.Events
 {
+    using MassTransit;
     using System;
-    
+
     /// <summary>
     /// A common base event for all events that applied to Eventus aggregates 
     /// </summary>
     public class Event : IEvent
     {
-        public int TargetVersion { get; set; }
+        public Guid EventId { get; set; }
 
         public Guid AggregateId { get; set; }
-
-        public Guid CorrelationId { get; set; }
+        
+        public int TargetVersion { get; set; }
 
         public DateTime EventCommittedTimestamp { get; set; }
 
-        public int ClassVersion { get; set; }
+        public int EventVersion { get; set; }
 
         public Event()
         {
         }
 
-        public Event(Guid aggregateId, int targetVersion) : this(aggregateId, targetVersion, Guid.NewGuid())
+        /// <summary>
+        /// This should be the most common event constructor as we always need an aggregate ID and target version but we can generate most other parameters
+        /// </summary>
+        protected Event(Guid aggregateId, int targetVersion) : this(aggregateId, targetVersion, NewId.NextGuid())
         {
         }
 
-        public Event(Guid aggregateId, int targetVersion, Guid correlationId) : this(aggregateId, targetVersion, correlationId, 1)
+        protected Event(Guid aggregateId, int targetVersion, Guid eventId) : this(aggregateId, targetVersion, eventId, 1)
         {
         }
 
 
-        public Event(Guid aggregateId, int targetVersion, Guid correlationId, int eventClassVersion)
+        private Event(Guid aggregateId, int targetVersion, Guid eventId, int eventEventVersion)
         {
             AggregateId = aggregateId;
             TargetVersion = targetVersion;
-            ClassVersion = eventClassVersion;
-            CorrelationId = correlationId == Guid.Empty ? Guid.NewGuid() : correlationId;
+            EventVersion = eventEventVersion;
+            EventId = eventId;
         }
     }
 }

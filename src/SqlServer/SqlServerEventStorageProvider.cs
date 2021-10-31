@@ -1,6 +1,5 @@
 ﻿namespace Eventus.SqlServer
 {
-    using Dapper;
     using Domain;
     using Events;
     using Storage;
@@ -75,7 +74,7 @@
                             await _loggedConnection.ExecuteAsync(connection, sql,
                                 new
                                 {
-                                    Id = @event.CorrelationId,
+                                    Id = @event.EventId,
                                     @event.AggregateId,
                                     @event.TargetVersion,
                                     AggregateVersion = committed,
