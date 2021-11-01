@@ -24,8 +24,10 @@ namespace Eventus.CosmosDB
             {
                 var container = await GetSnapshotContainer(aggregateType, aggregateId);
 
-                var sqlQueryText = $"SELECT * FROM c WHERE c.AggregateId = '{aggregateId}' and c.Version == {version}";
-                var queryDefinition = new QueryDefinition(sqlQueryText);
+                var sqlQueryText = "SELECT * FROM c WHERE c.AggregateId = @aggregateId and c.Version == @version";
+                var queryDefinition = new QueryDefinition(sqlQueryText)
+                    .WithParameter("@aggregateId", aggregateId)
+                    .WithParameter("@version", version);
 
                 var queryResultSetIterator = container.GetItemQueryIterator<CosmosDBSnapshot>(queryDefinition);
 
@@ -59,8 +61,9 @@ namespace Eventus.CosmosDB
                 var container = await GetSnapshotContainer(aggregateType, aggregateId);
 
                 var sqlQueryText =
-                    $"SELECT Top 1 * FROM c WHERE c.AggregateId = '{aggregateId}' ORDER BY c.Version DESC";
-                var queryDefinition = new QueryDefinition(sqlQueryText);
+                    "SELECT Top 1 * FROM c WHERE c.AggregateId = @aggregateId ORDER BY c.Version DESC";
+                var queryDefinition = new QueryDefinition(sqlQueryText)
+                    .WithParameter("@aggregateId", aggregateId);
 
                 var queryResultSetIterator = container.GetItemQueryIterator<CosmosDBSnapshot>(queryDefinition);
 

@@ -8,7 +8,6 @@
     using Microsoft.Extensions.Logging;
     using System.Threading.Tasks;
     
-    //TODO cosmos commposite index on aggregateid, version (exlude paths), parameterization sql cosmos, transactional batch write of events
     //TODO add timing to log decorator on setting
     //TODO add event store logging
     //TODO add cosmos DB logging

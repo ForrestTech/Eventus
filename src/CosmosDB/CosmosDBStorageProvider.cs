@@ -29,8 +29,11 @@
                 var container = await GetContainer(aggregateType, aggregateId);
 
                 var sqlQueryText =
-                    $"SELECT Top {count} * FROM c WHERE c.AggregateId = '{aggregateId}' AND c.Version >= {start} ORDER BY c.Version";
-                var queryDefinition = new QueryDefinition(sqlQueryText);
+                    $"SELECT Top {count} * FROM c WHERE c.AggregateId = @aggregateId AND c.Version >= @start ORDER BY c.Version";
+
+                var queryDefinition = new QueryDefinition(sqlQueryText)
+                    .WithParameter("@aggregateId", aggregateId)
+                    .WithParameter("@start", start);
 
                 var queryResultSetIterator = container.GetItemQueryIterator<CosmosDBAggregateEvent>(queryDefinition);
 
@@ -61,9 +64,10 @@
             {
                 var container = await GetContainer(aggregateType, aggregateId);
 
-                var sqlQueryText =
-                    $"SELECT Top 1 * FROM c WHERE c.AggregateId = '{aggregateId}' ORDER BY c.Version DESC";
-                var queryDefinition = new QueryDefinition(sqlQueryText);
+                var sqlQueryText = "SELECT Top 1 * FROM c WHERE c.AggregateId = @aggregateId ORDER BY c.Version DESC";
+                
+                var queryDefinition = new QueryDefinition(sqlQueryText)
+                    .WithParameter("@aggregateId", aggregateId);
 
                 var queryResultSetIterator = container.GetItemQueryIterator<CosmosDBAggregateEvent>(queryDefinition);
 
@@ -100,14 +104,36 @@
 
                 var container = await GetContainer(aggregate.GetType(), aggregate.Id);
 
-                //TODO create a transactional batch operation here https://docs.microsoft.com/vi-vn/azure/cosmos-db/sql/transactional-batch
-                foreach (var @event in events)
+                if (events.Count == 1)
                 {
                     committed++;
-                    var aggregateEvent = CreateCosmosDBEvent(aggregate, @event, committed);
-
+                    var aggregateEvent = CreateCosmosDBEvent(aggregate, events.First(), committed);
                     await container.CreateItemAsync(aggregateEvent, new PartitionKey(aggregate.Id.ToString()));
                 }
+                else
+                {
+                    await ProcessAsBatch(aggregate, container, events, committed);
+                }
+            }
+        }
+
+        private async Task ProcessAsBatch(Aggregate aggregate, Container container, List<IEvent> events, int committed)
+        {
+            var batch = container.CreateTransactionalBatch(new PartitionKey(aggregate.Id.ToString()));
+
+            foreach (var @event in events)
+            {
+                committed++;
+                var aggregateEvent = CreateCosmosDBEvent(aggregate, @event, committed);
+
+                batch.CreateItem(aggregateEvent);
+            }
+
+            var response = await batch.ExecuteAsync();
+
+            if (!response.IsSuccessStatusCode)
+            {
+                throw new CosmosException(response.ErrorMessage, response.StatusCode, (int) response.StatusCode, response.ActivityId, response.RequestCharge);
             }
         }
 
