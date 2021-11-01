@@ -15,11 +15,19 @@
         }
 
         [DebuggerStepThrough]
-        internal static void Exit(this ILogger logger, string type, object? parameters = null, object? result = null,
+        internal static void Exit(this ILogger logger, string type, object? parameters = null, object? result = null, TimeSpan? executedIn = null,
             [CallerMemberName] string methodName = "")
         {
-            logger.LogTrace("Exiting '{Method}' of '{Type}', arguments: '{@Parameters}', result: '{@Result}'", methodName,
-                type, parameters, result);
+            if (executedIn != null)
+            {
+                logger.LogTrace("Exiting '{Method}' of '{Type}', executed in: {ExecutedIn} arguments: '{@Parameters}', result: '{@Result}'", methodName,
+                    type, executedIn, parameters, result);    
+            }
+            else
+            {
+                logger.LogTrace("Exiting '{Method}' of '{Type}', arguments: '{@Parameters}', result: '{@Result}'", methodName,
+                    type, parameters, result);    
+            }
         }
 
         [DebuggerStepThrough]

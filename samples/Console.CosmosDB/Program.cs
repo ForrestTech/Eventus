@@ -21,10 +21,11 @@
                 "AccountEndpoint=https://localhost:8081/;AccountKey=C2y6yDjf5/R+ob0N8A7Cgv30VRDJIWEHLM+4QDU5DE2nQ9nDuVTqobD4b8mGGyPMbIZnqyMsEcaGQy67XIw/Jw==";
             
             var services = new ServiceCollection();
-            services.AddLogging(configure => configure.AddConsole().SetMinimumLevel(LogLevel.Debug));
+            services.AddLogging(configure => configure.AddConsole().SetMinimumLevel(LogLevel.Trace));
             const string databaseId = "eventus";
             services.AddEventus(typeof(BankAccount), options =>
             {
+                options.DiagnosticTimingEnabled = true;
                 options.SnapshotFrequency = 10;
                 options.AggregateConfigs.Add(new AggregateConfig(typeof(BankAccount))
                 {

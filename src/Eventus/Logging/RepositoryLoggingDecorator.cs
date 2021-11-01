@@ -1,4 +1,6 @@
-﻿namespace Eventus.Logging
+﻿using Eventus.Configuration;
+
+namespace Eventus.Logging
 {
     using System;
     using System.Threading.Tasks;
@@ -12,8 +14,10 @@
 
         private const string TypeName = "Event Sourcing Repository";
 
-        public RepositoryLoggingDecorator(ILogger<RepositoryLoggingDecorator> logger, IRepository decorated) :
-            base(logger)
+        public RepositoryLoggingDecorator(IRepository decorated,
+            ILogger<RepositoryLoggingDecorator> logger,
+            EventusOptions options) :
+            base(logger, options)
         {
             _decorated = decorated;
         }

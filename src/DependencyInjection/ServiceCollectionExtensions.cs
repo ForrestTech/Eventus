@@ -18,49 +18,49 @@
         {
             return services.AddEventus(aggregateType.GetTypeInfo().Assembly, configureOptions);
         }
-        
+
         public static EventusBuilder AddEventus(this IServiceCollection services,
             Assembly aggregateAssembly,
             Action<EventusOptions>? configureOptions = null)
         {
             return services.AddEventus(configureOptions, aggregateAssembly);
         }
-        
+
         public static EventusBuilder AddEventus(this IServiceCollection services,
             params Assembly[] assemblies)
         {
             return services.AddEventus(assemblies, null);
         }
-        
+
         public static EventusBuilder AddEventus(this IServiceCollection services,
             Action<EventusOptions>? configureOptions = null,
             params Assembly[] assemblies)
         {
             return services.AddEventus(assemblies, configureOptions);
         }
-        
+
         public static EventusBuilder AddEventus(this IServiceCollection services,
             params Type[] aggregateAssemblyTypes)
         {
             return services.AddEventus(null, aggregateAssemblyTypes);
         }
-        
+
         public static EventusBuilder AddEventus(this IServiceCollection services,
             Action<EventusOptions>? configureOptions = null,
             params Type[] aggregateAssemblyTypes)
         {
             return services.AddEventus(aggregateAssemblyTypes.Select(t => t.GetTypeInfo().Assembly), configureOptions);
         }
-        
+
         public static EventusBuilder AddEventus(this IServiceCollection services,
             Action<EventusOptions>? configureOptions = null)
         {
             var assemblies = AppDomain.CurrentDomain.GetAssemblies().ToList();
-            
+
             return services.AddEventus(assemblies, configureOptions);
         }
-        
-            
+
+
         public static EventusBuilder AddEventus(this IServiceCollection services,
             IEnumerable<Assembly> aggregateAssemblies,
             Action<EventusOptions>? configureOptions = null)
@@ -69,7 +69,7 @@
             configureOptions?.Invoke(options);
 
             services.AddSingleton(options);
-            
+
             services.AddTransient<ISnapshotCalculator, SnapshotCalculator>();
 
             services.AddTransient<InMemoryEventStorageProvider>();
@@ -79,10 +79,11 @@
                 var toDecorate = x.GetService<InMemoryEventStorageProvider>() ?? throw new InvalidOperationException();
                 var decorated = new EventStorageProviderLoggingDecorator(
                     toDecorate,
-                    logger);
+                    logger,
+                    options);
                 return decorated;
             });
-            
+
             services.AddTransient<InMemorySnapshotStorageProvider>();
             services.AddTransient<ISnapshotStorageProvider>(x =>
             {
@@ -90,28 +91,36 @@
                 var toDecorate = x.GetService<InMemorySnapshotStorageProvider>() ?? throw new InvalidOperationException();
                 var decorated = new SnapshotProviderLoggingDecorator(
                     toDecorate,
-                    logger);
-                return decorated;
-            });
-            
-            services.AddTransient<Repository>();
-            services.AddTransient<IRepository>(x =>
-            {
-                var logger = x.GetService<ILogger<RepositoryLoggingDecorator>>() ?? throw new InvalidOperationException();
-                var toDecorate = x.GetService<Repository>() ?? throw new InvalidOperationException();
-                var decorated = new RepositoryLoggingDecorator(
                     logger,
-                    toDecorate);
+                    options);
                 return decorated;
             });
+
+            if (options.RepositoryLoggingEnabled)
+            {
+                services.AddTransient<Repository>();
+                services.AddTransient<IRepository>(x =>
+                {
+                    var logger = x.GetService<ILogger<RepositoryLoggingDecorator>>() ?? throw new InvalidOperationException();
+                    var toDecorate = x.GetService<Repository>() ?? throw new InvalidOperationException();
+                    var decorated = new RepositoryLoggingDecorator(toDecorate,
+                        logger,
+                        options);
+                    return decorated;
+                });
+            }
+            else
+            {
+                services.AddTransient<IRepository, Repository>();
+            }
 
             var aggregateAssemblyList = aggregateAssemblies.ToList();
-            
+
             AggregateCache.AggregateAssemblies = aggregateAssemblyList;
-            
+
             AggregateValidation.AssertThatAggregatesSupportAllEvents(aggregateAssemblyList);
 
-            return new EventusBuilder(services);
+            return new EventusBuilder(services, options);
         }
     }
 }

@@ -1,3 +1,5 @@
+using Eventus.Configuration;
+
 namespace Eventus.Logging
 {
     using System;
@@ -12,7 +14,8 @@ namespace Eventus.Logging
         private const string TypeName = "Snapshot Storage Provider";
 
         public SnapshotProviderLoggingDecorator(ISnapshotStorageProvider decorated,
-            ILogger<SnapshotProviderLoggingDecorator> logger) : base(logger)
+            ILogger<SnapshotProviderLoggingDecorator> logger,
+            EventusOptions options) : base(logger, options)
         {
             _decorated = decorated;
         }

@@ -31,7 +31,8 @@
                 var toDecorate = x.GetService<SqlServerEventStorageProvider>() ?? throw new InvalidOperationException();
                 var decorated = new EventStorageProviderLoggingDecorator(
                     toDecorate,
-                    logger);
+                    logger,
+                    builder.EventusOptions);
                 return decorated;
             });
 
@@ -44,7 +45,8 @@
                                  throw new InvalidOperationException();
                 var decorated = new SnapshotProviderLoggingDecorator(
                     toDecorate,
-                    logger);
+                    logger,
+                    builder.EventusOptions);
                 return decorated;
             });
 

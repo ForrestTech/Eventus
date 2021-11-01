@@ -11,7 +11,7 @@
 
     public static class EventusBuilderExtensions
     {
-        public static EventusBuilder UseCosmosDB(this EventusBuilder builder, 
+        public static EventusBuilder UseCosmosDB(this EventusBuilder builder,
             string connectionString,
             string databaseId,
             Action<EventusCosmosDBOptions>? optionsConfig = null)
@@ -35,7 +35,8 @@
                 var toDecorate = x.GetService<CosmosDBStorageProvider>() ?? throw new InvalidOperationException();
                 var decorated = new EventStorageProviderLoggingDecorator(
                     toDecorate,
-                    logger);
+                    logger,
+                    builder.EventusOptions);
                 return decorated;
             });
 
@@ -48,15 +49,13 @@
                                  throw new InvalidOperationException();
                 var decorated = new SnapshotProviderLoggingDecorator(
                     toDecorate,
-                    logger);
+                    logger,
+                    builder.EventusOptions);
                 return decorated;
             });
 
             var cosmosClient =
-                new CosmosClient(connectionString, new CosmosClientOptions
-                {
-                    ApplicationName = options.ApplicationName
-                });
+                new CosmosClient(connectionString, new CosmosClientOptions {ApplicationName = options.ApplicationName});
 
             builder.Services.AddSingleton(cosmosClient);
 

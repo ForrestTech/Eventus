@@ -1,3 +1,5 @@
+using Eventus.Configuration;
+
 namespace Eventus.Logging
 {
     using System;
@@ -7,14 +9,16 @@ namespace Eventus.Logging
     using Events;
     using Storage;
     using Microsoft.Extensions.Logging;
-    
+
     public class EventStorageProviderLoggingDecorator : LoggingDecorator, IEventStorageProvider
     {
         private readonly IEventStorageProvider _decorated;
 
         private const string TypeName = "Event Storage Provider";
 
-        public EventStorageProviderLoggingDecorator(IEventStorageProvider decorated, ILogger<EventStorageProviderLoggingDecorator> logger) : base(logger)
+        public EventStorageProviderLoggingDecorator(IEventStorageProvider decorated,
+            ILogger<EventStorageProviderLoggingDecorator> logger,
+            EventusOptions options) : base(logger, options)
         {
             _decorated = decorated;
         }
