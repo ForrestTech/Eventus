@@ -62,7 +62,7 @@
                 var container = await GetContainer(aggregateType, aggregateId);
 
                 var sqlQueryText =
-                    $"SELECT Top 1 * FROM c WHERE c.AggregateId = '{aggregateId}' ORDER BY c.Version";
+                    $"SELECT Top 1 * FROM c WHERE c.AggregateId = '{aggregateId}' ORDER BY c.Version DESC";
                 var queryDefinition = new QueryDefinition(sqlQueryText);
 
                 var queryResultSetIterator = container.GetItemQueryIterator<CosmosDBAggregateEvent>(queryDefinition);

@@ -28,9 +28,9 @@
             return ProviderFactories.Single(x => x.Key == providerKey).GetSnapshotProvider(output);
         }
 
-        public static IRepository CreateRepository()
+        public static IRepository CreateRepository(string providerKey, ITestOutputHelper output)
         {
-            throw new System.NotImplementedException();
+            return ProviderFactories.Single(x => x.Key == providerKey).CreateRepository(output);
         }
 
         public static Task Teardown()

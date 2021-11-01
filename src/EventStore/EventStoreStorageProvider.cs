@@ -22,11 +22,6 @@
         {
         }
 
-        public Task<IEnumerable<IEvent>> GetEventAsync(Type aggregateType, Guid aggregateId)
-        {
-            return GetEventsAsync(aggregateType, aggregateId, 0, int.MaxValue);
-        }
-
         public async Task<IEnumerable<IEvent>> GetEventsAsync(Type aggregateType, Guid aggregateId, int start,
             int count)
         {

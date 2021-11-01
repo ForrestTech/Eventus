@@ -12,6 +12,8 @@
         
         ISnapshotStorageProvider GetSnapshotProvider(ITestOutputHelper output);
         
+        IRepository CreateRepository(ITestOutputHelper output);
+        
         Task Teardown();
     }
 }

@@ -8,14 +8,11 @@
     using Microsoft.Extensions.Logging;
     using System.Threading.Tasks;
     
-    //TODO add integration tests
     //TODO cosmos commposite index on aggregateid, version (exlude paths), parameterization sql cosmos, transactional batch write of events
-    //TODO sort out storage for event version (not storage provider is storing it at the moment)
     //TODO events should be immutable and should have equality comparison
     //TODO add timing to log decorator on setting
     //TODO add event store logging
     //TODO add cosmos DB logging
-    //TODO add support for paging of events for loading non snapshotable events
     //TODO review unit test coverage (snapshot options, aggregate config)
     //TODO add details to readme that event constructor parameter names are important (can we auto validate this)
     //TODO add details to readme on how snapshotting works without a read and how that will effect what snapshots you get

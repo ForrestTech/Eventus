@@ -137,13 +137,9 @@
 
             _logger.LogDebug("Performing pre commit checks for '{Aggregate}'", aggregate.Id);
 
-            var eventVersion = aggregate.LastCommittedVersion +1;
-            
             foreach (var e in changesToCommit)
             {
                 DoPreCommitTasks(e);
-                e.EventVersion = eventVersion;
-                eventVersion++;
             }
 
             _logger.LogDebug("Committing changes for aggregate: '{Aggregate}'", aggregate.Id);

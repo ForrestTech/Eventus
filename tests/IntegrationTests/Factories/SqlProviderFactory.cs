@@ -36,6 +36,13 @@
             return serviceProvider.GetService<ISnapshotStorageProvider>();
         }
 
+        public IRepository CreateRepository(ITestOutputHelper output)
+        {
+            var serviceProvider = BuildServiceProvider(output);
+
+            return serviceProvider.GetService<IRepository>();
+        }
+
         private static ServiceProvider BuildServiceProvider(ITestOutputHelper output)
         {
             var services = new ServiceCollection();
