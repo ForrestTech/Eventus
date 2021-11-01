@@ -1,4 +1,6 @@
-﻿namespace Eventus.UnitTests
+﻿using System;
+
+namespace Eventus.UnitTests
 {
     using Domain;
     using Events;
@@ -113,7 +115,7 @@
         {
             var aggregate = new BankAccount("Joe Bloggs");
 
-            aggregate.Invoking(x => x.LoadFromHistory(new List<IEvent> { new EventWithoutMatchingAggregate() }))
+            aggregate.Invoking(x => x.LoadFromHistory(new List<IEvent> { new EventWithoutMatchingAggregate(NewId.NextGuid(), 1) }))
                 .Should().Throw<AggregateEventOnApplyMethodMissingException>();
         }
 
@@ -123,17 +125,25 @@
         {
             var aggregate = new TestAggregate();
 
-            aggregate.Invoking(x => x.LoadFromHistory(new List<IEvent> { new TestAggregateEvent() }))
+            aggregate.Invoking(x => x.LoadFromHistory(new List<IEvent> { new TestAggregateEvent(NewId.NextGuid(), 1) }))
                 .Should().Throw<AggregateEventOnApplyMethodMissingException>();
         }
 
         private class EventWithoutMatchingAggregate : Event
-        { }
+        {
+            public EventWithoutMatchingAggregate(Guid aggregateId, int targetVersion) : base(aggregateId, targetVersion)
+            {
+            }
+        }
 
         private class TestAggregate : Aggregate
         {}
 
         private class TestAggregateEvent : Event
-        { }
+        {
+            public TestAggregateEvent(Guid aggregateId, int targetVersion) : base(aggregateId, targetVersion)
+            {
+            }
+        }
     }
 }

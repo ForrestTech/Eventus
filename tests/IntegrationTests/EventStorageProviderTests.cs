@@ -165,17 +165,6 @@ namespace Eventus.IntegrationTests
 
         private static async Task CommitChangesAsync(IEventStorageProvider provider, Aggregate aggregate)
         {
-            var changesToCommit = aggregate.GetUncommittedChanges().ToList();
-            
-            //as we are not using the repo so we need to remember to do this 
-            var eventVersion = aggregate.LastCommittedVersion +1;
-            foreach (var e in changesToCommit)
-            {
-                e.EventCommittedTimestamp = Clock.Now();
-                e.EventVersion = eventVersion;
-                eventVersion++;
-            }
-
             await provider.CommitChangesAsync(aggregate);
             
             aggregate.MarkChangesAsCommitted();

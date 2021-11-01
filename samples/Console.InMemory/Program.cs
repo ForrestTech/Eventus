@@ -9,17 +9,16 @@
     using System.Threading.Tasks;
     
     //TODO cosmos commposite index on aggregateid, version (exlude paths), parameterization sql cosmos, transactional batch write of events
-    //TODO events should be immutable and should have equality comparison
     //TODO add timing to log decorator on setting
     //TODO add event store logging
     //TODO add cosmos DB logging
     //TODO review unit test coverage (snapshot options, aggregate config)
+    //TODO github action builds
     //TODO add details to readme that event constructor parameter names are important (can we auto validate this)
     //TODO add details to readme on how snapshotting works without a read and how that will effect what snapshots you get
     //TODO add details to readme on how snapshotting is not transactional
     //TODO make a note in readme about NewId
     //TODO add sample for event publishing
-    //TODO github action builds
     //TODO sort out nuget publishing
     //TODO possible change to snapshot strategy if we loaded from snapshot we could store the details in the aggregate for writing or just store if we are in the modules
     //TODO SQL perf improvements single call to DB for a batch of commits

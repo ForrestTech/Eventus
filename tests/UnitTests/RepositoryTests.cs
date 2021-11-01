@@ -210,31 +210,6 @@
         }
 
         [Theory, AutoMoqData]
-        public void Save_should_throws_when_aggregate_target_version_does_not_match_last_event(
-            [Frozen] Mock<IEventStorageProvider> eventStore,
-            Repository repo,
-            AccountCreatedEvent existingAccount)
-        {
-            //create an aggregate with history then update it
-            var aggregate = new BankAccount();
-            aggregate.LoadFromHistory(
-                new List<IEvent> {new AccountCreatedEvent(aggregate.Id, 0, "Jeff")});
-            aggregate.Deposit(100);
-
-            //force the last event stored to be newer than expected (the first event should target 0)
-            existingAccount.TargetVersion = 1;
-            eventStore.Setup(x =>
-                    x.GetLastEventAsync(It.Is<Type>(t => t == aggregate.GetType()), It.Is<Guid>(i => i == aggregate.Id)))
-                .Returns(Task.FromResult<IEvent>(existingAccount))
-                .Verifiable();
-
-            Action act = () => repo.SaveAsync(aggregate).Wait();
-
-            act.Should().Throw<AggregateException>()
-                .WithInnerException<ConcurrencyException>();
-        }
-
-        [Theory, AutoMoqData]
         public async Task Save_should_call_commit_for_a_valid_aggregate([Frozen] Mock<IEventStorageProvider> eventStore,
             Repository repo)
         {

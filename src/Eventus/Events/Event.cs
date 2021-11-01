@@ -1,4 +1,7 @@
-﻿namespace Eventus.Events
+﻿using System.Collections.Generic;
+using System.Linq;
+
+namespace Eventus.Events
 {
     using MassTransit;
     using System;
@@ -8,19 +11,15 @@
     /// </summary>
     public class Event : IEvent
     {
-        public Guid EventId { get; set; }
+        public Guid EventId { get; init; }
 
-        public Guid AggregateId { get; set; }
+        public Guid AggregateId { get; init; }
         
-        public int TargetVersion { get; set; }
+        public int TargetVersion { get; init; }
 
-        public DateTime EventCommittedTimestamp { get; set; }
+        public DateTime EventCommittedTimestamp { get; init; }
 
-        public int EventVersion { get; set; }
-
-        public Event()
-        {
-        }
+        public int EventVersion { get; init; }
 
         /// <summary>
         /// This should be the most common event constructor as we always need an aggregate ID and target version but we can generate most other parameters
@@ -33,13 +32,13 @@
         {
         }
 
-
-        private Event(Guid aggregateId, int targetVersion, Guid eventId, int eventEventVersion)
+        private Event(Guid aggregateId, int targetVersion, Guid eventId, int eventVersion)
         {
             AggregateId = aggregateId;
             TargetVersion = targetVersion;
-            EventVersion = eventEventVersion;
+            EventVersion = eventVersion;
             EventId = eventId;
+            EventCommittedTimestamp = Clock.Now();
         }
     }
 }

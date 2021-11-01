@@ -26,6 +26,10 @@
         }
 
         public class EventWithoutMethod : Event
-        { }
+        {
+            protected EventWithoutMethod(Guid aggregateId, int targetVersion) : base(aggregateId, targetVersion)
+            {
+            }
+        }
     }
 }

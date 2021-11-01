@@ -134,14 +134,7 @@
             await ValidateCanCommitChanges(aggregate);
 
             var changesToCommit = aggregate.GetUncommittedChanges();
-
-            _logger.LogDebug("Performing pre commit checks for '{Aggregate}'", aggregate.Id);
-
-            foreach (var e in changesToCommit)
-            {
-                DoPreCommitTasks(e);
-            }
-
+            
             _logger.LogDebug("Committing changes for aggregate: '{Aggregate}'", aggregate.Id);
 
             await _eventStorageProvider.CommitChangesAsync(aggregate);
@@ -189,11 +182,6 @@
             {
                 throw new ConcurrencyException(aggregate.Id);
             }
-        }
-
-        private static void DoPreCommitTasks(IEvent e)
-        {
-            e.EventCommittedTimestamp = Clock.Now();
         }
 
         private static TAggregate? ConstructAggregate<TAggregate>() where TAggregate : Aggregate

@@ -87,11 +87,6 @@
 
         protected virtual void ApplyEvent(IEvent @event, bool isNew = true)
         {
-            if (isNew)
-            {
-                @event.AggregateId = Id;
-            }
-
             if (_eventHandlerCache.ContainsKey(@event.GetType()))
             {
                 var method = _eventHandlerCache[@event.GetType()];
