@@ -1,0 +1,31 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>net5.0</TargetFramework>
+        <RootNamespace>Eventus.IntegrationTests</RootNamespace>
+        <AssemblyName>Eventus.IntegrationTests</AssemblyName>
+    </PropertyGroup>
+
+
+    <ItemGroup>
+        <PackageReference Include="AutoFixture" Version="4.17.0" />        
+        <PackageReference Include="AutoFixture.Xunit2" Version="4.17.0" />
+        <PackageReference Include="FluentAssertions" Version="6.2.0" />
+        <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.11.0" />        
+        <PackageReference Include="xunit" Version="2.4.1" />
+        <PackageReference Include="Respawn" Version="4.0.0" />
+        <PackageReference Include="xunit.runner.visualstudio" Version="2.4.3" />
+        <PackageReference Include="Microsoft.Azure.Cosmos" Version="3.22.1" />
+        <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="5.0.2" />
+        <PackageReference Include="Microsoft.Extensions.Logging" Version="5.0.0" />
+    </ItemGroup>
+
+
+    <ItemGroup>
+      <ProjectReference Include="..\..\samples\Core\Core.csproj" />
+      <ProjectReference Include="..\..\src\CosmosDB\CosmosDB.csproj" />
+      <ProjectReference Include="..\..\src\DependencyInjection\DependencyInjection.csproj" />
+      <ProjectReference Include="..\..\src\EventStore\EventStore.csproj" />
+      <ProjectReference Include="..\..\src\SqlServer\SqlServer.csproj" />
+    </ItemGroup>
+</Project>

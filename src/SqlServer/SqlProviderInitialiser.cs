@@ -9,6 +9,8 @@
 
     public class SqlProviderInitialiser
     {
+        private static readonly Object LockObject = new();
+
         private readonly EventusSqlServerOptions _sqlOptions;
 
         public SqlProviderInitialiser(EventusSqlServerOptions sqlOptions)
@@ -20,20 +22,23 @@
         {
             var aggregateTypes = DetectAggregates();
 
-            var connection = GetOpenConnection();
-
-            using (connection)
+            lock (LockObject)
             {
-                using (var transactionScope = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled))
+                var connection = GetOpenConnection();
+                
+                using (connection)
                 {
-                    foreach (var aggregate in aggregateTypes)
+                    using (var transactionScope = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled))
                     {
-                        CreateTableForAggregate(connection, aggregate);
+                        foreach (var aggregate in aggregateTypes)
+                        {
+                            CreateTableForAggregate(connection, aggregate);
 
-                        CreateSnapshotTableForAggregate(connection, aggregate);
+                            CreateSnapshotTableForAggregate(connection, aggregate);
+                        }
+
+                        transactionScope.Complete();
                     }
-
-                    transactionScope.Complete();
                 }
             }
         }
@@ -47,11 +52,10 @@
 
         protected virtual void CreateTableForAggregate(IDbConnection connection, Type aggregate)
         {
-            var aggregateTable = string.Format(@"IF OBJECT_ID (N'{0}', N'U') IS NOT NULL
-
-                                             DROP TABLE [{1}].[{0}]
-
-                                             CREATE TABLE [{1}].[{0}](
+            var aggregateTable = string.Format(
+                @"IF NOT EXISTS (SELECT * FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_SCHEMA = '{0}' AND  TABLE_NAME = '{1}')
+                                                BEGIN
+                                                CREATE TABLE [{0}].[{1}](
 	                                            [Id]               UNIQUEIDENTIFIER NOT NULL,
                                                 [AggregateId]      UNIQUEIDENTIFIER NOT NULL,
                                                 [TargetVersion]    INT              NOT NULL,
@@ -59,28 +63,30 @@
                                                 [AggregateVersion] INT              NOT NULL,
                                                 [TimeStamp]        DATETIME2 (7)    NOT NULL,
                                                 [Data]             NVARCHAR (MAX)   NOT NULL
-	                                            PRIMARY KEY (AggregateId,[Id]))", SqlSchemaHelper.TableName(aggregate),
-                _sqlOptions.Schema);
+	                                            PRIMARY KEY (AggregateId,[Id]))
+                                                END",
+                _sqlOptions.Schema,
+                SqlSchemaHelper.TableName(aggregate));
 
             connection.Execute(aggregateTable);
         }
 
         protected virtual void CreateSnapshotTableForAggregate(IDbConnection connection, Type aggregate)
         {
-            var aggregateTable = string.Format(@"IF OBJECT_ID (N'{0}', N'U') IS NOT NULL
-
-                                             DROP TABLE [{1}].[{0}]
-
-                                             CREATE TABLE [{1}].[{0}](
+            var aggregateTable = string.Format(
+                @"IF NOT EXISTS (SELECT * FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_SCHEMA = '{0}' AND  TABLE_NAME = '{1}')
+                                                BEGIN
+                                                CREATE TABLE [{0}].[{1}](
 	                                            [Id]               UNIQUEIDENTIFIER NOT NULL,
                                                 [AggregateId]      UNIQUEIDENTIFIER NOT NULL,                                                
                                                 [ClrType]          NVARCHAR (500)   NOT NULL,
                                                 [AggregateVersion] INT              NOT NULL,
                                                 [TimeStamp]        DATETIME2 (7)    NOT NULL,
                                                 [Data]             NVARCHAR (MAX)   NOT NULL
-	                                            PRIMARY KEY (AggregateId,[Id]))",
-                SqlSchemaHelper.SnapshotTableName(aggregate),
-                _sqlOptions.Schema);
+	                                            PRIMARY KEY (AggregateId,[Id]))
+                                                END",
+                _sqlOptions.Schema,
+                SqlSchemaHelper.SnapshotTableName(aggregate));
 
             connection.Execute(aggregateTable);
         }

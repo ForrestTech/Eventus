@@ -1,11 +1,11 @@
 ﻿namespace Console.CosmosDB
 {
     using Eventus.Configuration;
+    using Eventus.CosmosDB;
     using Eventus.Extensions.DependencyInjection;
     using Eventus.Samples.Core;
     using Eventus.Samples.Core.Cleanup;
     using Eventus.Samples.Core.Domain;
-    using Eventus.SqlServer;
     using Microsoft.Azure.Cosmos;
     using Microsoft.Extensions.DependencyInjection;
     using Microsoft.Extensions.Logging;

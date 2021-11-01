@@ -5,7 +5,6 @@
     using Domain;
     using Storage;
     using Microsoft.Extensions.Logging;
-    using System.Diagnostics;
 
     public class RepositoryLoggingDecorator : LoggingDecorator, IRepository
     {

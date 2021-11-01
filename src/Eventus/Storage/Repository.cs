@@ -2,7 +2,6 @@
 {
     using Configuration;
     using System;
-    using System.Collections.Generic;
     using System.Linq;
     using System.Threading.Tasks;
     using Domain;
@@ -138,9 +137,13 @@
 
             _logger.LogDebug("Performing pre commit checks for '{Aggregate}'", aggregate.Id);
 
+            var eventVersion = aggregate.LastCommittedVersion +1;
+            
             foreach (var e in changesToCommit)
             {
                 DoPreCommitTasks(e);
+                e.EventVersion = eventVersion;
+                eventVersion++;
             }
 
             _logger.LogDebug("Committing changes for aggregate: '{Aggregate}'", aggregate.Id);

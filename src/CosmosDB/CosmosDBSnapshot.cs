@@ -1,4 +1,4 @@
-namespace Eventus.SqlServer
+namespace Eventus.CosmosDB
 {
     public class CosmosDBSnapshot : CosmosDBEventBase
     {}

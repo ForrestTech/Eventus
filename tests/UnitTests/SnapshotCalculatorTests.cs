@@ -4,7 +4,6 @@
     using FluentAssertions;
     using Samples.Core.Domain;
     using Storage;
-    using System;
     using Xunit;
 
     public class SnapshotCalculatorTests

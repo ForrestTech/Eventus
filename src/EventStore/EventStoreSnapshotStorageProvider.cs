@@ -23,7 +23,7 @@
             var streamEvents = await Connection
                 .ReadStreamEventsBackwardAsync(SnapShotStreamName(aggregateType, aggregateId), StreamPosition.End, 1,
                     false)
-                .ConfigureAwait(false);
+                ;
 
             if (streamEvents.Events.Any())
             {
@@ -49,7 +49,7 @@
 
             var streamEvents = await Connection
                 .ReadStreamEventsBackwardAsync(SnapShotStreamName(aggregateType, aggregateId), version, 1, false)
-                .ConfigureAwait(false);
+                ;
 
             if (streamEvents.Events.Any())
             {

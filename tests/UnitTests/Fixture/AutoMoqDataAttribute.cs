@@ -3,7 +3,6 @@ namespace Eventus.UnitTests.Fixture
     using AutoFixture.AutoMoq;
     using AutoFixture.Kernel;
     using AutoFixture.Xunit2;
-    using Moq;
     using Storage;
 
     public class AutoMoqDataAttribute : AutoDataAttribute

@@ -1,4 +1,4 @@
-﻿namespace Eventus.SqlServer
+﻿namespace Eventus.CosmosDB
 {
     using Configuration;
     using Extensions.DependencyInjection;
@@ -11,7 +11,8 @@
 
     public static class EventusBuilderExtensions
     {
-        public static EventusBuilder UseCosmosDB(this EventusBuilder builder, string connectionString,
+        public static EventusBuilder UseCosmosDB(this EventusBuilder builder, 
+            string connectionString,
             string databaseId,
             Action<EventusCosmosDBOptions>? optionsConfig = null)
         {

@@ -29,7 +29,7 @@
             //Ensure first character of type name is in lower camel case
             var prefix = _eventStoreOptions.StreamPrefix;
 
-            return $"{char.ToLower(prefix[0])}{prefix.Substring(1)}-{t.Name.ToLower()}-{id:N}";
+            return $"{char.ToLower(prefix[0])}{prefix.Substring(1)}-{t.Name.ToLower()}-{id}";
         }
 
         protected IEvent DeserializeEvent(ResolvedEvent returnedEvent)

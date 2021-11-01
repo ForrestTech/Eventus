@@ -1,4 +1,4 @@
-namespace Eventus.SqlServer.Configuration
+namespace Eventus.CosmosDB.Configuration
 {
     using System;
 

@@ -12,28 +12,28 @@
     /// </summary>
     public class InMemoryEventStorageProvider : IEventStorageProvider
     {
-        private static readonly Dictionary<Guid, IEnumerable<IEvent>> Storage = new();
+        public static readonly Dictionary<Guid, List<IEvent>> Storage = new();
 
         public Task<IEnumerable<IEvent>> GetEventsAsync(Type aggregateType, Guid aggregateId, int offSet, int count)
         {
-            IEnumerable<IEvent> result = new List<IEvent>();
+            var result = new List<IEvent>();
             
-            if (Storage.TryGetValue(aggregateId, out IEnumerable<IEvent>? events))
+            if (Storage.TryGetValue(aggregateId, out List<IEvent>? events))
             {
-                return Task.FromResult(events);
+                return Task.FromResult(events.Skip(offSet).Take(count).AsEnumerable());
             }
 
             if (events == null || !events.Any())
             {
-                return Task.FromResult(result);
+                return Task.FromResult(result.AsEnumerable());
             }
             
-            return Task.FromResult(result);
+            return Task.FromResult(result.AsEnumerable());
         }
 
         public Task<IEvent?> GetLastEventAsync(Type aggregateType, Guid aggregateId)
         {
-            if (Storage.TryGetValue(aggregateId, out IEnumerable<IEvent>? events))
+            if (Storage.TryGetValue(aggregateId, out List<IEvent>? events))
             {
                 var eventList = events.ToList();
                 
@@ -64,11 +64,11 @@
 
             var key = aggregate.Id;
 
-            if (Storage.TryGetValue(key, out IEnumerable<IEvent>? existingEvents))
+            if (Storage.TryGetValue(key, out List<IEvent>? existingEvents))
             {
                 var list = existingEvents.ToList();
 
-                list.AddRange(existingEvents);
+                list.AddRange(events);
 
                 Storage[key] = list;
             }

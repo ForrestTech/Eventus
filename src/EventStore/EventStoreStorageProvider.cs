@@ -37,9 +37,8 @@
 
         public async Task<IEvent?> GetLastEventAsync(Type aggregateType, Guid aggregateId)
         {
-            var results =
-                await Connection.ReadStreamEventsBackwardAsync(AggregateIdToStreamName(aggregateType, aggregateId),
-                    StreamPosition.End, 1, false);
+            var streamName = AggregateIdToStreamName(aggregateType, aggregateId);
+            var results = await Connection.ReadStreamEventsBackwardAsync(streamName, StreamPosition.End, 1, false);
 
             if (results.Status == SliceReadStatus.Success && results.Events.Length > 0)
             {
@@ -49,24 +48,23 @@
             return null;
         }
 
-        public Task CommitChangesAsync(Aggregate aggregate)
+        public async Task CommitChangesAsync(Aggregate aggregate)
         {
             var events = aggregate.GetUncommittedChanges().ToList();
 
             if (events.Any())
             {
+                var streamName = AggregateIdToStreamName(aggregate.GetType(), aggregate.Id);
                 var lastVersion = aggregate.LastCommittedVersion;
-
-                var lstEventData = events.Select(@event => SerializeEvent(@event, aggregate.LastCommittedVersion + 1))
+                var expectedVersion = lastVersion == 0 ? ExpectedVersion.NoStream : lastVersion -1;
+                
+                var eventData = events.Select(@event => SerializeEvent(@event, aggregate.LastCommittedVersion + 1))
                     .ToList();
 
-                return Connection.AppendToStreamAsync(
-                    $"{AggregateIdToStreamName(aggregate.GetType(), aggregate.Id)}",
-                    (lastVersion < 0 ? ExpectedVersion.NoStream : lastVersion),
-                    lstEventData);
+                await Connection.AppendToStreamAsync(streamName,
+                    expectedVersion,
+                    eventData);
             }
-
-            return Task.CompletedTask;
         }
 
         private async Task<IEnumerable<IEvent>> ReadEventsAsync(Type aggregateType, Guid aggregateId, int start,

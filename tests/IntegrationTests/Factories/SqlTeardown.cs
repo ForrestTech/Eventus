@@ -1,6 +1,5 @@
-﻿namespace Console.SqlServer
+﻿namespace Eventus.IntegrationTests.Factories
 {
-    using Eventus.Samples.Core.Cleanup;
     using Microsoft.Data.SqlClient;
     using Respawn;
     using System.Threading.Tasks;

@@ -1,6 +1,5 @@
-﻿namespace Console.CosmosDB
+﻿namespace Eventus.IntegrationTests.Factories
 {
-    using Eventus.Samples.Core.Cleanup;
     using Microsoft.Azure.Cosmos;
     using System.Net;
     using System.Threading.Tasks;

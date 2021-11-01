@@ -3,8 +3,8 @@
   <PropertyGroup>
     <TargetFramework>net5.0</TargetFramework>
     <Nullable>enable</Nullable>
-    <RootNamespace>Eventus.SqlServer</RootNamespace>
-    <AssemblyName>Eventus.SqlServer</AssemblyName>
+    <RootNamespace>Eventus.CosmosDB</RootNamespace>
+    <AssemblyName>Eventus.CosmosDB</AssemblyName>
   </PropertyGroup>
 
   <ItemGroup>

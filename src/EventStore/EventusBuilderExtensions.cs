@@ -7,7 +7,6 @@
     using Microsoft.Extensions.Logging;
     using Storage;
     using System;
-    using System.Text;
 
     public static class EventusBuilderExtensions
     {

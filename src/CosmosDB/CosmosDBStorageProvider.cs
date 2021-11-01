@@ -1,4 +1,4 @@
-﻿namespace Eventus.SqlServer
+﻿namespace Eventus.CosmosDB
 {
     using Configuration;
     using Domain;
@@ -29,7 +29,7 @@
                 var container = await GetContainer(aggregateType, aggregateId);
 
                 var sqlQueryText =
-                    $"SELECT Top {count} * FROM c WHERE c.AggregateId = '{aggregateId}' ORDER BY c.Version DESC";
+                    $"SELECT Top {count} * FROM c WHERE c.AggregateId = '{aggregateId}' AND c.Version >= {start} ORDER BY c.Version";
                 var queryDefinition = new QueryDefinition(sqlQueryText);
 
                 var queryResultSetIterator = container.GetItemQueryIterator<CosmosDBAggregateEvent>(queryDefinition);
@@ -62,7 +62,7 @@
                 var container = await GetContainer(aggregateType, aggregateId);
 
                 var sqlQueryText =
-                    $"SELECT Top 1 * FROM c WHERE c.AggregateId = '{aggregateId}' ORDER BY c.Version DESC";
+                    $"SELECT Top 1 * FROM c WHERE c.AggregateId = '{aggregateId}' ORDER BY c.Version";
                 var queryDefinition = new QueryDefinition(sqlQueryText);
 
                 var queryResultSetIterator = container.GetItemQueryIterator<CosmosDBAggregateEvent>(queryDefinition);
@@ -100,6 +100,7 @@
 
                 var container = await GetContainer(aggregate.GetType(), aggregate.Id);
 
+                //TODO create a transactional batch operation here https://docs.microsoft.com/vi-vn/azure/cosmos-db/sql/transactional-batch
                 foreach (var @event in events)
                 {
                     committed++;
