@@ -6,7 +6,6 @@
     using System.Threading.Tasks;
     using Domain;
     using EventBus;
-    using Events;
     using Exceptions;
     using Microsoft.Extensions.Logging;
 
@@ -149,7 +148,7 @@
                 }
             }
 
-            if (_options.SnapshottingEnabled && aggregate is ISnapshottable snapshottable &&
+            if (_options.GetSnapshotEnabled(aggregate.GetType()) && aggregate is ISnapshottable snapshottable &&
                 _snapshotCalculator.ShouldCreateSnapShot(aggregate))
             {
                 _logger.LogDebug(

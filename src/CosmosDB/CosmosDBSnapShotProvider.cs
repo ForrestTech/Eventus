@@ -1,3 +1,5 @@
+using Microsoft.Extensions.Logging;
+
 namespace Eventus.CosmosDB
 {
     using Configuration;
@@ -12,10 +14,14 @@ namespace Eventus.CosmosDB
 
     public class CosmosDBSnapShotProvider : CosmosDBProviderBase, ISnapshotStorageProvider
     {
+        private readonly ILogger<CosmosDBSnapShotProvider> _logger;
+
         public CosmosDBSnapShotProvider(CosmosClient client,
             EventusCosmosDBOptions cosmosOptions,
-            EventusOptions options) : base(client, cosmosOptions, options)
+            EventusOptions options,
+            ILogger<CosmosDBSnapShotProvider> logger) : base(client, cosmosOptions, options)
         {
+            _logger = logger;
         }
 
         public async Task<Snapshot?> GetSnapshotAsync(Type aggregateType, Guid aggregateId, int version)
@@ -28,6 +34,8 @@ namespace Eventus.CosmosDB
                 var queryDefinition = new QueryDefinition(sqlQueryText)
                     .WithParameter("@aggregateId", aggregateId)
                     .WithParameter("@version", version);
+
+                _logger.LogDebug("Executing Cosmos Query:'{Sql}' for aggregate: '{Aggregate}'", sqlQueryText, aggregateId);
 
                 var queryResultSetIterator = container.GetItemQueryIterator<CosmosDBSnapshot>(queryDefinition);
 
@@ -65,6 +73,8 @@ namespace Eventus.CosmosDB
                 var queryDefinition = new QueryDefinition(sqlQueryText)
                     .WithParameter("@aggregateId", aggregateId);
 
+                _logger.LogDebug("Executing Cosmos Query:'{Sql}' for aggregate: '{Aggregate}'", sqlQueryText, aggregateId);
+
                 var queryResultSetIterator = container.GetItemQueryIterator<CosmosDBSnapshot>(queryDefinition);
 
                 var snapshots = new List<CosmosDBSnapshot>();
@@ -94,6 +104,8 @@ namespace Eventus.CosmosDB
         {
             var container = await GetSnapshotContainer(aggregateType, snapshot.AggregateId);
             var cosmosDBSnapshot = CreateSnapshotEvent(snapshot);
+
+            _logger.LogDebug("Inserting snapshot for aggregate: '{Aggregate}'", snapshot.AggregateId);
 
             await container.CreateItemAsync(cosmosDBSnapshot, new PartitionKey(snapshot.AggregateId.ToString()));
         }

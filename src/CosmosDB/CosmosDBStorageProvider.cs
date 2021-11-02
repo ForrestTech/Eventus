@@ -1,4 +1,6 @@
-﻿namespace Eventus.CosmosDB
+﻿using Microsoft.Extensions.Logging;
+
+namespace Eventus.CosmosDB
 {
     using Configuration;
     using Domain;
@@ -15,10 +17,14 @@
 
     public class CosmosDBStorageProvider : CosmosDBProviderBase, IEventStorageProvider
     {
+        private readonly ILogger<CosmosDBStorageProvider> _logger;
+
         public CosmosDBStorageProvider(CosmosClient client,
             EventusCosmosDBOptions cosmosOptions,
-            EventusOptions options) : base(client, cosmosOptions, options)
+            EventusOptions options,
+            ILogger<CosmosDBStorageProvider> logger) : base(client, cosmosOptions, options)
         {
+            _logger = logger;
         }
 
         public async Task<IEnumerable<IEvent>> GetEventsAsync(Type aggregateType, Guid aggregateId, int start,
@@ -34,6 +40,8 @@
                 var queryDefinition = new QueryDefinition(sqlQueryText)
                     .WithParameter("@aggregateId", aggregateId)
                     .WithParameter("@start", start);
+
+                _logger.LogDebug("Executing Cosmos Query:'{Sql}' for aggregate: '{Aggregate}'", sqlQueryText, aggregateId);
 
                 var queryResultSetIterator = container.GetItemQueryIterator<CosmosDBAggregateEvent>(queryDefinition);
 
@@ -65,9 +73,11 @@
                 var container = await GetContainer(aggregateType, aggregateId);
 
                 var sqlQueryText = "SELECT Top 1 * FROM c WHERE c.AggregateId = @aggregateId ORDER BY c.Version DESC";
-                
+
                 var queryDefinition = new QueryDefinition(sqlQueryText)
                     .WithParameter("@aggregateId", aggregateId);
+
+                _logger.LogDebug("Executing Cosmos Query:'{Sql}' for aggregate: '{Aggregate}'", sqlQueryText, aggregateId);
 
                 var queryResultSetIterator = container.GetItemQueryIterator<CosmosDBAggregateEvent>(queryDefinition);
 
@@ -108,6 +118,8 @@
                 {
                     committed++;
                     var aggregateEvent = CreateCosmosDBEvent(aggregate, events.First(), committed);
+
+                    _logger.LogDebug("Inserting event for aggregate: '{Aggregate}'", aggregate.Id);
                     await container.CreateItemAsync(aggregateEvent, new PartitionKey(aggregate.Id.ToString()));
                 }
                 else
@@ -129,11 +141,13 @@
                 batch.CreateItem(aggregateEvent);
             }
 
+            _logger.LogDebug("Inserting batch of {BatchCount} for aggregate: '{Aggregate}'", events.Count, aggregate.Id);
+
             var response = await batch.ExecuteAsync();
 
             if (!response.IsSuccessStatusCode)
             {
-                throw new CosmosException(response.ErrorMessage, response.StatusCode, (int) response.StatusCode, response.ActivityId, response.RequestCharge);
+                throw new CosmosException(response.ErrorMessage, response.StatusCode, (int)response.StatusCode, response.ActivityId, response.RequestCharge);
             }
         }
 
