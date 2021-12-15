@@ -2,6 +2,8 @@
 
 ![Eventus](logo.png)
 
+[![.NET](https://github.com/ForrestTech/Eventus/actions/workflows/build.yml/badge.svg)](https://github.com/ForrestTech/Eventus/actions/workflows/build.yml)
+
 ## Synopsis
 
 Eventus is a framework that provides a common setup for working
